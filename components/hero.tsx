@@ -9,11 +9,11 @@ export default function Hero() {
         <source src="https://videos.pexels.com/video-files/19570489/19570489-hd_1920_1080_30fps.mp4" type="video/mp4" />
       </video>
 
-      {/* Dark Overlay - Radial gradient: lighter center, darker edges */}
+      {/* Dark Overlay - Radial gradient: lighter center, darker edges - matching irri-hub.com */}
       <div 
         className="absolute inset-0" 
         style={{
-          background: 'radial-gradient(circle at center, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.73) 100%)'
+          background: 'radial-gradient(circle at center, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.85) 100%)'
         }}
       />
 
