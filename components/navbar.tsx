@@ -42,11 +42,9 @@ export default function Navbar() {
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY
-      const heroHeight = window.innerHeight
       
-      // Check if scrolled past hero section (50% of viewport height)
-      const scrolled = scrollY > heroHeight * 0.5
-      setIsScrolled(scrolled)
+      // Show background when scrolled even a little bit (better UX)
+      setIsScrolled(scrollY > 10)
 
       // Check if navbar is over light sections
       const lightSectionIds = ['seedlings', 'care-guides', 'testimonials', 'contact']
@@ -57,8 +55,7 @@ export default function Navbar() {
         const element = document.getElementById(id)
         if (element) {
           const rect = element.getBoundingClientRect()
-          // Check if navbar area (top to navbarHeight) overlaps with light section
-          // Navbar is at top, so check if section starts before navbar ends
+          // Check if navbar area overlaps with light section
           if (rect.top < navbarHeight && rect.bottom > 0) {
             overLightSection = true
           }
@@ -103,20 +100,40 @@ export default function Navbar() {
 
   return (
     <header
-      className={cn(
-        "fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300",
-        shouldShowSolidBackground
-          ? "bg-gray-900/95 backdrop-blur-md shadow-lg"
-          : "bg-gradient-to-b from-black/40 via-black/30 to-transparent backdrop-blur-md"
-      )}
+      className="fixed top-0 left-0 right-0 z-50 w-full px-4 sm:px-6 lg:px-8 pt-4"
+      style={{ pointerEvents: "none" }}
     >
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" aria-label="Main navigation">
-        <div className="flex justify-between items-center h-16 md:h-20">
+      {/* Animated Background Layer - Drops from top with padding */}
+      <div
+        className={cn(
+          "absolute top-4 left-4 right-4 sm:left-6 sm:right-6 lg:left-8 lg:right-8 transition-all duration-500 ease-in-out",
+          shouldShowSolidBackground
+            ? "bg-white shadow-lg opacity-100 translate-y-0 rounded-[10px]"
+            : "bg-white opacity-0 -translate-y-full shadow-none rounded-[10px]"
+        )}
+        style={{
+          transition: "opacity 500ms ease-in-out, transform 500ms ease-in-out, box-shadow 500ms ease-in-out",
+          pointerEvents: "none",
+          overflow: "visible",
+          height: "calc(100% - 1rem)",
+          zIndex: 1,
+        }}
+      />
+
+      {/* Navbar Content - Always visible on transparent background */}
+      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10" aria-label="Main navigation" style={{ overflow: "visible", pointerEvents: "auto" }}>
+        <div className="flex justify-between items-center h-16 md:h-20 relative" style={{ overflow: "visible" }}>
           {/* Logo */}
           <div className="flex-shrink-0 z-50 relative">
             <Link
               href="/"
-              className="text-2xl md:text-3xl font-bold text-white hover:text-green-300 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-transparent rounded relative z-10"
+              className={cn(
+                "text-2xl md:text-3xl font-bold transition-colors duration-300",
+                "focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-transparent rounded relative z-10",
+                shouldShowSolidBackground
+                  ? "text-gray-900 hover:text-green-600"
+                  : "text-white hover:text-green-300"
+              )}
               aria-label="Mynzagric Home"
             >
               MYNZAGRIC
@@ -125,27 +142,34 @@ export default function Navbar() {
 
           {/* Desktop Navigation - Centered */}
           <div className="hidden lg:flex items-center justify-center absolute left-1/2 -translate-x-1/2 space-x-1">
-            <NavLink href="#about" label="About" />
-            <NavLink href="#seedlings" label="Seedlings" />
+            <NavLink href="#about" label="About" shouldShowSolidBackground={shouldShowSolidBackground} />
+            <NavLink href="#seedlings" label="Seedlings" shouldShowSolidBackground={shouldShowSolidBackground} />
 
             {/* Care Guides Dropdown */}
             <div
               ref={dropdownRef}
-              className="relative group"
+              className="relative"
               onMouseEnter={() => {
                 setIsCareGuidesOpen(true)
                 setActiveDropdown("care-guides")
               }}
-              onMouseLeave={() => {
+              onMouseLeave={(e) => {
+                // Check if mouse is moving to dropdown menu
+                const relatedTarget = e.relatedTarget as HTMLElement | null
+                if (relatedTarget && dropdownRef.current?.contains(relatedTarget)) {
+                  return // Don't close if moving to dropdown
+                }
                 setIsCareGuidesOpen(false)
                 setActiveDropdown(null)
               }}
             >
               <button
                 className={cn(
-                  "relative px-4 py-2 text-white uppercase text-sm font-medium transition-colors duration-300",
+                  "relative px-4 py-2 uppercase text-sm font-medium transition-colors duration-300",
                   "focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-transparent rounded",
-                  "hover:text-green-300"
+                  shouldShowSolidBackground
+                    ? "text-gray-900 hover:text-green-600"
+                    : "text-white hover:text-green-300"
                 )}
                 aria-expanded={isCareGuidesOpen}
                 aria-haspopup="true"
@@ -155,74 +179,101 @@ export default function Navbar() {
                 Care Guides
                 <ChevronDown
                   className={cn(
-                    "inline-block ml-2 w-4 h-4 transition-transform duration-300",
-                    isCareGuidesOpen && "rotate-180"
+                    "inline-block ml-2 w-4 h-4 transition-all duration-300",
+                    isCareGuidesOpen && "rotate-180",
+                    shouldShowSolidBackground ? "text-gray-900" : "text-white"
                   )}
                   aria-hidden="true"
                 />
                 {/* Animated underline - expands from center on hover or when open */}
                 <span
                   className={cn(
-                    "absolute bottom-0 left-1/2 h-0.5 bg-green-300 transition-all duration-300 ease-out",
+                    "absolute bottom-0 left-1/2 h-0.5 transition-all duration-300 ease-out",
                     "transform -translate-x-1/2",
-                    "group-hover:w-full",
-                    isCareGuidesOpen ? "w-full" : "w-0"
+                    isCareGuidesOpen ? "w-full" : "w-0",
+                    shouldShowSolidBackground ? "bg-green-600" : "bg-green-300"
                   )}
                   aria-hidden="true"
                 />
               </button>
 
-              {/* Dropdown Menu - Centered below button */}
-              <div
-                className={cn(
-                  "absolute mt-2 w-96 bg-white rounded-lg shadow-2xl border border-gray-100 z-50",
-                  "transition-all duration-300 ease-out",
-                  "left-1/2 -translate-x-1/2",
-                  isCareGuidesOpen
-                    ? "opacity-100 visible translate-y-0"
-                    : "opacity-0 invisible -translate-y-2 pointer-events-none"
-                )}
-                role="menu"
-                aria-orientation="vertical"
-              >
-                <div className="p-4">
-                  <div className="mb-3 pb-2 border-b border-gray-200">
-                    <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
-                      Plant Care Guides
-                    </h3>
+              {/* Dropdown Menu - Centered below button, stays open on hover */}
+              {isCareGuidesOpen && (
+                <>
+                  {/* Invisible bridge area to prevent dropdown from closing when moving mouse */}
+                  <div
+                    className="absolute top-full left-1/2 -translate-x-1/2 w-96 h-2"
+                    style={{
+                      zIndex: 9998,
+                    }}
+                    onMouseEnter={() => {
+                      setIsCareGuidesOpen(true)
+                      setActiveDropdown("care-guides")
+                    }}
+                  />
+                  {/* Dropdown Menu */}
+                  <div
+                    className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-96 bg-white rounded-lg shadow-2xl border border-gray-100"
+                    role="menu"
+                    aria-orientation="vertical"
+                    onMouseEnter={() => {
+                      setIsCareGuidesOpen(true)
+                      setActiveDropdown("care-guides")
+                    }}
+                    onMouseLeave={() => {
+                      setIsCareGuidesOpen(false)
+                      setActiveDropdown(null)
+                    }}
+                    style={{
+                      zIndex: 9999,
+                    }}
+                  >
+                    <div className="p-4">
+                      <div className="mb-3 pb-2 border-b border-gray-200">
+                        <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
+                          Plant Care Guides
+                        </h3>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 max-h-96 overflow-y-auto">
+                        {seedlings.map((seedling) => (
+                          <Link
+                            key={seedling.id}
+                            href={`/plant-care/${seedling.id}`}
+                            className={cn(
+                              "block px-3 py-2 text-sm text-gray-700 rounded-md",
+                              "transition-all duration-200",
+                              "hover:bg-green-50 hover:text-green-700",
+                              "focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-1"
+                            )}
+                            role="menuitem"
+                            onClick={() => {
+                              setIsCareGuidesOpen(false)
+                              setActiveDropdown(null)
+                            }}
+                          >
+                            {seedling.name}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-2 max-h-96 overflow-y-auto">
-                    {seedlings.map((seedling) => (
-                      <Link
-                        key={seedling.id}
-                        href={`/plant-care/${seedling.id}`}
-                        className={cn(
-                          "block px-3 py-2 text-sm text-gray-700 rounded-md",
-                          "transition-all duration-200",
-                          "hover:bg-green-50 hover:text-green-700",
-                          "focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-1"
-                        )}
-                        role="menuitem"
-                        onClick={() => {
-                          setIsCareGuidesOpen(false)
-                          setActiveDropdown(null)
-                        }}
-                      >
-                        {seedling.name}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              </div>
+                </>
+              )}
             </div>
 
-            <NavLink href="#contact" label="Contact" />
+            <NavLink href="#contact" label="Contact" shouldShowSolidBackground={shouldShowSolidBackground} />
           </div>
 
           {/* Mobile menu button */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="lg:hidden inline-flex items-center justify-center p-2 rounded-md text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-transparent transition-colors"
+            className={cn(
+              "lg:hidden inline-flex items-center justify-center p-2 rounded-md transition-colors",
+              "focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-transparent",
+              shouldShowSolidBackground
+                ? "text-gray-900 hover:bg-gray-100"
+                : "text-white hover:bg-white/10"
+            )}
             aria-expanded={isOpen}
             aria-label="Toggle navigation menu"
             aria-controls="mobile-menu"
@@ -236,22 +287,27 @@ export default function Navbar() {
           id="mobile-menu"
           className={cn(
             "lg:hidden overflow-hidden transition-all duration-300 ease-in-out",
-            isOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
+            isOpen ? "max-h-screen opacity-100 pb-4" : "max-h-0 opacity-0"
           )}
           aria-hidden={!isOpen}
         >
-          <nav className="py-4 space-y-1 bg-black/60 backdrop-blur-md rounded-lg mt-2">
-            <MobileNavLink href="#about" label="About" onClick={() => setIsOpen(false)} />
-            <MobileNavLink href="#seedlings" label="Seedlings" onClick={() => setIsOpen(false)} />
+          <nav className={cn(
+            "py-4 space-y-1 backdrop-blur-md rounded-lg mt-2",
+            shouldShowSolidBackground ? "bg-white/95" : "bg-black/60"
+          )}>
+            <MobileNavLink href="#about" label="About" onClick={() => setIsOpen(false)} shouldShowSolidBackground={shouldShowSolidBackground} />
+            <MobileNavLink href="#seedlings" label="Seedlings" onClick={() => setIsOpen(false)} shouldShowSolidBackground={shouldShowSolidBackground} />
 
             {/* Mobile Care Guides Dropdown */}
             <div>
               <button
                 onClick={() => setIsCareGuidesOpen(!isCareGuidesOpen)}
                 className={cn(
-                  "w-full flex items-center justify-between px-4 py-3 text-white uppercase text-sm font-medium",
-                  "hover:bg-white/10 rounded-md transition-colors",
-                  "focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-black/60"
+                  "w-full flex items-center justify-between px-4 py-3 uppercase text-sm font-medium rounded-md transition-colors",
+                  "focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2",
+                  shouldShowSolidBackground
+                    ? "text-gray-900 hover:bg-gray-100 focus:ring-offset-white"
+                    : "text-white hover:bg-white/10 focus:ring-offset-black/60"
                 )}
                 aria-expanded={isCareGuidesOpen}
                 aria-haspopup="true"
@@ -259,8 +315,9 @@ export default function Navbar() {
                 Care Guides
                 <ChevronDown
                   className={cn(
-                    "w-4 h-4 transition-transform duration-300",
-                    isCareGuidesOpen && "rotate-180"
+                    "w-4 h-4 transition-all duration-300",
+                    isCareGuidesOpen && "rotate-180",
+                    shouldShowSolidBackground ? "text-gray-900" : "text-white"
                   )}
                   aria-hidden="true"
                 />
@@ -276,7 +333,12 @@ export default function Navbar() {
                     <Link
                       key={seedling.id}
                       href={`/plant-care/${seedling.id}`}
-                      className="block px-3 py-2 text-sm text-green-200 hover:text-white hover:bg-white/10 rounded-md transition-colors"
+                      className={cn(
+                        "block px-3 py-2 text-sm rounded-md transition-colors",
+                        shouldShowSolidBackground
+                          ? "text-gray-700 hover:text-green-700 hover:bg-green-50"
+                          : "text-green-200 hover:text-white hover:bg-white/10"
+                      )}
                       onClick={() => {
                         setIsOpen(false)
                         setIsCareGuidesOpen(false)
@@ -289,7 +351,7 @@ export default function Navbar() {
               </div>
             </div>
 
-            <MobileNavLink href="#contact" label="Contact" onClick={() => setIsOpen(false)} />
+            <MobileNavLink href="#contact" label="Contact" onClick={() => setIsOpen(false)} shouldShowSolidBackground={shouldShowSolidBackground} />
           </nav>
         </div>
       </nav>
@@ -298,15 +360,18 @@ export default function Navbar() {
 }
 
 // Desktop Nav Link Component with animated underline
-function NavLink({ href, label }: { href: string; label: string }) {
+function NavLink({ href, label, shouldShowSolidBackground = false }: { href: string; label: string; shouldShowSolidBackground?: boolean }) {
   return (
     <Link
       href={href}
       className={cn(
-        "relative px-4 py-2 text-white uppercase text-sm font-medium",
+        "relative px-4 py-2 uppercase text-sm font-medium",
         "transition-colors duration-300",
         "focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-transparent rounded",
-        "hover:text-green-300 group"
+        "group",
+        shouldShowSolidBackground
+          ? "text-gray-900 hover:text-green-600"
+          : "text-white hover:text-green-300"
       )}
       aria-label={label}
     >
@@ -314,10 +379,10 @@ function NavLink({ href, label }: { href: string; label: string }) {
       {/* Animated underline - expands from center */}
       <span
         className={cn(
-          "absolute bottom-0 left-1/2 h-0.5 bg-green-300",
-          "transition-all duration-300 ease-out",
+          "absolute bottom-0 left-1/2 h-0.5 transition-all duration-300 ease-out",
           "transform -translate-x-1/2",
-          "group-hover:w-full w-0"
+          "group-hover:w-full w-0",
+          shouldShowSolidBackground ? "bg-green-600" : "bg-green-300"
         )}
         aria-hidden="true"
       />
@@ -330,19 +395,23 @@ function MobileNavLink({
   href,
   label,
   onClick,
+  shouldShowSolidBackground = false,
 }: {
   href: string
   label: string
   onClick: () => void
+  shouldShowSolidBackground?: boolean
 }) {
   return (
     <Link
       href={href}
       onClick={onClick}
       className={cn(
-        "block px-4 py-3 text-white uppercase text-sm font-medium",
-        "hover:bg-white/10 rounded-md transition-colors",
-        "focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-black/60"
+        "block px-4 py-3 uppercase text-sm font-medium rounded-md transition-colors",
+        "focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2",
+        shouldShowSolidBackground
+          ? "text-gray-900 hover:bg-gray-100 focus:ring-offset-white"
+          : "text-white hover:bg-white/10 focus:ring-offset-black/60"
       )}
       aria-label={label}
     >
