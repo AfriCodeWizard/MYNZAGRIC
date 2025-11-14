@@ -21,7 +21,7 @@ export default function Testimonials() {
   ]
 
   return (
-    <section className="py-20 md:py-28 bg-gradient-to-b from-white to-green-50">
+    <section id="testimonials" className="py-20 md:py-28 bg-gradient-to-b from-white to-green-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-16">
           <h2 className="text-5xl md:text-6xl font-bold text-gray-900">

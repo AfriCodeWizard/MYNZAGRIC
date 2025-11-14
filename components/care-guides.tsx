@@ -30,7 +30,7 @@ export default function CareGuides() {
   ]
 
   return (
-    <section className="py-20 md:py-28 bg-gradient-to-b from-green-50 to-white">
+    <section id="care-guides" className="py-20 md:py-28 bg-gradient-to-b from-green-50 to-white">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-16">
           <h2 className="text-5xl md:text-6xl font-bold text-gray-900">
