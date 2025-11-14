@@ -18,25 +18,25 @@ export default function Hero() {
       />
 
       {/* Main Content Container */}
-      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col min-h-screen pt-24 md:pt-28">
+      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col min-h-screen pt-20 md:pt-24">
         {/* Navbar */}
         <Navbar /> {/* Using the new Navbar component with animated hover effects */}
         {/* Main Content */}
-        <main className="mt-12 md:mt-32 flex-grow">
+        <main className="mt-6 md:mt-12 flex-grow">
           <div className="max-w-3xl">
             <h1 className="text-5xl md:text-7xl font-bold text-white leading-tight">
               GROW WITH
               <br />
               <span className="text-green-300">MYNZAGRIC</span>
             </h1>
-            <p className="mt-6 text-lg text-gray-200 max-w-xl">
+            <p className="mt-4 md:mt-6 text-lg text-gray-200 max-w-xl">
               Certified grafted fruit seedlings ready for transplanting. Premium quality seedlings from Kenya's trusted
               nursery.
             </p>
           </div>
         </main>
         {/* Satisfied Clients Card - Top Right */}
-        <div className="absolute top-28 right-8 hidden xl:block">
+        <div className="absolute top-20 right-8 hidden xl:block">
           <div className="bg-black/20 backdrop-blur-md border border-white/20 rounded-2xl p-6 text-white text-center">
             <p className="text-2xl font-bold">500+</p>
             <p className="text-sm">Satisfied Farmers</p>
@@ -48,7 +48,7 @@ export default function Hero() {
           </div>
         </div>
         {/* Footer with CTA and Featured Card */}
-        <footer className="py-8 mt-auto">
+        <footer className="py-4 md:py-6 mt-auto">
           <div className="flex items-end justify-between">
             <div className="w-full lg:w-auto">
               <div className="flex items-center space-x-6">
@@ -66,15 +66,6 @@ export default function Hero() {
                 >
                   Explore Products
                 </a>
-              </div>
-              <div className="w-full max-w-xs text-white mt-10">
-                <div className="flex items-center">
-                  <span className="font-semibold">01</span>
-                  <div className="relative flex-grow h-0.5 bg-white/20 mx-4">
-                    <div className="absolute top-0 left-0 h-full w-1/3 bg-white" />
-                  </div>
-                  <span className="font-semibold text-white/50">03</span>
-                </div>
               </div>
             </div>
 
