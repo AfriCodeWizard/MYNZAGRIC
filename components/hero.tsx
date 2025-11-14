@@ -1,5 +1,5 @@
 "use client"
-import Header from "@/components/header" // Import the Header component
+import Navbar from "@/components/navbar" // Import the Navbar component
 
 export default function Hero() {
   return (
@@ -13,9 +13,9 @@ export default function Hero() {
       <div className="absolute inset-0 bg-black/50" />
 
       {/* Main Content Container */}
-      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col min-h-screen">
-        {/* Header */}
-        <Header /> {/* Using the centralized Header component instead of duplicate nav */}
+      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col min-h-screen pt-16 md:pt-20">
+        {/* Navbar */}
+        <Navbar /> {/* Using the new Navbar component with animated hover effects */}
         {/* Main Content */}
         <main className="mt-12 md:mt-32 flex-grow">
           <div className="max-w-3xl">
