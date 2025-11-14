@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import { Menu, X, ChevronDown } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 import { seedlings } from "@/lib/seedlings-data"
 import { cn } from "@/lib/utils"
 
@@ -128,15 +129,20 @@ export default function Navbar() {
             <Link
               href="/"
               className={cn(
-                "text-2xl md:text-3xl font-bold transition-colors duration-300",
-                "focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-transparent rounded relative z-10",
-                shouldShowSolidBackground
-                  ? "text-gray-900 hover:text-green-600"
-                  : "text-white hover:text-green-300"
+                "flex items-center transition-opacity duration-300 hover:opacity-80",
+                "focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-transparent rounded relative z-10"
               )}
               aria-label="Mynzagric Home"
             >
-              MYNZAGRIC
+              <Image
+                src="/mynzAgric-logoOficial-_1_.webp"
+                alt="Mynzagric Logo"
+                width={180}
+                height={50}
+                className="h-8 md:h-10 w-auto"
+                priority
+                style={{ objectFit: 'contain' }}
+              />
             </Link>
           </div>
 

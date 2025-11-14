@@ -1,5 +1,6 @@
 import { Facebook, Instagram, MessageCircle } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 
 export default function Footer() {
   return (
@@ -8,7 +9,17 @@ export default function Footer() {
         <div className="grid md:grid-cols-4 gap-8 mb-12">
           {/* Brand */}
           <div>
-            <h3 className="text-2xl font-bold mb-4">🌱 Mynzagric</h3>
+            <Link href="/" className="inline-block mb-4 hover:opacity-80 transition-opacity">
+              <Image
+                src="/mynzAgric-logoOficial-_1_.webp"
+                alt="Mynzagric Logo"
+                width={200}
+                height={60}
+                className="h-12 w-auto"
+                priority={false}
+                style={{ objectFit: 'contain' }}
+              />
+            </Link>
             <p className="text-green-100 text-sm leading-relaxed">
               Growing Kenya's future, one seedling at a time. Providing premium fruit seedlings to farmers across the
               nation since 2020.
