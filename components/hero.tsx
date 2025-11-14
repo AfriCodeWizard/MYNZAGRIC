@@ -37,13 +37,22 @@ export default function Hero() {
         </main>
         {/* Satisfied Clients Card - Top Right */}
         <div className="absolute top-20 right-8 hidden xl:block">
-          <div className="bg-black/20 backdrop-blur-md border border-white/20 rounded-2xl p-6 text-white text-center">
-            <p className="text-2xl font-bold">500+</p>
-            <p className="text-sm">Satisfied Farmers</p>
-            <div className="flex justify-center -space-x-2 mt-4">
-              <div className="w-8 h-8 rounded-full border-2 border-white/50 bg-white/20" />
-              <div className="w-8 h-8 rounded-full border-2 border-white/50 bg-white/20" />
-              <div className="w-8 h-8 rounded-full border-2 border-white/50 bg-white/20" />
+          <div className="relative bg-black/20 backdrop-blur-md border border-white/20 rounded-2xl p-6 text-white overflow-hidden">
+            {/* Animated White Glow on Left */}
+            <div 
+              className="absolute left-0 top-0 bottom-0 w-1 bg-white/80 blur-sm"
+              style={{
+                animation: 'glow 2s ease-in-out infinite',
+              }}
+            />
+            <div className="text-left">
+              <p className="text-2xl font-bold">500+</p>
+              <p className="text-sm">Satisfied Clients</p>
+              <div className="flex -space-x-2 mt-4 justify-start">
+                <div className="w-8 h-8 rounded-full border-2 border-white/50 bg-transparent" />
+                <div className="w-8 h-8 rounded-full border-2 border-white/50 bg-transparent" />
+                <div className="w-8 h-8 rounded-full border-2 border-white/50 bg-transparent" />
+              </div>
             </div>
           </div>
         </div>
