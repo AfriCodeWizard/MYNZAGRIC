@@ -9,8 +9,8 @@ export default function Hero() {
         <source src="https://videos.pexels.com/video-files/19570489/19570489-hd_1920_1080_30fps.mp4" type="video/mp4" />
       </video>
 
-      {/* Dark Overlay */}
-      <div className="absolute inset-0 bg-black/50" />
+      {/* Dark Overlay - Enhanced for better text visibility */}
+      <div className="absolute inset-0 bg-black/73" />
 
       {/* Main Content Container */}
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col min-h-screen pt-24 md:pt-28">
