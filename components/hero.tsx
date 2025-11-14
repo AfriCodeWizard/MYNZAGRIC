@@ -59,27 +59,6 @@ export default function Hero() {
             </p>
           </div>
         </main>
-        {/* Satisfied Clients Card - Top Right */}
-        <div className="absolute top-20 right-8 hidden xl:block">
-          <div className="relative bg-black/20 backdrop-blur-md border border-white/20 rounded-2xl p-6 text-white overflow-hidden">
-            {/* Animated White Glow on Left */}
-            <div 
-              className="absolute left-0 top-0 bottom-0 w-1 bg-white/80 blur-sm"
-              style={{
-                animation: 'glow 2s ease-in-out infinite',
-              }}
-            />
-            <div className="text-left">
-              <p className="text-2xl font-bold">{count}+</p>
-              <p className="text-sm">Satisfied Clients</p>
-              <div className="flex -space-x-2 mt-4 justify-start">
-                <div className="w-8 h-8 rounded-full border-2 border-white/50 bg-transparent" />
-                <div className="w-8 h-8 rounded-full border-2 border-white/50 bg-transparent" />
-                <div className="w-8 h-8 rounded-full border-2 border-white/50 bg-transparent" />
-              </div>
-            </div>
-          </div>
-        </div>
         {/* Footer with CTA and Featured Card */}
         <footer className="py-4 md:py-6 mt-auto">
           <div className="flex items-end justify-between">
@@ -101,45 +80,68 @@ export default function Hero() {
                 </a>
               </div>
             </div>
-
-            {/* Featured Project Card - Bottom Right */}
-            <div className="hidden lg:block">
-              <div 
-                className="relative bg-gradient-to-tr from-white/10 to-white/40 backdrop-blur-md border border-white/20 p-6 text-white max-w-sm overflow-hidden" 
-                style={{ borderRadius: '12px', width: 'calc(100% - 1rem)' }}
-              >
-                {/* Diagonal Transparency Gradient Overlay - from bottom-left (transparent) to top-right (opaque) */}
-                <div 
-                  className="absolute inset-0 pointer-events-none"
-                  style={{
-                    background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.07) 0%, rgba(0, 0, 0, 0.12) 30%, rgba(0, 0, 0, 0.22) 60%, rgba(0, 0, 0, 0.35) 100%)',
-                    borderRadius: '12px',
-                    mixBlendMode: 'multiply',
-                  }}
-                />
-                <div className="relative z-10">
-                  {/* Top Icons Row */}
-                  <div className="flex items-start justify-between mb-3">
-                    {/* Location Pin Icon - Top Left */}
-                    <MapPin className="w-5 h-5 text-white/80" strokeWidth={2} />
-                    {/* Dark Green Circular Button - Top Right */}
-                    <button className="bg-green-900/80 hover:bg-green-900 p-2 rounded-full transition-colors shrink-0">
-                      <ArrowUpRight className="w-4 h-4 text-white" strokeWidth={2} />
-                    </button>
-                  </div>
-                  
-                  {/* Title */}
-                  <h3 className="font-bold text-lg mb-2">Premium Seedlings</h3>
-                  
-                  {/* Description */}
-                  <p className="text-sm text-gray-300">
-                    Grafted and tissue-cultured disease-resistant seedlings for beautiful, sustainable produce.
-                  </p>
-                </div>
+          </div>
+        </footer>
+        
+        {/* Right Side Cards - Aligned on same vertical line with equal spacing from edge */}
+        {/* Satisfied Clients Card - Top Right */}
+        <div className="absolute top-20 right-8 hidden xl:block">
+          <div className="relative bg-black/20 backdrop-blur-md border border-white/20 rounded-2xl p-6 text-white overflow-hidden">
+            {/* Animated White Glow on Left */}
+            <div 
+              className="absolute left-0 top-0 bottom-0 w-1 bg-white/80 blur-sm"
+              style={{
+                animation: 'glow 2s ease-in-out infinite',
+              }}
+            />
+            <div className="text-left">
+              <p className="text-2xl font-bold">{count}+</p>
+              <p className="text-sm">Satisfied Clients</p>
+              <div className="flex -space-x-2 mt-4 justify-start">
+                <div className="w-8 h-8 rounded-full border-2 border-white/50 bg-transparent" />
+                <div className="w-8 h-8 rounded-full border-2 border-white/50 bg-transparent" />
+                <div className="w-8 h-8 rounded-full border-2 border-white/50 bg-transparent" />
               </div>
             </div>
           </div>
-        </footer>
+        </div>
+        
+        {/* Featured Project Card - Bottom Right - Aligned with top card */}
+        <div className="absolute bottom-8 right-8 hidden lg:block">
+          <div 
+            className="relative bg-gradient-to-tr from-white/10 to-white/40 backdrop-blur-md border border-white/20 p-6 text-white max-w-sm overflow-hidden" 
+            style={{ borderRadius: '12px' }}
+          >
+            {/* Diagonal Transparency Gradient Overlay - from bottom-left (transparent) to top-right (opaque) */}
+            <div 
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.07) 0%, rgba(0, 0, 0, 0.12) 30%, rgba(0, 0, 0, 0.22) 60%, rgba(0, 0, 0, 0.35) 100%)',
+                borderRadius: '12px',
+                mixBlendMode: 'multiply',
+              }}
+            />
+            <div className="relative z-10">
+              {/* Top Icons Row */}
+              <div className="flex items-start justify-between mb-3">
+                {/* Location Pin Icon - Top Left */}
+                <MapPin className="w-5 h-5 text-white/80" strokeWidth={2} />
+                {/* Dark Green Circular Button - Top Right */}
+                <button className="bg-green-900/80 hover:bg-green-900 p-2 rounded-full transition-colors shrink-0">
+                  <ArrowUpRight className="w-4 h-4 text-white" strokeWidth={2} />
+                </button>
+              </div>
+              
+              {/* Title */}
+              <h3 className="font-bold text-lg mb-2">Premium Seedlings</h3>
+              
+              {/* Description */}
+              <p className="text-sm text-gray-300">
+                Grafted and tissue-cultured disease-resistant seedlings for beautiful, sustainable produce.
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   )
