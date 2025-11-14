@@ -79,7 +79,7 @@ export default function Hero() {
                 <div 
                   className="absolute inset-0 pointer-events-none"
                   style={{
-                    background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.15) 30%, rgba(0, 0, 0, 0.25) 60%, rgba(0, 0, 0, 0.4) 100%)',
+                    background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.07) 0%, rgba(0, 0, 0, 0.12) 30%, rgba(0, 0, 0, 0.22) 60%, rgba(0, 0, 0, 0.35) 100%)',
                     borderRadius: '12px',
                     mixBlendMode: 'multiply',
                   }}
@@ -102,4 +102,7 @@ export default function Hero() {
             </div>
           </div>
         </footer>
-      
+      </div>
+    </section>
+  )
+}
