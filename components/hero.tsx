@@ -1,7 +1,30 @@
 "use client"
+import { useState, useEffect } from "react"
 import Navbar from "@/components/navbar" // Import the Navbar component
 
 export default function Hero() {
+  const [count, setCount] = useState(0)
+
+  useEffect(() => {
+    const target = 500
+    const duration = 2000 // 2 seconds
+    const steps = 60 // 60 steps for smooth animation
+    const increment = target / steps
+    const stepDuration = duration / steps
+
+    let current = 0
+    const timer = setInterval(() => {
+      current += increment
+      if (current >= target) {
+        setCount(target)
+        clearInterval(timer)
+      } else {
+        setCount(Math.floor(current))
+      }
+    }, stepDuration)
+
+    return () => clearInterval(timer)
+  }, [])
   return (
     <section className="relative min-h-screen w-full overflow-hidden">
       {/* Video Background */}
@@ -46,7 +69,7 @@ export default function Hero() {
               }}
             />
             <div className="text-left">
-              <p className="text-2xl font-bold">500+</p>
+              <p className="text-2xl font-bold">{count}+</p>
               <p className="text-sm">Satisfied Clients</p>
               <div className="flex -space-x-2 mt-4 justify-start">
                 <div className="w-8 h-8 rounded-full border-2 border-white/50 bg-transparent" />
