@@ -1,5 +1,6 @@
 "use client"
 import { useState, useEffect } from "react"
+import { MapPin, ArrowUpRight } from "lucide-react"
 import Navbar from "@/components/navbar" // Import the Navbar component
 
 export default function Hero() {
@@ -116,19 +117,24 @@ export default function Hero() {
                     mixBlendMode: 'multiply',
                   }}
                 />
-                <div className="relative z-10 flex items-start justify-between">
-                  <div>
-                    <div className="flex items-center space-x-2">
-                      <span className="text-xl">🌱</span>
-                      <h3 className="font-semibold text-lg">Premium Seedlings</h3>
-                    </div>
-                    <p className="text-sm text-gray-300 mt-2">
-                      Grafted and tissue-cultured disease-resistant seedlings for beautiful, sustainable produce.
-                    </p>
+                <div className="relative z-10">
+                  {/* Top Icons Row */}
+                  <div className="flex items-start justify-between mb-3">
+                    {/* Location Pin Icon - Top Left */}
+                    <MapPin className="w-5 h-5 text-white/80" strokeWidth={2} />
+                    {/* Dark Green Circular Button - Top Right */}
+                    <button className="bg-green-900/80 hover:bg-green-900 p-2 rounded-full transition-colors shrink-0">
+                      <ArrowUpRight className="w-4 h-4 text-white" strokeWidth={2} />
+                    </button>
                   </div>
-                  <button className="bg-white/20 p-2 rounded-full hover:bg-white/30 transition-colors shrink-0 ml-4">
-                    →
-                  </button>
+                  
+                  {/* Title */}
+                  <h3 className="font-bold text-lg mb-2">Premium Seedlings</h3>
+                  
+                  {/* Description */}
+                  <p className="text-sm text-gray-300">
+                    Grafted and tissue-cultured disease-resistant seedlings for beautiful, sustainable produce.
+                  </p>
                 </div>
               </div>
             </div>
