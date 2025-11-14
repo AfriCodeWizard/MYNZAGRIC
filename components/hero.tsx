@@ -71,8 +71,20 @@ export default function Hero() {
 
             {/* Featured Project Card - Bottom Right */}
             <div className="hidden lg:block">
-              <div className="bg-gradient-to-tr from-white/10 to-white/40 backdrop-blur-md border border-white/20 p-6 text-white max-w-sm" style={{ borderRadius: '12px', width: 'calc(100% - 1rem)' }}>
-                <div className="flex items-start justify-between">
+              <div 
+                className="relative bg-gradient-to-tr from-white/10 to-white/40 backdrop-blur-md border border-white/20 p-6 text-white max-w-sm overflow-hidden" 
+                style={{ borderRadius: '12px', width: 'calc(100% - 1rem)' }}
+              >
+                {/* Diagonal Transparency Gradient Overlay - from bottom-left (transparent) to top-right (opaque) */}
+                <div 
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.15) 30%, rgba(0, 0, 0, 0.25) 60%, rgba(0, 0, 0, 0.4) 100%)',
+                    borderRadius: '12px',
+                    mixBlendMode: 'multiply',
+                  }}
+                />
+                <div className="relative z-10 flex items-start justify-between">
                   <div>
                     <div className="flex items-center space-x-2">
                       <span className="text-xl">🌱</span>
@@ -90,7 +102,4 @@ export default function Hero() {
             </div>
           </div>
         </footer>
-      </div>
-    </section>
-  )
-}
+      
