@@ -22,7 +22,7 @@ export default function Hero() {
         {/* Navbar */}
         <Navbar /> {/* Using the new Navbar component with animated hover effects */}
         {/* Main Content */}
-        <main className="mt-6 md:mt-12 flex-grow">
+        <main className="mt-8 md:mt-16 flex-grow">
           <div className="max-w-3xl">
             <h1 className="text-5xl md:text-7xl font-bold text-white leading-tight">
               GROW WITH
@@ -71,7 +71,7 @@ export default function Hero() {
 
             {/* Featured Project Card - Bottom Right */}
             <div className="hidden lg:block">
-              <div className="bg-gradient-to-tr from-white/10 to-white/40 backdrop-blur-md border border-white/20 rounded-3xl p-6 text-white max-w-sm">
+              <div className="bg-gradient-to-tr from-white/10 to-white/40 backdrop-blur-md border border-white/20 p-6 text-white max-w-sm" style={{ borderRadius: '5px', width: 'calc(100% - 1rem)' }}>
                 <div className="flex items-start justify-between">
                   <div>
                     <div className="flex items-center space-x-2">
