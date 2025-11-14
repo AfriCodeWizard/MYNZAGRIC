@@ -71,7 +71,7 @@ export default function Hero() {
 
             {/* Featured Project Card - Bottom Right */}
             <div className="hidden lg:block">
-              <div className="bg-gradient-to-tr from-white/10 to-white/40 backdrop-blur-md border border-white/20 p-6 text-white max-w-sm" style={{ borderRadius: '5px', width: 'calc(100% - 1rem)' }}>
+              <div className="bg-gradient-to-tr from-white/10 to-white/40 backdrop-blur-md border border-white/20 p-6 text-white max-w-sm" style={{ borderRadius: '12px', width: 'calc(100% - 1rem)' }}>
                 <div className="flex items-start justify-between">
                   <div>
                     <div className="flex items-center space-x-2">
