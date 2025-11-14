@@ -139,9 +139,17 @@ export default function Navbar() {
                 alt="Mynzagric Logo"
                 width={180}
                 height={50}
-                className="h-8 md:h-10 w-auto"
+                className={cn(
+                  "h-14 md:h-[70px] w-auto",
+                  shouldShowSolidBackground 
+                    ? "mix-blend-multiply" 
+                    : ""
+                )}
                 priority
-                style={{ objectFit: 'contain' }}
+                style={{ 
+                  objectFit: 'contain',
+                  backgroundColor: 'transparent',
+                }}
               />
             </Link>
           </div>

@@ -15,9 +15,13 @@ export default function Footer() {
                 alt="Mynzagric Logo"
                 width={200}
                 height={60}
-                className="h-12 w-auto"
+                className="h-21 w-auto"
                 priority={false}
-                style={{ objectFit: 'contain' }}
+                style={{ 
+                  objectFit: 'contain',
+                  backgroundColor: 'transparent',
+                  mixBlendMode: 'multiply',
+                }}
               />
             </Link>
             <p className="text-green-100 text-sm leading-relaxed">
