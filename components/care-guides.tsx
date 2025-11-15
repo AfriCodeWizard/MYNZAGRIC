@@ -33,12 +33,9 @@ export default function CareGuides() {
     <section id="care-guides" className="relative py-20 md:py-28 overflow-hidden">
       {/* Background Image */}
       <div 
-        className="absolute inset-0 z-0"
+        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
         style={{
           backgroundImage: "url('https://images.unsplash.com/photo-1508615070457-7baeba4003ab?w=1920&q=80&auto=format&fit=crop')",
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
           filter: 'brightness(0.75) saturate(75%)',
         }}
       />
@@ -47,7 +44,7 @@ export default function CareGuides() {
       <div 
         className="absolute inset-0 z-[1]"
         style={{ 
-          background: `linear-gradient(to bottom, transparent 40%, rgba(0, 0, 0, 0.7) 100%)`,
+          background: 'linear-gradient(to bottom, transparent 40%, rgba(0, 0, 0, 0.7) 100%)',
         }}
       />
       
