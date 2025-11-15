@@ -60,8 +60,8 @@ export default function ProductGrid() {
       label: "Berries", 
       icon: "🫐",
       description: "Sweet success in every harvest.",
-      bgImage: "https://images.unsplash.com/photo-1587393855524-087f83d95b9e?w=800&q=80",
-      fgImage: "https://images.unsplash.com/photo-1587393855524-087f83d95b9e?w=480&q=80&auto=format&fit=crop",
+      bgImage: "https://images.unsplash.com/photo-1464965911861-746a04b4bca6?w=800&q=80&auto=format&fit=crop",
+      fgImage: "https://images.unsplash.com/photo-1464965911861-746a04b4bca6?w=480&q=80&auto=format&fit=crop",
       bgColor: "from-red-900 to-purple-900"
     },
     { 
@@ -69,8 +69,8 @@ export default function ProductGrid() {
       label: "Tropical", 
       icon: "🍍",
       description: "Exotic flavors, premium quality.",
-      bgImage: "https://images.unsplash.com/photo-1550258987-190a2d41a8ba?w=800&q=80&auto=format&fit=crop",
-      fgImage: "https://images.unsplash.com/photo-1550258987-190a2d41a8ba?w=480&q=80&auto=format&fit=crop",
+      bgImage: "https://images.unsplash.com/photo-1528821128474-27f963b062bf?w=800&q=80&auto=format&fit=crop",
+      fgImage: "https://images.unsplash.com/photo-1528821128474-27f963b062bf?w=480&q=80&auto=format&fit=crop",
       bgColor: "from-orange-800 to-pink-800"
     },
   ]
