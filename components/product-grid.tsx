@@ -15,28 +15,17 @@ interface CartItem {
 export default function ProductGrid() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [activeIndex, setActiveIndex] = useState(0)
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null) // null = first card expanded by default
   const [cart, setCart] = useState<CartItem[]>([])
   const [isCartOpen, setIsCartOpen] = useState(false)
   const trackRef = useRef<HTMLDivElement>(null)
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   
-  // Initialize scroll position to center first card
+  // Initialize: first card expanded, scroll to left edge
   useEffect(() => {
-    if (trackRef.current && selectedCategory === null && hoveredIndex === null) {
-      setTimeout(() => {
-        if (trackRef.current) {
-          const cards = Array.from(trackRef.current.children) as HTMLElement[]
-          if (cards[1]) { // First card after spacer
-            const card = cards[1]
-            const cardLeft = card.offsetLeft
-            const cardWidth = card.offsetWidth
-            const trackWidth = trackRef.current.offsetWidth
-            const scrollPosition = cardLeft - (trackWidth / 2) + (cardWidth / 2)
-            trackRef.current.scrollTo({ left: Math.max(0, scrollPosition), behavior: 'auto' })
-          }
-        }
-      }, 100)
+    if (trackRef.current && selectedCategory === null) {
+      // Scroll to the very left (position 0) so first card is at left edge
+      trackRef.current.scrollTo({ left: 0, behavior: 'auto' })
     }
   }, []) // Only run on mount
 
@@ -95,10 +84,10 @@ export default function ProductGrid() {
     return seedlings.filter((s) => s.category === selectedCategory)
   }, [selectedCategory])
 
-  // Center the active or hovered card with proper viewport handling
+  // Handle scrolling when cards expand (except for first card on initial load)
   useEffect(() => {
-    if (trackRef.current && selectedCategory === null && hoveredIndex !== null) {
-      // Only scroll when a card is being hovered (expanding)
+    if (trackRef.current && selectedCategory === null && hoveredIndex !== null && hoveredIndex !== 0) {
+      // Only scroll when a card other than the first is being hovered
       // Clear any existing timeout
       if (scrollTimeoutRef.current) {
         clearTimeout(scrollTimeoutRef.current)
@@ -107,16 +96,16 @@ export default function ProductGrid() {
       // Wait for width transition to complete (500ms) before scrolling
       // This prevents cards from sliding away before they expand
       scrollTimeoutRef.current = setTimeout(() => {
-        if (trackRef.current && hoveredIndex !== null) {
+        if (trackRef.current && hoveredIndex !== null && hoveredIndex !== 0) {
           const cards = Array.from(trackRef.current.children) as HTMLElement[]
-          // Skip the first spacer div (index 0), so card index is hoveredIndex + 1
-          const cardIndex = hoveredIndex + 1
           
-          if (cards[cardIndex]) {
-            const card = cards[cardIndex]
+          if (cards[hoveredIndex]) {
+            const card = cards[hoveredIndex]
             const cardLeft = card.offsetLeft
             const cardWidth = card.offsetWidth
             const trackWidth = trackRef.current.offsetWidth
+            
+            // For cards after the first, center them in viewport
             const scrollPosition = cardLeft - (trackWidth / 2) + (cardWidth / 2)
             
             // Ensure we don't scroll beyond bounds
@@ -129,12 +118,24 @@ export default function ProductGrid() {
       }, 550) // Wait for 500ms transition + 50ms buffer
     }
     
+    // When hover is removed, scroll back to show first card at left edge
+    if (trackRef.current && selectedCategory === null && hoveredIndex === null) {
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current)
+      }
+      scrollTimeoutRef.current = setTimeout(() => {
+        if (trackRef.current) {
+          trackRef.current.scrollTo({ left: 0, behavior: 'smooth' })
+        }
+      }, 550)
+    }
+    
     return () => {
       if (scrollTimeoutRef.current) {
         clearTimeout(scrollTimeoutRef.current)
       }
     }
-  }, [hoveredIndex, selectedCategory]) // Removed activeIndex to prevent scrolling on pagination
+  }, [hoveredIndex, selectedCategory, activeIndex])
 
   const handleDetailsClick = (categoryValue: string, index: number) => {
     setActiveIndex(index)
@@ -279,12 +280,10 @@ export default function ProductGrid() {
                 scrollBehavior: 'smooth',
               }}
             >
-              {/* Left padding spacer to allow first card to center */}
-              <div className="flex-shrink-0 w-0" style={{ minWidth: 'calc(50vw - 2.5rem)' }}></div>
               {categories.map((category, index) => {
                 const categorySeedlings = seedlings.filter((s) => s.category === category.value)
-                // Only expand on hover, not on activeIndex (activeIndex is for pagination)
-                const isExpanded = hoveredIndex === index
+                // Expand on hover, or if it's the first card and nothing is hovered (default state)
+                const isExpanded = hoveredIndex === index || (hoveredIndex === null && index === 0)
                 const isActive = activeIndex === index
                 
                 return (
@@ -376,8 +375,8 @@ export default function ProductGrid() {
                   </div>
                 )
               })}
-              {/* Right padding spacer to allow last card to center */}
-              <div className="flex-shrink-0 w-0" style={{ minWidth: 'calc(50vw - 15rem)' }}></div>
+              {/* Right padding to ensure last card is fully visible */}
+              <div className="flex-shrink-0 w-4"></div>
             </div>
 
             {/* Pagination Dots */}
