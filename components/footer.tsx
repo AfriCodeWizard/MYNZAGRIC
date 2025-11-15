@@ -1,11 +1,39 @@
+'use client'
+
 import { Facebook, Instagram, MessageCircle } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
+import { useMemo } from "react"
+import Bubble from "./Bubble"
 
 export default function Footer() {
+  // Generate bubbles with varying properties for natural animation
+  const bubbles = useMemo(() => {
+    return Array.from({ length: 15 }).map((_, index) => ({
+      size: Math.random() * 40 + 20, // 20-60px
+      left: Math.random() * 100, // 0-100%
+      delay: Math.random() * 5, // 0-5s
+      duration: Math.random() * 8 + 12, // 12-20s
+    }))
+  }, [])
+
   return (
-    <footer className="bg-gradient-to-b from-green-900 to-green-950 text-white py-16 md:py-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <footer className="relative bg-gradient-to-b from-green-900 to-green-950 text-white py-16 md:py-20 overflow-hidden">
+      {/* Bubble Animation Layer */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+        {bubbles.map((bubble, index) => (
+          <Bubble
+            key={index}
+            size={bubble.size}
+            left={bubble.left}
+            delay={bubble.delay}
+            duration={bubble.duration}
+          />
+        ))}
+      </div>
+
+      {/* Footer Content */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid md:grid-cols-4 gap-8 mb-12">
           {/* Brand */}
           <div>
