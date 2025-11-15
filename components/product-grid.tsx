@@ -34,7 +34,7 @@ export default function ProductGrid() {
       icon: "🥭",
       description: "Tools that work like you do.",
       bgImage: "https://images.unsplash.com/photo-1605027990121-cf736391f40a?w=800&q=80",
-      fgImage: "https://images.unsplash.com/photo-1605027990121-cf736391f40a?w=400&q=80",
+      fgImage: "https://images.unsplash.com/photo-1605027990121-cf736391f40a?w=480&q=80",
       bgColor: "from-blue-900 to-blue-950"
     },
     { 
@@ -43,7 +43,7 @@ export default function ProductGrid() {
       icon: "🍊",
       description: "Create faster, explore new possibilities.",
       bgImage: "https://images.unsplash.com/photo-1611080626919-7cf5a9dbab5b?w=800&q=80",
-      fgImage: "https://images.unsplash.com/photo-1611080626919-7cf5a9dbab5b?w=400&q=80",
+      fgImage: "https://images.unsplash.com/photo-1611080626919-7cf5a9dbab5b?w=480&q=80",
       bgColor: "from-purple-800 to-purple-900"
     },
     { 
@@ -52,7 +52,7 @@ export default function ProductGrid() {
       icon: "🥑",
       description: "From concept to cut, faster.",
       bgImage: "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=800&q=80",
-      fgImage: "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=400&q=80",
+      fgImage: "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=480&q=80",
       bgColor: "from-teal-800 to-teal-900"
     },
     { 
@@ -61,7 +61,7 @@ export default function ProductGrid() {
       icon: "🫐",
       description: "Sweet success in every harvest.",
       bgImage: "https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=800&q=80",
-      fgImage: "https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=400&q=80",
+      fgImage: "https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=480&q=80",
       bgColor: "from-red-900 to-purple-900"
     },
     { 
@@ -70,7 +70,7 @@ export default function ProductGrid() {
       icon: "🍍",
       description: "Exotic flavors, premium quality.",
       bgImage: "https://images.unsplash.com/photo-1615485925511-ef4e4c5b0e5e?w=800&q=80",
-      fgImage: "https://images.unsplash.com/photo-1615485925511-ef4e4c5b0e5e?w=400&q=80",
+      fgImage: "https://images.unsplash.com/photo-1615485925511-ef4e4c5b0e5e?w=480&q=80",
       bgColor: "from-orange-800 to-pink-800"
     },
   ]
@@ -274,11 +274,14 @@ export default function ProductGrid() {
                       <div 
                         className="absolute inset-0 z-[1]"
                         style={{ 
-                          background: `linear-gradient(to bottom, transparent 40%, rgba(0, 0, 0, 0.85) 100%)`,
+                          background: `linear-gradient(to bottom, transparent 40%, rgba(0, 0, 0, 0.7) 100%)`,
                         }}
                       ></div>
                       <div 
-                        className={`absolute inset-0 bg-gradient-to-br ${category.bgColor} opacity-90 z-[1]`}
+                        className={`absolute inset-0 bg-gradient-to-br ${category.bgColor} z-[1]`}
+                        style={{
+                          opacity: 0.75, // Reduced from 0.9 to 0.75 for 15% more visibility
+                        }}
                       ></div>
                       
                       {/* Content Container */}
