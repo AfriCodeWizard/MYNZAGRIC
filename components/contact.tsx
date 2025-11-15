@@ -33,8 +33,7 @@ export default function Contact() {
         <div className="mb-16">
           <h2 className="text-5xl md:text-6xl font-bold text-gray-900">
             ORDER <span className="font-light text-gray-500">YOUR</span>
-            <br />
-            SEEDLINGS TODAY
+            <br />& SEEDLINGS TODAY
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl">
             Get premium fruit seedlings delivered to your doorstep with expert guidance

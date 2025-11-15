@@ -71,7 +71,8 @@ export default function About() {
         <main className="grid grid-cols-1 lg:grid-cols-2 gap-12 xl:gap-20 items-start">
           <div className="flex flex-col">
             <h1 className="text-5xl md:text-6xl font-bold leading-tight text-white mb-12">
-              WE ARE DIFFERENT <br /> IN EVERY WAY
+              WE ARE <span className="font-light text-gray-300">DIFFERENT</span>
+              <br />& IN EVERY WAY
             </h1>
             <img
               alt="Fresh strawberries representing quality produce from Mynzagric"

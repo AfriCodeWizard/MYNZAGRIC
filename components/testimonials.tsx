@@ -26,8 +26,7 @@ export default function Testimonials() {
         <div className="mb-16">
           <h2 className="text-5xl md:text-6xl font-bold text-gray-900">
             CUSTOMER <span className="font-light text-gray-500">SUCCESS</span>
-            <br />
-            STORIES
+            <br />& STORIES
           </h2>
           <p className="text-lg text-gray-600">
             Join hundreds of Kenyan farmers achieving remarkable harvests with Mynzagric
