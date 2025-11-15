@@ -375,11 +375,10 @@ export default function ProductGrid() {
                       {!isExpanded && (
                         <div className="absolute inset-0 flex items-center justify-center">
                           <h3 
-                            className="text-white text-2xl font-bold"
+                            className="text-white text-2xl font-bold whitespace-nowrap"
                             style={{ 
-                              writingMode: 'vertical-rl',
-                              textOrientation: 'upright',
-                              transform: 'none'
+                              transform: 'rotate(-90deg)',
+                              transformOrigin: 'center',
                             }}
                           >
                             {category.label}
