@@ -1,31 +1,32 @@
 "use client"
 
 import { useState } from "react"
+import { Heart, PenTool, Leaf, Lightbulb } from "lucide-react"
 
 export default function About() {
   const [darkMode] = useState(false)
 
   const features = [
     {
-      icon: "🌱",
+      icon: Heart,
       title: "Passion in every work",
       description:
-        "Professionally grafted and tissue-cultured disease-resistant seedlings for beautiful, sustainable produce.",
+        "Professionally grafted and tissue-cultured disease-resistant seedlings for beautiful, sustainable produce. Our team brings years of expertise and genuine care to every seedling we cultivate, ensuring the highest quality standards from selection to delivery.",
     },
     {
-      icon: "🤝",
+      icon: PenTool,
       title: "Collaboration on top",
-      description: "Partnering with farmers to share expertise and achieve growing success together.",
+      description: "Partnering with farmers to share expertise and achieve growing success together. We work closely with agricultural communities, providing personalized guidance, technical support, and innovative solutions that help transform farming operations into thriving enterprises.",
     },
     {
-      icon: "♻️",
+      icon: Leaf,
       title: "Sustainability in check",
-      description: "Committed to eco-friendly practices that nurture both your crops and the environment.",
+      description: "Committed to eco-friendly practices that nurture both your crops and the environment. Our sustainable farming methods protect soil health, conserve water resources, and promote biodiversity while delivering exceptional yields that benefit both farmers and the planet.",
     },
     {
-      icon: "✨",
+      icon: Lightbulb,
       title: "Creativity unleashed",
-      description: "Innovative solutions tailored to your unique farming vision and goals.",
+      description: "Innovative solutions tailored to your unique farming vision and goals. We combine cutting-edge agricultural technology with traditional wisdom, creating customized approaches that maximize productivity, efficiency, and profitability for each farming operation.",
     },
   ]
 
@@ -67,7 +68,7 @@ export default function About() {
           </nav>
         </header>
 
-        <main className="grid grid-cols-1 lg:grid-cols-2 gap-12 xl:gap-20 items-end">
+        <main className="grid grid-cols-1 lg:grid-cols-2 gap-12 xl:gap-20 items-start">
           <div className="flex flex-col">
             <h1 className="text-5xl md:text-6xl font-bold leading-tight text-white mb-12">
               WE ARE DIFFERENT <br /> IN EVERY WAY
@@ -79,19 +80,22 @@ export default function About() {
             />
           </div>
 
-          <div className="flex flex-col space-y-12">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-              {features.map((feature, index) => (
-                <div key={index} className="flex space-x-4">
-                  <div className="flex-shrink-0 w-12 h-12 border border-gray-400 rounded-md flex items-center justify-center text-gray-300">
-                    <span className="text-lg">{feature.icon}</span>
+          <div className="flex flex-col justify-center h-full">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
+              {features.map((feature, index) => {
+                const IconComponent = feature.icon
+                return (
+                  <div key={index} className="flex space-x-4">
+                    <div className="flex-shrink-0 w-12 h-12 border border-gray-400 rounded-md flex items-center justify-center text-white bg-transparent">
+                      <IconComponent className="w-5 h-5" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-white mb-3 text-base lg:text-lg">{feature.title}</h3>
+                      <p className="text-sm lg:text-base text-gray-300 leading-relaxed">{feature.description}</p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-white mb-2">{feature.title}</h3>
-                    <p className="text-sm text-gray-300 leading-relaxed">{feature.description}</p>
-                  </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           </div>
         </main>
