@@ -104,12 +104,23 @@ export default function ProductGrid() {
               const cardLeft = card.offsetLeft
               const cardWidth = card.offsetWidth
               const trackWidth = trackRef.current.offsetWidth
+              const currentScroll = trackRef.current.scrollLeft
               
               // For first card, keep it at left edge
               if (hoveredIndex === 0) {
                 trackRef.current.scrollTo({ left: 0, behavior: 'smooth' })
+              } else if (hoveredIndex === categories.length - 1) {
+                // For last card, position it so it's fully visible
+                // Calculate how much we need to scroll to show the full card
+                const cardRight = cardLeft + cardWidth
+                const maxScroll = trackRef.current.scrollWidth - trackWidth
+                
+                // Scroll to show the full card, positioning it at the right edge if needed
+                // But don't scroll past the maximum
+                const scrollPosition = Math.min(cardRight - trackWidth, maxScroll)
+                trackRef.current.scrollTo({ left: Math.max(0, scrollPosition), behavior: 'smooth' })
               } else {
-                // For other cards, center them in viewport
+                // For middle cards, center them in viewport
                 const scrollPosition = cardLeft - (trackWidth / 2) + (cardWidth / 2)
                 const maxScroll = trackRef.current.scrollWidth - trackWidth
                 const clampedScroll = Math.max(0, Math.min(scrollPosition, maxScroll))
@@ -120,12 +131,14 @@ export default function ProductGrid() {
         }, 550) // Wait for 500ms transition + 50ms buffer
       } else {
         // No card is hovered - scroll back to first card at left edge
-        // Use a longer delay to prevent jumping when moving between cards
+        // Use a much longer delay to prevent jumping when moving between cards
+        // This gives time for the hover to be set on the new card
         scrollTimeoutRef.current = setTimeout(() => {
           if (trackRef.current && hoveredIndex === null) {
+            // Only reset to first if hover is still null after delay
             trackRef.current.scrollTo({ left: 0, behavior: 'smooth' })
           }
-        }, 600) // Slightly longer delay to allow hover transitions
+        }, 1000) // Long delay to allow smooth transitions between cards
       }
     }
     
@@ -303,7 +316,7 @@ export default function ProductGrid() {
                       setActiveIndex(index)
                     }}
                     onMouseLeave={(e) => {
-                      // Use a small delay to check if we're moving to another card
+                      // Use a delay to check if we're moving to another card
                       // This prevents flickering when moving between cards
                       if (hoverTimeoutRef.current) {
                         clearTimeout(hoverTimeoutRef.current)
@@ -311,10 +324,11 @@ export default function ProductGrid() {
                       hoverTimeoutRef.current = setTimeout(() => {
                         const relatedTarget = e.relatedTarget as HTMLElement
                         // Only clear hover if we're not moving to another card
-                        if (!relatedTarget || !relatedTarget.closest('[data-category-card]')) {
+                        const isMovingToCard = relatedTarget?.closest('[data-category-card]')
+                        if (!isMovingToCard) {
                           setHoveredIndex(null)
                         }
-                      }, 50) // Small delay to allow mouse to enter adjacent card
+                      }, 100) // Longer delay to allow smooth transitions between cards
                     }}
                     data-category-card={category.value}
                     className={`relative flex-shrink-0 transition-all duration-500 ease-in-out ${
