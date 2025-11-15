@@ -226,6 +226,7 @@ export default function ProductGrid() {
                         backgroundImage: `url(${category.bgImage})`,
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
+                        backgroundRepeat: 'no-repeat',
                       }}
                     >
                       {/* Gradient Overlay */}
