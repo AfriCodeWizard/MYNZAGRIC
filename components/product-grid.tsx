@@ -19,6 +19,26 @@ export default function ProductGrid() {
   const [cart, setCart] = useState<CartItem[]>([])
   const [isCartOpen, setIsCartOpen] = useState(false)
   const trackRef = useRef<HTMLDivElement>(null)
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  
+  // Initialize scroll position to center first card
+  useEffect(() => {
+    if (trackRef.current && selectedCategory === null && hoveredIndex === null) {
+      setTimeout(() => {
+        if (trackRef.current) {
+          const cards = Array.from(trackRef.current.children) as HTMLElement[]
+          if (cards[1]) { // First card after spacer
+            const card = cards[1]
+            const cardLeft = card.offsetLeft
+            const cardWidth = card.offsetWidth
+            const trackWidth = trackRef.current.offsetWidth
+            const scrollPosition = cardLeft - (trackWidth / 2) + (cardWidth / 2)
+            trackRef.current.scrollTo({ left: Math.max(0, scrollPosition), behavior: 'auto' })
+          }
+        }
+      }, 100)
+    }
+  }, []) // Only run on mount
 
   const categories = [
     { 
@@ -75,20 +95,46 @@ export default function ProductGrid() {
     return seedlings.filter((s) => s.category === selectedCategory)
   }, [selectedCategory])
 
-  // Center the active or hovered card
+  // Center the active or hovered card with proper viewport handling
   useEffect(() => {
-    if (trackRef.current && selectedCategory === null) {
-      const cards = trackRef.current.children
-      const indexToCenter = hoveredIndex !== null ? hoveredIndex : activeIndex
-      if (cards[indexToCenter]) {
-        const card = cards[indexToCenter] as HTMLElement
-        const cardWidth = card.offsetWidth
-        const trackWidth = trackRef.current.offsetWidth
-        const scrollPosition = card.offsetLeft - (trackWidth / 2) + (cardWidth / 2)
-        trackRef.current.scrollTo({ left: scrollPosition, behavior: 'smooth' })
+    if (trackRef.current && selectedCategory === null && hoveredIndex !== null) {
+      // Only scroll when a card is being hovered (expanding)
+      // Clear any existing timeout
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current)
+      }
+      
+      // Wait for width transition to complete (500ms) before scrolling
+      // This prevents cards from sliding away before they expand
+      scrollTimeoutRef.current = setTimeout(() => {
+        if (trackRef.current && hoveredIndex !== null) {
+          const cards = Array.from(trackRef.current.children) as HTMLElement[]
+          // Skip the first spacer div (index 0), so card index is hoveredIndex + 1
+          const cardIndex = hoveredIndex + 1
+          
+          if (cards[cardIndex]) {
+            const card = cards[cardIndex]
+            const cardLeft = card.offsetLeft
+            const cardWidth = card.offsetWidth
+            const trackWidth = trackRef.current.offsetWidth
+            const scrollPosition = cardLeft - (trackWidth / 2) + (cardWidth / 2)
+            
+            // Ensure we don't scroll beyond bounds
+            const maxScroll = trackRef.current.scrollWidth - trackWidth
+            const clampedScroll = Math.max(0, Math.min(scrollPosition, maxScroll))
+            
+            trackRef.current.scrollTo({ left: clampedScroll, behavior: 'smooth' })
+          }
+        }
+      }, 550) // Wait for 500ms transition + 50ms buffer
+    }
+    
+    return () => {
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current)
       }
     }
-  }, [activeIndex, hoveredIndex, selectedCategory])
+  }, [hoveredIndex, selectedCategory]) // Removed activeIndex to prevent scrolling on pagination
 
   const handleDetailsClick = (categoryValue: string, index: number) => {
     setActiveIndex(index)
@@ -101,13 +147,45 @@ export default function ProductGrid() {
 
   const handlePrev = () => {
     if (selectedCategory === null) {
-      setActiveIndex((prev) => (prev > 0 ? prev - 1 : categories.length - 1))
+      const newIndex = activeIndex > 0 ? activeIndex - 1 : categories.length - 1
+      setActiveIndex(newIndex)
+      // Scroll to the card (account for spacer div at index 0)
+      if (trackRef.current) {
+        const cards = Array.from(trackRef.current.children) as HTMLElement[]
+        const cardIndex = newIndex + 1 // +1 for spacer
+        if (cards[cardIndex]) {
+          const card = cards[cardIndex]
+          const cardLeft = card.offsetLeft
+          const cardWidth = card.offsetWidth
+          const trackWidth = trackRef.current.offsetWidth
+          const scrollPosition = cardLeft - (trackWidth / 2) + (cardWidth / 2)
+          const maxScroll = trackRef.current.scrollWidth - trackWidth
+          const clampedScroll = Math.max(0, Math.min(scrollPosition, maxScroll))
+          trackRef.current.scrollTo({ left: clampedScroll, behavior: 'smooth' })
+        }
+      }
     }
   }
 
   const handleNext = () => {
     if (selectedCategory === null) {
-      setActiveIndex((prev) => (prev < categories.length - 1 ? prev + 1 : 0))
+      const newIndex = activeIndex < categories.length - 1 ? activeIndex + 1 : 0
+      setActiveIndex(newIndex)
+      // Scroll to the card (account for spacer div at index 0)
+      if (trackRef.current) {
+        const cards = Array.from(trackRef.current.children) as HTMLElement[]
+        const cardIndex = newIndex + 1 // +1 for spacer
+        if (cards[cardIndex]) {
+          const card = cards[cardIndex]
+          const cardLeft = card.offsetLeft
+          const cardWidth = card.offsetWidth
+          const trackWidth = trackRef.current.offsetWidth
+          const scrollPosition = cardLeft - (trackWidth / 2) + (cardWidth / 2)
+          const maxScroll = trackRef.current.scrollWidth - trackWidth
+          const clampedScroll = Math.max(0, Math.min(scrollPosition, maxScroll))
+          trackRef.current.scrollTo({ left: clampedScroll, behavior: 'smooth' })
+        }
+      }
     }
   }
 
@@ -196,25 +274,39 @@ export default function ProductGrid() {
             {/* Category Cards Track */}
             <div
               ref={trackRef}
-              className="flex gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-8"
+              className="flex gap-4 overflow-x-auto scrollbar-hide pb-8"
               style={{
-                scrollSnapType: 'x mandatory',
                 scrollBehavior: 'smooth',
               }}
             >
+              {/* Left padding spacer to allow first card to center */}
+              <div className="flex-shrink-0 w-0" style={{ minWidth: 'calc(50vw - 2.5rem)' }}></div>
               {categories.map((category, index) => {
                 const categorySeedlings = seedlings.filter((s) => s.category === category.value)
-                const isExpanded = hoveredIndex === index || activeIndex === index
-                const isHovered = hoveredIndex === index
+                // Only expand on hover, not on activeIndex (activeIndex is for pagination)
+                const isExpanded = hoveredIndex === index
+                const isActive = activeIndex === index
                 
                 return (
                   <div
                     key={category.value}
-                    onMouseEnter={() => setHoveredIndex(index)}
-                    onMouseLeave={() => setHoveredIndex(null)}
-                    className={`relative flex-shrink-0 transition-all duration-500 ease-out snap-center ${
+                    onMouseEnter={() => {
+                      // Set hover state first to trigger expansion
+                      setHoveredIndex(index)
+                      // Update active index after a small delay to allow expansion
+                      setTimeout(() => {
+                        setActiveIndex(index)
+                      }, 100)
+                    }}
+                    onMouseLeave={() => {
+                      setHoveredIndex(null)
+                    }}
+                    className={`relative flex-shrink-0 transition-all duration-500 ease-out ${
                       isExpanded ? 'w-[30rem]' : 'w-[5rem]'
                     }`}
+                    style={{
+                      willChange: 'width', // Optimize for width transitions
+                    }}
                   >
                     <div
                       className={`h-[32rem] rounded-2xl overflow-hidden transition-all duration-500 relative ${
@@ -227,6 +319,7 @@ export default function ProductGrid() {
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
                         backgroundRepeat: 'no-repeat',
+                        willChange: 'transform', // Optimize for transitions
                       }}
                     >
                       {/* Gradient Overlay */}
@@ -236,8 +329,12 @@ export default function ProductGrid() {
                       {!isExpanded && (
                         <div className="absolute inset-0 flex items-center justify-center">
                           <h3 
-                            className="text-white text-2xl font-bold transform -rotate-90 whitespace-nowrap"
-                            style={{ writingMode: 'vertical-rl', textOrientation: 'mixed' }}
+                            className="text-white text-2xl font-bold"
+                            style={{ 
+                              writingMode: 'vertical-rl',
+                              textOrientation: 'upright',
+                              transform: 'none'
+                            }}
                           >
                             {category.label}
                           </h3>
@@ -279,20 +376,44 @@ export default function ProductGrid() {
                   </div>
                 )
               })}
+              {/* Right padding spacer to allow last card to center */}
+              <div className="flex-shrink-0 w-0" style={{ minWidth: 'calc(50vw - 15rem)' }}></div>
             </div>
 
             {/* Pagination Dots */}
             <div className="flex justify-center gap-2 mt-8">
-              {categories.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setActiveIndex(index)}
-                  className={`w-2 h-2 rounded-full transition-all ${
-                    activeIndex === index ? 'bg-[#ff6b35] w-8' : 'bg-gray-600'
-                  }`}
-                  aria-label={`Go to ${categories[index].label}`}
-                />
-              ))}
+              {categories.map((_, index) => {
+                const isActive = activeIndex === index
+                return (
+                  <button
+                    key={index}
+                    onClick={() => {
+                      setActiveIndex(index)
+                      // Scroll to the card when dot is clicked (account for spacer div at index 0)
+                      if (trackRef.current) {
+                        const cards = Array.from(trackRef.current.children) as HTMLElement[]
+                        const cardIndex = index + 1 // +1 for spacer
+                        if (cards[cardIndex]) {
+                          const card = cards[cardIndex]
+                          const cardLeft = card.offsetLeft
+                          const cardWidth = card.offsetWidth
+                          const trackWidth = trackRef.current.offsetWidth
+                          const scrollPosition = cardLeft - (trackWidth / 2) + (cardWidth / 2)
+                          const maxScroll = trackRef.current.scrollWidth - trackWidth
+                          const clampedScroll = Math.max(0, Math.min(scrollPosition, maxScroll))
+                          trackRef.current.scrollTo({ left: clampedScroll, behavior: 'smooth' })
+                        }
+                      }
+                    }}
+                    className={`rounded-full transition-all duration-300 ${
+                      isActive 
+                        ? 'bg-[#ff6b35] w-8 h-2' 
+                        : 'bg-gray-600 w-2 h-2 hover:bg-gray-500'
+                    }`}
+                    aria-label={`Go to ${categories[index].label}`}
+                  />
+                )
+              })}
             </div>
           </div>
         )}
