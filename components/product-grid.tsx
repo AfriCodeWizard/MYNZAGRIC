@@ -33,8 +33,8 @@ export default function ProductGrid() {
       label: "Mangoes", 
       icon: "🥭",
       description: "Tools that work like you do.",
-      bgImage: "https://images.unsplash.com/photo-1605027990121-cf736391f40a?w=800&q=80",
-      fgImage: "https://images.unsplash.com/photo-1605027990121-cf736391f40a?w=480&q=80",
+      bgImage: "https://images.unsplash.com/photo-1605027990121-cf736391f40a?w=800&q=80&auto=format&fit=crop",
+      fgImage: "https://images.unsplash.com/photo-1605027990121-cf736391f40a?w=480&q=80&auto=format&fit=crop",
       bgColor: "from-blue-900 to-blue-950"
     },
     { 
@@ -43,7 +43,7 @@ export default function ProductGrid() {
       icon: "🍊",
       description: "Create faster, explore new possibilities.",
       bgImage: "https://images.unsplash.com/photo-1611080626919-7cf5a9dbab5b?w=800&q=80",
-      fgImage: "https://images.unsplash.com/photo-1611080626919-7cf5a9dbab5b?w=480&q=80",
+      fgImage: "https://images.unsplash.com/photo-1611080626919-7cf5a9dbab5b?w=480&q=80&auto=format&fit=crop",
       bgColor: "from-purple-800 to-purple-900"
     },
     { 
@@ -52,7 +52,7 @@ export default function ProductGrid() {
       icon: "🥑",
       description: "From concept to cut, faster.",
       bgImage: "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=800&q=80",
-      fgImage: "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=480&q=80",
+      fgImage: "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=480&q=80&auto=format&fit=crop",
       bgColor: "from-teal-800 to-teal-900"
     },
     { 
@@ -60,8 +60,8 @@ export default function ProductGrid() {
       label: "Berries", 
       icon: "🫐",
       description: "Sweet success in every harvest.",
-      bgImage: "https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=800&q=80",
-      fgImage: "https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=480&q=80",
+      bgImage: "https://images.unsplash.com/photo-1587393855524-087f83d95b9e?w=800&q=80",
+      fgImage: "https://images.unsplash.com/photo-1587393855524-087f83d95b9e?w=480&q=80&auto=format&fit=crop",
       bgColor: "from-red-900 to-purple-900"
     },
     { 
@@ -69,8 +69,8 @@ export default function ProductGrid() {
       label: "Tropical", 
       icon: "🍍",
       description: "Exotic flavors, premium quality.",
-      bgImage: "https://images.unsplash.com/photo-1615485925511-ef4e4c5b0e5e?w=800&q=80",
-      fgImage: "https://images.unsplash.com/photo-1615485925511-ef4e4c5b0e5e?w=480&q=80",
+      bgImage: "https://images.unsplash.com/photo-1550258987-190a2d41a8ba?w=800&q=80&auto=format&fit=crop",
+      fgImage: "https://images.unsplash.com/photo-1550258987-190a2d41a8ba?w=480&q=80&auto=format&fit=crop",
       bgColor: "from-orange-800 to-pink-800"
     },
   ]
