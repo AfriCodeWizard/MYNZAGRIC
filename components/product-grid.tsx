@@ -15,16 +15,57 @@ interface CartItem {
 export default function ProductGrid() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [activeIndex, setActiveIndex] = useState(0)
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
   const [cart, setCart] = useState<CartItem[]>([])
   const [isCartOpen, setIsCartOpen] = useState(false)
   const trackRef = useRef<HTMLDivElement>(null)
 
   const categories = [
-    { value: "mango", label: "Mangoes", icon: "🥭" },
-    { value: "citrus", label: "Citrus", icon: "🍊" },
-    { value: "avocado", label: "Avocados", icon: "🥑" },
-    { value: "berries", label: "Berries", icon: "🫐" },
-    { value: "tropical", label: "Tropical", icon: "🍍" },
+    { 
+      value: "mango", 
+      label: "Mangoes", 
+      icon: "🥭",
+      description: "Tools that work like you do.",
+      bgImage: "https://images.unsplash.com/photo-1605027990121-cf736391f40a?w=800&q=80",
+      fgImage: "https://images.unsplash.com/photo-1605027990121-cf736391f40a?w=400&q=80",
+      bgColor: "from-blue-900 to-blue-950"
+    },
+    { 
+      value: "citrus", 
+      label: "Citrus", 
+      icon: "🍊",
+      description: "Create faster, explore new possibilities.",
+      bgImage: "https://images.unsplash.com/photo-1611080626919-7cf5a9dbab5b?w=800&q=80",
+      fgImage: "https://images.unsplash.com/photo-1611080626919-7cf5a9dbab5b?w=400&q=80",
+      bgColor: "from-purple-800 to-purple-900"
+    },
+    { 
+      value: "avocado", 
+      label: "Avocados", 
+      icon: "🥑",
+      description: "From concept to cut, faster.",
+      bgImage: "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=800&q=80",
+      fgImage: "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=400&q=80",
+      bgColor: "from-teal-800 to-teal-900"
+    },
+    { 
+      value: "berries", 
+      label: "Berries", 
+      icon: "🫐",
+      description: "Sweet success in every harvest.",
+      bgImage: "https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=800&q=80",
+      fgImage: "https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=400&q=80",
+      bgColor: "from-red-900 to-purple-900"
+    },
+    { 
+      value: "tropical", 
+      label: "Tropical", 
+      icon: "🍍",
+      description: "Exotic flavors, premium quality.",
+      bgImage: "https://images.unsplash.com/photo-1615485925511-ef4e4c5b0e5e?w=800&q=80",
+      fgImage: "https://images.unsplash.com/photo-1615485925511-ef4e4c5b0e5e?w=400&q=80",
+      bgColor: "from-orange-800 to-pink-800"
+    },
   ]
 
   const filteredSeedlings = useMemo(() => {
@@ -34,21 +75,22 @@ export default function ProductGrid() {
     return seedlings.filter((s) => s.category === selectedCategory)
   }, [selectedCategory])
 
-  // Center the active card
+  // Center the active or hovered card
   useEffect(() => {
     if (trackRef.current && selectedCategory === null) {
       const cards = trackRef.current.children
-      if (cards[activeIndex]) {
-        const card = cards[activeIndex] as HTMLElement
+      const indexToCenter = hoveredIndex !== null ? hoveredIndex : activeIndex
+      if (cards[indexToCenter]) {
+        const card = cards[indexToCenter] as HTMLElement
         const cardWidth = card.offsetWidth
         const trackWidth = trackRef.current.offsetWidth
         const scrollPosition = card.offsetLeft - (trackWidth / 2) + (cardWidth / 2)
         trackRef.current.scrollTo({ left: scrollPosition, behavior: 'smooth' })
       }
     }
-  }, [activeIndex, selectedCategory])
+  }, [activeIndex, hoveredIndex, selectedCategory])
 
-  const handleCategoryClick = (categoryValue: string, index: number) => {
+  const handleDetailsClick = (categoryValue: string, index: number) => {
     setActiveIndex(index)
     setSelectedCategory(categoryValue)
   }
@@ -104,16 +146,16 @@ export default function ProductGrid() {
   }
 
   return (
-    <section id="seedlings" className="relative min-h-screen bg-white overflow-hidden">
+    <section id="seedlings" className="relative min-h-screen bg-[#07090d] overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
         {/* Section Header with Cart Button */}
         <div className="flex items-start justify-between mb-12">
           <div>
-            <h2 className="text-5xl md:text-6xl font-bold text-gray-900">
-              SEEDLING <span className="font-light text-gray-500">VARIETIES</span>
+            <h2 className="text-5xl md:text-6xl font-bold text-white">
+              SEEDLING <span className="font-light text-gray-400">VARIETIES</span>
               <br />& PRICES
             </h2>
-            <p className="text-lg text-gray-600">Premium grafted and tissue-culture varieties</p>
+            <p className="text-lg text-gray-400">Premium grafted and tissue-culture varieties</p>
           </div>
 
           <button
@@ -137,24 +179,24 @@ export default function ProductGrid() {
             <div className="flex items-center justify-between mb-8">
               <button
                 onClick={handlePrev}
-                className="p-3 bg-gray-100 hover:bg-gray-200 rounded-full transition disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-3 bg-white/10 hover:bg-white/20 rounded-full transition text-white"
                 aria-label="Previous"
               >
-                <ChevronLeft className="w-6 h-6 text-gray-700" />
+                <ChevronLeft className="w-6 h-6" />
               </button>
               <button
                 onClick={handleNext}
-                className="p-3 bg-gray-100 hover:bg-gray-200 rounded-full transition disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-3 bg-white/10 hover:bg-white/20 rounded-full transition text-white"
                 aria-label="Next"
               >
-                <ChevronRight className="w-6 h-6 text-gray-700" />
+                <ChevronRight className="w-6 h-6" />
               </button>
             </div>
 
             {/* Category Cards Track */}
             <div
               ref={trackRef}
-              className="flex gap-6 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-8"
+              className="flex gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-8"
               style={{
                 scrollSnapType: 'x mandatory',
                 scrollBehavior: 'smooth',
@@ -162,42 +204,94 @@ export default function ProductGrid() {
             >
               {categories.map((category, index) => {
                 const categorySeedlings = seedlings.filter((s) => s.category === category.value)
-                const isActive = activeIndex === index
+                const isExpanded = hoveredIndex === index || activeIndex === index
+                const isHovered = hoveredIndex === index
+                
                 return (
-                  <button
+                  <div
                     key={category.value}
-                    onClick={() => handleCategoryClick(category.value, index)}
-                    className={`group relative flex-shrink-0 transition-all duration-500 ease-out snap-center ${
-                      isActive ? 'w-[30rem] scale-105' : 'w-[5rem]'
+                    onMouseEnter={() => setHoveredIndex(index)}
+                    onMouseLeave={() => setHoveredIndex(null)}
+                    className={`relative flex-shrink-0 transition-all duration-500 ease-out snap-center ${
+                      isExpanded ? 'w-[30rem]' : 'w-[5rem]'
                     }`}
                   >
                     <div
-                      className={`h-40 rounded-2xl p-6 flex items-center justify-between transition-all duration-500 ${
-                        isActive
-                          ? 'bg-gradient-to-br from-green-600 to-green-700 text-white shadow-2xl'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      className={`h-[32rem] rounded-2xl overflow-hidden transition-all duration-500 relative ${
+                        isExpanded
+                          ? 'shadow-2xl'
+                          : 'shadow-lg'
                       }`}
+                      style={{
+                        backgroundImage: `url(${category.bgImage})`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                      }}
                     >
-                      <div className="flex items-center gap-4 min-w-0">
-                        <div className={`text-5xl flex-shrink-0 transition-transform duration-500 ${isActive ? 'scale-110' : ''}`}>
-                          {category.icon}
+                      {/* Gradient Overlay */}
+                      <div className={`absolute inset-0 bg-gradient-to-br ${category.bgColor} opacity-90`}></div>
+                      
+                      {/* Collapsed State - Vertical Text */}
+                      {!isExpanded && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <h3 
+                            className="text-white text-2xl font-bold transform -rotate-90 whitespace-nowrap"
+                            style={{ writingMode: 'vertical-rl', textOrientation: 'mixed' }}
+                          >
+                            {category.label}
+                          </h3>
                         </div>
-                        <div className={`overflow-hidden transition-all duration-500 ${isActive ? 'opacity-100 w-auto' : 'opacity-0 w-0'}`}>
-                          <h3 className="text-2xl font-bold mb-2 whitespace-nowrap">{category.label}</h3>
-                          <p className="text-sm opacity-90 whitespace-nowrap">
-                            {categorySeedlings.length} {categorySeedlings.length === 1 ? 'variety' : 'varieties'} available
-                          </p>
-                        </div>
-                      </div>
-                      {isActive && (
-                        <div className="flex-shrink-0 ml-4">
-                          <div className="w-3 h-3 rounded-full bg-white/30 animate-pulse"></div>
+                      )}
+
+                      {/* Expanded State - Full Content */}
+                      {isExpanded && (
+                        <div className="relative h-full flex flex-col p-8 text-white">
+                          {/* Foreground Image */}
+                          <div className="relative mb-6 flex-shrink-0">
+                            <div className="w-64 h-48 rounded-xl overflow-hidden shadow-xl bg-white/10 backdrop-blur-sm">
+                              <img
+                                src={category.fgImage}
+                                alt={category.label}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                          </div>
+
+                          {/* Content */}
+                          <div className="flex-1 flex flex-col justify-between">
+                            <div>
+                              <h3 className="text-5xl font-bold mb-4">{category.label}</h3>
+                              <p className="text-lg text-white/90 mb-6">{category.description}</p>
+                            </div>
+
+                            {/* Details Button */}
+                            <button
+                              onClick={() => handleDetailsClick(category.value, index)}
+                              className="bg-[#ff6b35] hover:bg-[#ff8555] text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg self-start"
+                            >
+                              Details
+                            </button>
+                          </div>
                         </div>
                       )}
                     </div>
-                  </button>
+                  </div>
                 )
               })}
+            </div>
+
+            {/* Pagination Dots */}
+            <div className="flex justify-center gap-2 mt-8">
+              {categories.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setActiveIndex(index)}
+                  className={`w-2 h-2 rounded-full transition-all ${
+                    activeIndex === index ? 'bg-[#ff6b35] w-8' : 'bg-gray-600'
+                  }`}
+                  aria-label={`Go to ${categories[index].label}`}
+                />
+              ))}
             </div>
           </div>
         )}
