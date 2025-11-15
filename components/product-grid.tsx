@@ -301,7 +301,7 @@ export default function ProductGrid() {
                       setHoveredIndex(null)
                     }}
                     className={`relative flex-shrink-0 transition-all duration-500 ease-out ${
-                      isExpanded ? 'w-[30rem]' : 'w-[5rem]'
+                      isExpanded ? 'w-[60vw] min-w-[40rem]' : 'w-[5rem]'
                     }`}
                     style={{
                       willChange: 'width', // Optimize for width transitions
