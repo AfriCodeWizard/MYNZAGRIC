@@ -21,6 +21,7 @@ export default function ProductGrid() {
   const trackRef = useRef<HTMLDivElement>(null)
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const previousHoveredIndexRef = useRef<number | null>(null)
   
   // Initialize: first card expanded, scroll to left edge
   useEffect(() => {
@@ -104,7 +105,6 @@ export default function ProductGrid() {
               const cardLeft = card.offsetLeft
               const cardWidth = card.offsetWidth
               const trackWidth = trackRef.current.offsetWidth
-              const currentScroll = trackRef.current.scrollLeft
               
               // For first card, keep it at left edge
               if (hoveredIndex === 0) {
@@ -120,7 +120,7 @@ export default function ProductGrid() {
                 const scrollPosition = Math.min(cardRight - trackWidth, maxScroll)
                 trackRef.current.scrollTo({ left: Math.max(0, scrollPosition), behavior: 'smooth' })
               } else {
-                // For middle cards, center them in viewport
+                // For middle cards (including when moving from last card), center them in viewport
                 const scrollPosition = cardLeft - (trackWidth / 2) + (cardWidth / 2)
                 const maxScroll = trackRef.current.scrollWidth - trackWidth
                 const clampedScroll = Math.max(0, Math.min(scrollPosition, maxScroll))
@@ -130,15 +130,22 @@ export default function ProductGrid() {
           }
         }, 550) // Wait for 500ms transition + 50ms buffer
       } else {
-        // No card is hovered - scroll back to first card at left edge
-        // Use a much longer delay to prevent jumping when moving between cards
-        // This gives time for the hover to be set on the new card
+        // No card is hovered - only scroll back to first if we're truly leaving the card area
+        // Don't reset if we just moved from one card to another (previousHoveredIndexRef will be set)
         scrollTimeoutRef.current = setTimeout(() => {
           if (trackRef.current && hoveredIndex === null) {
             // Only reset to first if hover is still null after delay
+            // This prevents jumping when moving between cards
             trackRef.current.scrollTo({ left: 0, behavior: 'smooth' })
           }
-        }, 1000) // Long delay to allow smooth transitions between cards
+          // Clear the previous hover ref after timeout
+          previousHoveredIndexRef.current = null
+        }, 1200) // Even longer delay to allow smooth transitions, especially from last card
+      }
+      
+      // Update previous hover ref when hover changes
+      if (hoveredIndex !== null) {
+        previousHoveredIndexRef.current = hoveredIndex
       }
     }
     
@@ -310,10 +317,16 @@ export default function ProductGrid() {
                         clearTimeout(hoverTimeoutRef.current)
                         hoverTimeoutRef.current = null
                       }
+                      // Clear any pending scroll reset
+                      if (scrollTimeoutRef.current) {
+                        clearTimeout(scrollTimeoutRef.current)
+                        scrollTimeoutRef.current = null
+                      }
                       // Immediately set hover state for precise hover detection
                       e.stopPropagation()
                       setHoveredIndex(index)
                       setActiveIndex(index)
+                      previousHoveredIndexRef.current = index
                     }}
                     onMouseLeave={(e) => {
                       // Use a delay to check if we're moving to another card
@@ -328,7 +341,7 @@ export default function ProductGrid() {
                         if (!isMovingToCard) {
                           setHoveredIndex(null)
                         }
-                      }, 100) // Longer delay to allow smooth transitions between cards
+                      }, 150) // Longer delay to allow smooth transitions, especially from last card
                     }}
                     data-category-card={category.value}
                     className={`relative flex-shrink-0 transition-all duration-500 ease-in-out ${
