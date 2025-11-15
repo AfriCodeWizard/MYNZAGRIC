@@ -48,10 +48,10 @@ export default function Hero() {
         {/* Main Content */}
         <main className="mt-8 md:mt-16 flex-grow">
           <div className="max-w-3xl">
-            <h1 className="text-5xl md:text-7xl font-bold text-white leading-tight">
+            <h1 className="text-5xl md:text-7xl text-white leading-tight">
               <span className="font-light">GROW WITH</span>
               <br />
-              <span className="text-green-300 font-black">MYNZAGRIC</span>
+              <span className="text-green-300 font-bold">MYNZAGRIC</span>
             </h1>
             <p className="mt-4 md:mt-6 text-lg text-gray-200 max-w-xl">
               Certified grafted fruit seedlings ready for transplanting. Premium quality seedlings from Kenya's trusted
