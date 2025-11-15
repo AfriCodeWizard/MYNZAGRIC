@@ -283,8 +283,8 @@ export default function ProductGrid() {
                       
                       {/* Content Container */}
                       <div 
-                        className={`absolute inset-0 flex items-center justify-center gap-3 p-0 z-10 ${
-                          isActive ? 'flex-row items-center p-5 gap-4' : 'flex-col'
+                        className={`absolute inset-0 flex z-10 ${
+                          isActive ? 'flex-row items-center justify-start p-5 gap-4' : 'flex-col items-center justify-center'
                         }`}
                         style={{
                           transition: 'all 0.3s ease',
