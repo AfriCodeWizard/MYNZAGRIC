@@ -3,18 +3,28 @@
 import { Facebook, Instagram, MessageCircle } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-import { useMemo } from "react"
+import { useState, useEffect } from "react"
 import Bubble from "./Bubble"
 
 export default function Footer() {
-  // Generate bubbles with varying properties for natural animation
-  const bubbles = useMemo(() => {
-    return Array.from({ length: 15 }).map((_, index) => ({
-      size: Math.random() * 40 + 20, // 20-60px
-      left: Math.random() * 100, // 0-100%
-      delay: Math.random() * 5, // 0-5s
-      duration: Math.random() * 8 + 12, // 12-20s
-    }))
+  // Generate bubbles only on client side to avoid hydration mismatch
+  const [bubbles, setBubbles] = useState<Array<{
+    size: number
+    left: number
+    delay: number
+    duration: number
+  }>>([])
+
+  useEffect(() => {
+    // Generate bubbles with varying properties for natural animation
+    setBubbles(
+      Array.from({ length: 15 }).map(() => ({
+        size: Math.random() * 40 + 20, // 20-60px
+        left: Math.random() * 100, // 0-100%
+        delay: Math.random() * 5, // 0-5s
+        duration: Math.random() * 8 + 12, // 12-20s
+      }))
+    )
   }, [])
 
   return (
