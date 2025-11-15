@@ -1,9 +1,9 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect, useRef } from "react"
 import ProductCard from "./product-card"
 import { seedlings } from "@/lib/seedlings-data"
-import { Search, X, ShoppingBag, Plus, Minus } from "lucide-react"
+import { X, ShoppingBag, Plus, Minus, ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react"
 
 interface CartItem {
   id: string
@@ -13,29 +13,61 @@ interface CartItem {
 }
 
 export default function ProductGrid() {
-  const [selectedCategory, setSelectedCategory] = useState("all")
-  const [searchQuery, setSearchQuery] = useState("")
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+  const [activeIndex, setActiveIndex] = useState(0)
   const [cart, setCart] = useState<CartItem[]>([])
   const [isCartOpen, setIsCartOpen] = useState(false)
+  const trackRef = useRef<HTMLDivElement>(null)
 
   const categories = [
-    { value: "all", label: "All Varieties" },
-    { value: "mango", label: "Mangoes" },
-    { value: "citrus", label: "Citrus" },
-    { value: "avocado", label: "Avocados" },
-    { value: "berries", label: "Berries" },
-    { value: "tropical", label: "Tropical" },
+    { value: "mango", label: "Mangoes", icon: "🥭" },
+    { value: "citrus", label: "Citrus", icon: "🍊" },
+    { value: "avocado", label: "Avocados", icon: "🥑" },
+    { value: "berries", label: "Berries", icon: "🫐" },
+    { value: "tropical", label: "Tropical", icon: "🍍" },
   ]
 
   const filteredSeedlings = useMemo(() => {
-    let filtered = selectedCategory === "all" ? seedlings : seedlings.filter((s) => s.category === selectedCategory)
-
-    if (searchQuery.trim()) {
-      filtered = filtered.filter((s) => s.name.toLowerCase().includes(searchQuery.toLowerCase()))
+    if (!selectedCategory) {
+      return []
     }
+    return seedlings.filter((s) => s.category === selectedCategory)
+  }, [selectedCategory])
 
-    return filtered
-  }, [selectedCategory, searchQuery])
+  // Center the active card
+  useEffect(() => {
+    if (trackRef.current && selectedCategory === null) {
+      const cards = trackRef.current.children
+      if (cards[activeIndex]) {
+        const card = cards[activeIndex] as HTMLElement
+        const cardWidth = card.offsetWidth
+        const trackWidth = trackRef.current.offsetWidth
+        const scrollPosition = card.offsetLeft - (trackWidth / 2) + (cardWidth / 2)
+        trackRef.current.scrollTo({ left: scrollPosition, behavior: 'smooth' })
+      }
+    }
+  }, [activeIndex, selectedCategory])
+
+  const handleCategoryClick = (categoryValue: string, index: number) => {
+    setActiveIndex(index)
+    setSelectedCategory(categoryValue)
+  }
+
+  const handleBack = () => {
+    setSelectedCategory(null)
+  }
+
+  const handlePrev = () => {
+    if (selectedCategory === null) {
+      setActiveIndex((prev) => (prev > 0 ? prev - 1 : categories.length - 1))
+    }
+  }
+
+  const handleNext = () => {
+    if (selectedCategory === null) {
+      setActiveIndex((prev) => (prev < categories.length - 1 ? prev + 1 : 0))
+    }
+  }
 
   const addToCart = (seedling: any) => {
     setCart((prevCart) => {
@@ -62,9 +94,6 @@ export default function ProductGrid() {
   const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0)
 
-  const handleClearSearch = () => {
-    setSearchQuery("")
-  }
 
   const generateWhatsAppMessage = () => {
     const items = cart
@@ -75,8 +104,8 @@ export default function ProductGrid() {
   }
 
   return (
-    <section id="seedlings" className="py-20 md:py-28 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="seedlings" className="relative min-h-screen bg-white overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
         {/* Section Header with Cart Button */}
         <div className="flex items-start justify-between mb-12">
           <div>
@@ -89,7 +118,7 @@ export default function ProductGrid() {
 
           <button
             onClick={() => setIsCartOpen(!isCartOpen)}
-            className="relative p-3 bg-green-600 text-white rounded-full hover:bg-green-700 transition shadow-lg hover:shadow-xl"
+            className="relative p-3 bg-green-600 text-white rounded-full hover:bg-green-700 transition shadow-lg hover:shadow-xl z-10"
             title="Bulk Order Cart"
           >
             <ShoppingBag className="w-6 h-6" />
@@ -101,71 +130,120 @@ export default function ProductGrid() {
           </button>
         </div>
 
-        {/* Search Bar */}
-        <div className="mb-12 space-y-6">
+        {/* Category View - Full Section */}
+        {selectedCategory === null && (
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-            <input
-              type="text"
-              placeholder="Search seedlings by name..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-12 py-3 border border-green-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent transition"
-            />
-            {searchQuery && (
+            {/* Navigation Controls */}
+            <div className="flex items-center justify-between mb-8">
               <button
-                onClick={handleClearSearch}
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                onClick={handlePrev}
+                className="p-3 bg-gray-100 hover:bg-gray-200 rounded-full transition disabled:opacity-50 disabled:cursor-not-allowed"
+                aria-label="Previous"
               >
-                <X className="w-5 h-5" />
+                <ChevronLeft className="w-6 h-6 text-gray-700" />
               </button>
-            )}
-          </div>
-
-          {/* Category Filter */}
-          <div className="flex flex-wrap gap-2">
-            {categories.map((category) => (
               <button
-                key={category.value}
-                onClick={() => setSelectedCategory(category.value)}
-                className={`px-4 py-2 rounded-full font-medium transition text-sm whitespace-nowrap ${
-                  selectedCategory === category.value
-                    ? "bg-green-700 text-white shadow-md"
-                    : "bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200"
-                }`}
+                onClick={handleNext}
+                className="p-3 bg-gray-100 hover:bg-gray-200 rounded-full transition disabled:opacity-50 disabled:cursor-not-allowed"
+                aria-label="Next"
               >
-                {category.label}
+                <ChevronRight className="w-6 h-6 text-gray-700" />
               </button>
-            ))}
-          </div>
+            </div>
 
-          {/* Results Counter */}
-          <div className="text-sm text-gray-600">
-            Showing <span className="font-semibold text-gray-900">{filteredSeedlings.length}</span> seedling
-            {filteredSeedlings.length !== 1 ? "s" : ""}
-          </div>
-        </div>
-
-        {/* Product Grid */}
-        {filteredSeedlings.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredSeedlings.map((seedling) => (
-              <ProductCard key={seedling.id} seedling={seedling} onAddToCart={addToCart} />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-16">
-            <p className="text-lg text-gray-600 mb-2">No seedlings found</p>
-            <p className="text-sm text-gray-500">Try adjusting your search or category filters</p>
-            <button
-              onClick={() => {
-                setSearchQuery("")
-                setSelectedCategory("all")
+            {/* Category Cards Track */}
+            <div
+              ref={trackRef}
+              className="flex gap-6 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-8"
+              style={{
+                scrollSnapType: 'x mandatory',
+                scrollBehavior: 'smooth',
               }}
-              className="mt-4 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
             >
-              Clear Filters
-            </button>
+              {categories.map((category, index) => {
+                const categorySeedlings = seedlings.filter((s) => s.category === category.value)
+                const isActive = activeIndex === index
+                return (
+                  <button
+                    key={category.value}
+                    onClick={() => handleCategoryClick(category.value, index)}
+                    className={`group relative flex-shrink-0 transition-all duration-500 ease-out snap-center ${
+                      isActive ? 'w-[30rem] scale-105' : 'w-[5rem]'
+                    }`}
+                  >
+                    <div
+                      className={`h-40 rounded-2xl p-6 flex items-center justify-between transition-all duration-500 ${
+                        isActive
+                          ? 'bg-gradient-to-br from-green-600 to-green-700 text-white shadow-2xl'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      <div className="flex items-center gap-4 min-w-0">
+                        <div className={`text-5xl flex-shrink-0 transition-transform duration-500 ${isActive ? 'scale-110' : ''}`}>
+                          {category.icon}
+                        </div>
+                        <div className={`overflow-hidden transition-all duration-500 ${isActive ? 'opacity-100 w-auto' : 'opacity-0 w-0'}`}>
+                          <h3 className="text-2xl font-bold mb-2 whitespace-nowrap">{category.label}</h3>
+                          <p className="text-sm opacity-90 whitespace-nowrap">
+                            {categorySeedlings.length} {categorySeedlings.length === 1 ? 'variety' : 'varieties'} available
+                          </p>
+                        </div>
+                      </div>
+                      {isActive && (
+                        <div className="flex-shrink-0 ml-4">
+                          <div className="w-3 h-3 rounded-full bg-white/30 animate-pulse"></div>
+                        </div>
+                      )}
+                    </div>
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Category Items View - Full Page Transition */}
+        {selectedCategory !== null && (
+          <div className="absolute inset-0 bg-white z-20 animate-in fade-in duration-500">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
+              {/* Back Button and Header */}
+              <div className="flex items-center justify-between mb-8">
+                <button
+                  onClick={handleBack}
+                  className="flex items-center gap-2 text-gray-700 hover:text-gray-900 transition group"
+                >
+                  <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+                  <span className="font-medium">Back to Categories</span>
+                </button>
+                <div className="text-right">
+                  <h3 className="text-3xl font-bold text-gray-900">
+                    {categories.find((c) => c.value === selectedCategory)?.label} Varieties
+                  </h3>
+                  <p className="text-sm text-gray-600 mt-1">
+                    {filteredSeedlings.length} {filteredSeedlings.length === 1 ? 'item' : 'items'} available
+                  </p>
+                </div>
+              </div>
+
+              {/* Product Grid */}
+              {filteredSeedlings.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {filteredSeedlings.map((seedling) => (
+                    <ProductCard key={seedling.id} seedling={seedling} onAddToCart={addToCart} />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-16">
+                  <p className="text-lg text-gray-600 mb-2">No seedlings found in this category</p>
+                  <button
+                    onClick={handleBack}
+                    className="mt-4 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+                  >
+                    Back to Categories
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         )}
 

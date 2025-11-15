@@ -131,18 +131,20 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Animation for hover effects */
+/* Animation for hover effects and page transitions */
 @keyframes fadeIn {
   from {
     opacity: 0;
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
+    transform: translateY(0);
   }
 }
 
 .animate-in {
-  animation: fadeIn 0.2s ease-in-out;
+  animation: fadeIn 0.5s ease-out;
 }
 
 /* Animated white glow animation */
@@ -156,3 +158,14 @@ html {
     box-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.5), 0 0 40px rgba(255, 255, 255, 0.3);
   }
 }
+
+/* Hide scrollbar for category cards */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
