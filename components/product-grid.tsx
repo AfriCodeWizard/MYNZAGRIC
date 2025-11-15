@@ -284,10 +284,11 @@ export default function ProductGrid() {
                       {/* Content Container */}
                       <div 
                         className={`absolute inset-0 flex z-10 ${
-                          isActive ? 'flex-row items-center justify-start p-5 gap-4' : 'flex-col items-center justify-center'
+                          isActive ? 'flex-row items-center justify-start gap-4' : 'flex-col items-center justify-center'
                         }`}
                         style={{
                           transition: 'all 0.3s ease',
+                          padding: isActive ? '1.25rem 1.25rem 1.25rem 3.125rem' : '0',
                         }}
                       >
                         {/* Foreground Image - Only visible when active */}
