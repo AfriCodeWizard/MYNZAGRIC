@@ -20,6 +20,7 @@ export default function ProductGrid() {
   const [isCartOpen, setIsCartOpen] = useState(false)
   const trackRef = useRef<HTMLDivElement>(null)
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   
   // Initialize: first card expanded, scroll to left edge
   useEffect(() => {
@@ -84,58 +85,59 @@ export default function ProductGrid() {
     return seedlings.filter((s) => s.category === selectedCategory)
   }, [selectedCategory])
 
-  // Handle scrolling when cards expand (except for first card on initial load)
+  // Handle scrolling when cards expand - smooth transitions
   useEffect(() => {
-    if (trackRef.current && selectedCategory === null && hoveredIndex !== null && hoveredIndex !== 0) {
-      // Only scroll when a card other than the first is being hovered
+    if (trackRef.current && selectedCategory === null) {
       // Clear any existing timeout
       if (scrollTimeoutRef.current) {
         clearTimeout(scrollTimeoutRef.current)
       }
       
-      // Wait for width transition to complete (500ms) before scrolling
-      // This prevents cards from sliding away before they expand
-      scrollTimeoutRef.current = setTimeout(() => {
-        if (trackRef.current && hoveredIndex !== null && hoveredIndex !== 0) {
-          const cards = Array.from(trackRef.current.children) as HTMLElement[]
-          
-          if (cards[hoveredIndex]) {
-            const card = cards[hoveredIndex]
-            const cardLeft = card.offsetLeft
-            const cardWidth = card.offsetWidth
-            const trackWidth = trackRef.current.offsetWidth
+      if (hoveredIndex !== null) {
+        // A card is being hovered - scroll to show it properly
+        scrollTimeoutRef.current = setTimeout(() => {
+          if (trackRef.current && hoveredIndex !== null) {
+            const cards = Array.from(trackRef.current.children) as HTMLElement[]
             
-            // For cards after the first, center them in viewport
-            const scrollPosition = cardLeft - (trackWidth / 2) + (cardWidth / 2)
-            
-            // Ensure we don't scroll beyond bounds
-            const maxScroll = trackRef.current.scrollWidth - trackWidth
-            const clampedScroll = Math.max(0, Math.min(scrollPosition, maxScroll))
-            
-            trackRef.current.scrollTo({ left: clampedScroll, behavior: 'smooth' })
+            if (cards[hoveredIndex]) {
+              const card = cards[hoveredIndex]
+              const cardLeft = card.offsetLeft
+              const cardWidth = card.offsetWidth
+              const trackWidth = trackRef.current.offsetWidth
+              
+              // For first card, keep it at left edge
+              if (hoveredIndex === 0) {
+                trackRef.current.scrollTo({ left: 0, behavior: 'smooth' })
+              } else {
+                // For other cards, center them in viewport
+                const scrollPosition = cardLeft - (trackWidth / 2) + (cardWidth / 2)
+                const maxScroll = trackRef.current.scrollWidth - trackWidth
+                const clampedScroll = Math.max(0, Math.min(scrollPosition, maxScroll))
+                trackRef.current.scrollTo({ left: clampedScroll, behavior: 'smooth' })
+              }
+            }
           }
-        }
-      }, 550) // Wait for 500ms transition + 50ms buffer
-    }
-    
-    // When hover is removed, scroll back to show first card at left edge
-    if (trackRef.current && selectedCategory === null && hoveredIndex === null) {
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current)
+        }, 550) // Wait for 500ms transition + 50ms buffer
+      } else {
+        // No card is hovered - scroll back to first card at left edge
+        // Use a longer delay to prevent jumping when moving between cards
+        scrollTimeoutRef.current = setTimeout(() => {
+          if (trackRef.current && hoveredIndex === null) {
+            trackRef.current.scrollTo({ left: 0, behavior: 'smooth' })
+          }
+        }, 600) // Slightly longer delay to allow hover transitions
       }
-      scrollTimeoutRef.current = setTimeout(() => {
-        if (trackRef.current) {
-          trackRef.current.scrollTo({ left: 0, behavior: 'smooth' })
-        }
-      }, 550)
     }
     
     return () => {
       if (scrollTimeoutRef.current) {
         clearTimeout(scrollTimeoutRef.current)
       }
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current)
+      }
     }
-  }, [hoveredIndex, selectedCategory, activeIndex])
+  }, [hoveredIndex, selectedCategory])
 
   const handleDetailsClick = (categoryValue: string, index: number) => {
     setActiveIndex(index)
@@ -289,26 +291,43 @@ export default function ProductGrid() {
                 return (
                   <div
                     key={category.value}
-                    onMouseEnter={() => {
-                      // Set hover state first to trigger expansion
+                    onMouseEnter={(e) => {
+                      // Clear any pending hover removal
+                      if (hoverTimeoutRef.current) {
+                        clearTimeout(hoverTimeoutRef.current)
+                        hoverTimeoutRef.current = null
+                      }
+                      // Immediately set hover state for precise hover detection
+                      e.stopPropagation()
                       setHoveredIndex(index)
-                      // Update active index after a small delay to allow expansion
-                      setTimeout(() => {
-                        setActiveIndex(index)
-                      }, 100)
+                      setActiveIndex(index)
                     }}
-                    onMouseLeave={() => {
-                      setHoveredIndex(null)
+                    onMouseLeave={(e) => {
+                      // Use a small delay to check if we're moving to another card
+                      // This prevents flickering when moving between cards
+                      if (hoverTimeoutRef.current) {
+                        clearTimeout(hoverTimeoutRef.current)
+                      }
+                      hoverTimeoutRef.current = setTimeout(() => {
+                        const relatedTarget = e.relatedTarget as HTMLElement
+                        // Only clear hover if we're not moving to another card
+                        if (!relatedTarget || !relatedTarget.closest('[data-category-card]')) {
+                          setHoveredIndex(null)
+                        }
+                      }, 50) // Small delay to allow mouse to enter adjacent card
                     }}
-                    className={`relative flex-shrink-0 transition-all duration-500 ease-out ${
+                    data-category-card={category.value}
+                    className={`relative flex-shrink-0 transition-all duration-500 ease-in-out ${
                       isExpanded ? 'w-[60vw] min-w-[40rem]' : 'w-[5rem]'
                     }`}
                     style={{
                       willChange: 'width', // Optimize for width transitions
+                      transitionProperty: 'width',
+                      transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)', // Smooth easing
                     }}
                   >
                     <div
-                      className={`h-[32rem] rounded-2xl overflow-hidden transition-all duration-500 relative ${
+                      className={`h-[32rem] rounded-2xl overflow-hidden transition-all duration-500 ease-in-out relative ${
                         isExpanded
                           ? 'shadow-2xl'
                           : 'shadow-lg'
@@ -319,6 +338,7 @@ export default function ProductGrid() {
                         backgroundPosition: 'center',
                         backgroundRepeat: 'no-repeat',
                         willChange: 'transform', // Optimize for transitions
+                        transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)', // Smooth easing
                       }}
                     >
                       {/* Gradient Overlay */}
