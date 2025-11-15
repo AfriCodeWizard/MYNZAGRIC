@@ -15,13 +15,9 @@ interface CartItem {
 export default function ProductGrid() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [activeIndex, setActiveIndex] = useState(0)
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null) // null = first card expanded by default
   const [cart, setCart] = useState<CartItem[]>([])
   const [isCartOpen, setIsCartOpen] = useState(false)
   const trackRef = useRef<HTMLDivElement>(null)
-  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-  const previousHoveredIndexRef = useRef<number | null>(null)
   
   // Initialize: first card expanded, scroll to left edge
   useEffect(() => {
@@ -86,78 +82,41 @@ export default function ProductGrid() {
     return seedlings.filter((s) => s.category === selectedCategory)
   }, [selectedCategory])
 
-  // Handle scrolling when cards expand - smooth transitions
+  // Handle scrolling when active card changes - smooth transitions
   useEffect(() => {
     if (trackRef.current && selectedCategory === null) {
-      // Clear any existing timeout
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current)
-      }
-      
-      if (hoveredIndex !== null) {
-        // A card is being hovered - scroll to show it properly
-        scrollTimeoutRef.current = setTimeout(() => {
-          if (trackRef.current && hoveredIndex !== null) {
-            const cards = Array.from(trackRef.current.children) as HTMLElement[]
+      // Small delay to allow flex-basis transition to start
+      const timeoutId = setTimeout(() => {
+        if (trackRef.current) {
+          const cards = Array.from(trackRef.current.children) as HTMLElement[]
+          
+          if (cards[activeIndex]) {
+            const card = cards[activeIndex]
+            const cardLeft = card.offsetLeft
+            const cardWidth = card.offsetWidth
+            const trackWidth = trackRef.current.offsetWidth
+            const trackScrollLeft = trackRef.current.scrollLeft
             
-            if (cards[hoveredIndex]) {
-              const card = cards[hoveredIndex]
-              const cardLeft = card.offsetLeft
-              const cardWidth = card.offsetWidth
-              const trackWidth = trackRef.current.offsetWidth
-              
-              // For first card, keep it at left edge
-              if (hoveredIndex === 0) {
-                trackRef.current.scrollTo({ left: 0, behavior: 'smooth' })
-              } else if (hoveredIndex === categories.length - 1) {
-                // For last card, position it so it's fully visible
-                // Calculate how much we need to scroll to show the full card
-                const cardRight = cardLeft + cardWidth
-                const maxScroll = trackRef.current.scrollWidth - trackWidth
-                
-                // Scroll to show the full card, positioning it at the right edge if needed
-                // But don't scroll past the maximum
-                const scrollPosition = Math.min(cardRight - trackWidth, maxScroll)
-                trackRef.current.scrollTo({ left: Math.max(0, scrollPosition), behavior: 'smooth' })
-              } else {
-                // For middle cards (including when moving from last card), center them in viewport
-                const scrollPosition = cardLeft - (trackWidth / 2) + (cardWidth / 2)
-                const maxScroll = trackRef.current.scrollWidth - trackWidth
-                const clampedScroll = Math.max(0, Math.min(scrollPosition, maxScroll))
-                trackRef.current.scrollTo({ left: clampedScroll, behavior: 'smooth' })
-              }
+            // Calculate scroll position to center the active card
+            const scrollPosition = cardLeft - (trackWidth / 2) + (cardWidth / 2)
+            const maxScroll = trackRef.current.scrollWidth - trackWidth
+            const clampedScroll = Math.max(0, Math.min(scrollPosition, maxScroll))
+            
+            // Only scroll if the card is not already visible
+            const cardRight = cardLeft + cardWidth
+            const visibleLeft = trackScrollLeft
+            const visibleRight = trackScrollLeft + trackWidth
+            
+            if (cardLeft < visibleLeft || cardRight > visibleRight) {
+              trackRef.current.scrollTo({ left: clampedScroll, behavior: 'smooth' })
             }
           }
-        }, 520) // Wait for 500ms transition + 20ms buffer (reduced for smoother feel)
-      } else {
-        // No card is hovered - only scroll back to first if we're truly leaving the card area
-        // Don't reset if we just moved from one card to another (previousHoveredIndexRef will be set)
-        scrollTimeoutRef.current = setTimeout(() => {
-          if (trackRef.current && hoveredIndex === null) {
-            // Only reset to first if hover is still null after delay
-            // This prevents jumping when moving between cards
-            trackRef.current.scrollTo({ left: 0, behavior: 'smooth' })
-          }
-          // Clear the previous hover ref after timeout
-          previousHoveredIndexRef.current = null
-        }, 1200) // Even longer delay to allow smooth transitions, especially from last card
-      }
+        }
+      }, 50) // Small delay to let flex-basis transition start
       
-      // Update previous hover ref when hover changes
-      if (hoveredIndex !== null) {
-        previousHoveredIndexRef.current = hoveredIndex
-      }
+      return () => clearTimeout(timeoutId)
     }
-    
-    return () => {
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current)
-      }
-      if (hoverTimeoutRef.current) {
-        clearTimeout(hoverTimeoutRef.current)
-      }
-    }
-  }, [hoveredIndex, selectedCategory])
+  }, [activeIndex, selectedCategory])
 
   const handleDetailsClick = (categoryValue: string, index: number) => {
     setActiveIndex(index)
@@ -172,31 +131,6 @@ export default function ProductGrid() {
     if (selectedCategory === null) {
       const newIndex = activeIndex > 0 ? activeIndex - 1 : categories.length - 1
       setActiveIndex(newIndex)
-      setHoveredIndex(newIndex)
-      // Scroll to the card
-      if (trackRef.current) {
-        const cards = Array.from(trackRef.current.children) as HTMLElement[]
-        if (cards[newIndex]) {
-          const card = cards[newIndex]
-          const cardLeft = card.offsetLeft
-          const cardWidth = card.offsetWidth
-          const trackWidth = trackRef.current.offsetWidth
-          
-          if (newIndex === 0) {
-            trackRef.current.scrollTo({ left: 0, behavior: 'smooth' })
-          } else if (newIndex === categories.length - 1) {
-            const cardRight = cardLeft + cardWidth
-            const maxScroll = trackRef.current.scrollWidth - trackWidth
-            const scrollPosition = Math.min(cardRight - trackWidth, maxScroll)
-            trackRef.current.scrollTo({ left: Math.max(0, scrollPosition), behavior: 'smooth' })
-          } else {
-            const scrollPosition = cardLeft - (trackWidth / 2) + (cardWidth / 2)
-            const maxScroll = trackRef.current.scrollWidth - trackWidth
-            const clampedScroll = Math.max(0, Math.min(scrollPosition, maxScroll))
-            trackRef.current.scrollTo({ left: clampedScroll, behavior: 'smooth' })
-          }
-        }
-      }
     }
   }
 
@@ -204,31 +138,6 @@ export default function ProductGrid() {
     if (selectedCategory === null) {
       const newIndex = activeIndex < categories.length - 1 ? activeIndex + 1 : 0
       setActiveIndex(newIndex)
-      setHoveredIndex(newIndex)
-      // Scroll to the card
-      if (trackRef.current) {
-        const cards = Array.from(trackRef.current.children) as HTMLElement[]
-        if (cards[newIndex]) {
-          const card = cards[newIndex]
-          const cardLeft = card.offsetLeft
-          const cardWidth = card.offsetWidth
-          const trackWidth = trackRef.current.offsetWidth
-          
-          if (newIndex === 0) {
-            trackRef.current.scrollTo({ left: 0, behavior: 'smooth' })
-          } else if (newIndex === categories.length - 1) {
-            const cardRight = cardLeft + cardWidth
-            const maxScroll = trackRef.current.scrollWidth - trackWidth
-            const scrollPosition = Math.min(cardRight - trackWidth, maxScroll)
-            trackRef.current.scrollTo({ left: Math.max(0, scrollPosition), behavior: 'smooth' })
-          } else {
-            const scrollPosition = cardLeft - (trackWidth / 2) + (cardWidth / 2)
-            const maxScroll = trackRef.current.scrollWidth - trackWidth
-            const clampedScroll = Math.max(0, Math.min(scrollPosition, maxScroll))
-            trackRef.current.scrollTo({ left: clampedScroll, behavior: 'smooth' })
-          }
-        }
-      }
     }
   }
 
@@ -317,110 +226,73 @@ export default function ProductGrid() {
             {/* Category Cards Track */}
             <div
               ref={trackRef}
-              className="flex gap-4 overflow-x-auto scrollbar-hide pb-8"
+              className="flex gap-5 overflow-x-auto scrollbar-hide pb-10"
               style={{
                 scrollBehavior: 'smooth',
+                scrollSnapType: 'x mandatory',
               }}
             >
               {categories.map((category, index) => {
                 const categorySeedlings = seedlings.filter((s) => s.category === category.value)
-                // Expand on hover, or if it's the first card and nothing is hovered (default state)
-                const isExpanded = hoveredIndex === index || (hoveredIndex === null && index === 0)
                 const isActive = activeIndex === index
                 
                 return (
                   <div
                     key={category.value}
-                    onMouseEnter={(e) => {
-                      // Clear any pending hover removal
-                      if (hoverTimeoutRef.current) {
-                        clearTimeout(hoverTimeoutRef.current)
-                        hoverTimeoutRef.current = null
-                      }
-                      // Clear any pending scroll reset
-                      if (scrollTimeoutRef.current) {
-                        clearTimeout(scrollTimeoutRef.current)
-                        scrollTimeoutRef.current = null
-                      }
-                      // Immediately set hover state for precise hover detection
-                      e.stopPropagation()
-                      setHoveredIndex(index)
+                    onMouseEnter={() => {
                       setActiveIndex(index)
-                      previousHoveredIndexRef.current = index
-                    }}
-                    onMouseLeave={(e) => {
-                      // Use a delay to check if we're moving to another card
-                      // This prevents flickering when moving between cards
-                      if (hoverTimeoutRef.current) {
-                        clearTimeout(hoverTimeoutRef.current)
-                      }
-                      hoverTimeoutRef.current = setTimeout(() => {
-                        const relatedTarget = e.relatedTarget as HTMLElement
-                        // Only clear hover if we're not moving to another card
-                        const isMovingToCard = relatedTarget?.closest('[data-category-card]')
-                        if (!isMovingToCard) {
-                          setHoveredIndex(null)
-                        }
-                      }, 150) // Longer delay to allow smooth transitions, especially from last card
                     }}
                     data-category-card={category.value}
-                    className={`relative flex-shrink-0 ${
-                      isExpanded ? 'w-[60vw] min-w-[40rem]' : 'w-[5rem]'
-                    }`}
+                    className="relative flex-shrink-0 snap-center"
                     style={{
-                      transition: 'width 500ms cubic-bezier(0.4, 0, 0.2, 1)',
-                      willChange: 'width',
+                      flexBasis: isActive ? '60vw' : '5rem',
+                      minWidth: isActive ? '40rem' : '5rem',
+                      transition: 'flex-basis 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94), min-width 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                      transform: isActive ? 'translateY(-6px)' : 'translateY(0)',
+                      willChange: 'flex-basis, transform',
                     }}
                   >
                     <div
-                      className={`h-[32rem] rounded-2xl overflow-hidden relative transition-shadow duration-500 ${
-                        isExpanded
-                          ? 'shadow-2xl'
-                          : 'shadow-lg'
-                      }`}
+                      className="h-[26rem] rounded-2xl overflow-hidden relative cursor-pointer"
                       style={{
-                        backgroundImage: `url(${category.bgImage})`,
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                        backgroundRepeat: 'no-repeat',
+                        boxShadow: isActive ? '0 18px 55px rgba(0, 0, 0, 0.45)' : '0 4px 15px rgba(0, 0, 0, 0.2)',
+                        transition: 'box-shadow 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
                       }}
                     >
+                      {/* Background Image */}
+                      <img
+                        src={category.bgImage}
+                        alt={category.label}
+                        className="absolute inset-0 w-full h-full object-cover transition-all duration-300"
+                        style={{
+                          filter: isActive ? 'brightness(0.9) saturate(100%)' : 'brightness(0.75) saturate(75%)',
+                          transform: isActive ? 'scale(1.06)' : 'scale(1)',
+                        }}
+                      />
+                      
                       {/* Gradient Overlay */}
                       <div 
-                        className={`absolute inset-0 bg-gradient-to-br ${category.bgColor}`}
-                        style={{ opacity: 0.9 }}
+                        className="absolute inset-0 z-[1]"
+                        style={{ 
+                          background: `linear-gradient(to bottom, transparent 40%, rgba(0, 0, 0, 0.85) 100%)`,
+                        }}
+                      ></div>
+                      <div 
+                        className={`absolute inset-0 bg-gradient-to-br ${category.bgColor} opacity-90 z-[1]`}
                       ></div>
                       
-                      {/* Collapsed State - Vertical Text */}
+                      {/* Content Container */}
                       <div 
-                        className="absolute inset-0 flex items-center justify-center transition-opacity duration-300"
-                        style={{ 
-                          opacity: isExpanded ? 0 : 1,
-                          pointerEvents: isExpanded ? 'none' : 'auto',
+                        className={`absolute inset-0 flex items-center justify-center gap-3 p-0 z-10 ${
+                          isActive ? 'flex-row items-center p-5 gap-4' : 'flex-col'
+                        }`}
+                        style={{
+                          transition: 'all 0.3s ease',
                         }}
                       >
-                        <h3 
-                          className="text-white text-2xl font-bold whitespace-nowrap"
-                          style={{ 
-                            transform: 'rotate(-90deg)',
-                            transformOrigin: 'center',
-                          }}
-                        >
-                          {category.label}
-                        </h3>
-                      </div>
-
-                      {/* Expanded State - Full Content */}
-                      <div 
-                        className="relative h-full flex flex-col p-8 text-white transition-opacity duration-300"
-                        style={{ 
-                          opacity: isExpanded ? 1 : 0,
-                          pointerEvents: isExpanded ? 'auto' : 'none',
-                        }}
-                      >
-                        {/* Foreground Image */}
-                        <div className="relative mb-6 flex-shrink-0">
-                          <div className="w-64 h-48 rounded-xl overflow-hidden shadow-xl bg-white/10 backdrop-blur-sm">
+                        {/* Foreground Image - Only visible when active */}
+                        {isActive && (
+                          <div className="w-[133px] h-[269px] rounded-lg overflow-hidden shadow-lg flex-shrink-0">
                             <img
                               src={category.fgImage}
                               alt={category.label}
@@ -428,22 +300,38 @@ export default function ProductGrid() {
                               loading="lazy"
                             />
                           </div>
-                        </div>
+                        )}
 
-                        {/* Content */}
-                        <div className="flex-1 flex flex-col justify-between">
-                          <div>
-                            <h3 className="text-5xl font-bold mb-4">{category.label}</h3>
-                            <p className="text-lg text-white/90 mb-6">{category.description}</p>
-                          </div>
-
-                          {/* Details Button */}
-                          <button
-                            onClick={() => handleDetailsClick(category.value, index)}
-                            className="bg-[#ff6b35] hover:bg-[#ff8555] text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg self-start"
+                        {/* Text Content */}
+                        <div className={`flex flex-col ${isActive ? 'items-start' : 'items-center'}`}>
+                          <h3 
+                            className={`text-white font-bold ${
+                              isActive 
+                                ? 'text-4xl mb-2' 
+                                : 'text-xl'
+                            }`}
+                            style={{
+                              writingMode: isActive ? 'horizontal-tb' : 'vertical-rl',
+                              transform: isActive ? 'none' : 'rotate(180deg)',
+                              transition: 'all 0.3s ease',
+                            }}
                           >
-                            Details
-                          </button>
+                            {category.label}
+                          </h3>
+                          
+                          {isActive && (
+                            <>
+                              <p className="text-base text-gray-200 mb-4 max-w-[16rem] leading-relaxed">
+                                {category.description}
+                              </p>
+                              <button
+                                onClick={() => handleDetailsClick(category.value, index)}
+                                className="bg-[#ff6b35] hover:bg-[#ff824f] text-white font-semibold py-2 px-5 rounded-full transition-all duration-300 text-sm"
+                              >
+                                Details
+                              </button>
+                            </>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -452,7 +340,7 @@ export default function ProductGrid() {
               })}
               {/* Right padding to ensure last card is fully visible */}
               <div className="flex-shrink-0 w-4"></div>
-            </div>
+          </div>
 
             {/* Pagination Dots */}
             <div className="flex justify-center gap-2 mt-8">
@@ -463,31 +351,6 @@ export default function ProductGrid() {
                     key={index}
                     onClick={() => {
                       setActiveIndex(index)
-                      setHoveredIndex(index)
-                      // Scroll to the card when dot is clicked
-                      if (trackRef.current) {
-                        const cards = Array.from(trackRef.current.children) as HTMLElement[]
-                        if (cards[index]) {
-                          const card = cards[index]
-                          const cardLeft = card.offsetLeft
-                          const cardWidth = card.offsetWidth
-                          const trackWidth = trackRef.current.offsetWidth
-                          
-                          if (index === 0) {
-                            trackRef.current.scrollTo({ left: 0, behavior: 'smooth' })
-                          } else if (index === categories.length - 1) {
-                            const cardRight = cardLeft + cardWidth
-                            const maxScroll = trackRef.current.scrollWidth - trackWidth
-                            const scrollPosition = Math.min(cardRight - trackWidth, maxScroll)
-                            trackRef.current.scrollTo({ left: Math.max(0, scrollPosition), behavior: 'smooth' })
-                          } else {
-                            const scrollPosition = cardLeft - (trackWidth / 2) + (cardWidth / 2)
-                            const maxScroll = trackRef.current.scrollWidth - trackWidth
-                            const clampedScroll = Math.max(0, Math.min(scrollPosition, maxScroll))
-                            trackRef.current.scrollTo({ left: clampedScroll, behavior: 'smooth' })
-                          }
-                        }
-                      }
                     }}
                     className={`rounded-full transition-all duration-300 ${
                       isActive 
@@ -522,25 +385,25 @@ export default function ProductGrid() {
                   <p className="text-sm text-gray-600 mt-1">
                     {filteredSeedlings.length} {filteredSeedlings.length === 1 ? 'item' : 'items'} available
                   </p>
-                </div>
-              </div>
+          </div>
+        </div>
 
-              {/* Product Grid */}
-              {filteredSeedlings.length > 0 ? (
+        {/* Product Grid */}
+        {filteredSeedlings.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {filteredSeedlings.map((seedling) => (
-                    <ProductCard key={seedling.id} seedling={seedling} onAddToCart={addToCart} />
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-16">
+            {filteredSeedlings.map((seedling) => (
+              <ProductCard key={seedling.id} seedling={seedling} onAddToCart={addToCart} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-16">
                   <p className="text-lg text-gray-600 mb-2">No seedlings found in this category</p>
-                  <button
+            <button
                     onClick={handleBack}
-                    className="mt-4 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
-                  >
+              className="mt-4 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+            >
                     Back to Categories
-                  </button>
+            </button>
                 </div>
               )}
             </div>
