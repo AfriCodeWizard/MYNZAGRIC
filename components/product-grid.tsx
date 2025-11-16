@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect, useRef } from "react"
 import ProductCard from "./product-card"
 import { seedlings } from "@/lib/seedlings-data"
-import { X, ShoppingBag, Plus, Minus, ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react"
+import { X, ShoppingBag, Plus, Minus, ArrowLeft, ChevronLeft, ChevronRight, ChevronUp, ChevronDown } from "lucide-react"
 
 interface CartItem {
   id: string
@@ -225,7 +225,7 @@ export default function ProductGrid() {
     <section id="seedlings" className="relative min-h-screen bg-[#07090d] overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
         {/* Section Header with Cart Button */}
-        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-12">
+        <div className="flex flex-col gap-4 mb-12">
           <div>
             <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white">
               SEEDLING <span className="font-light text-gray-400">VARIETIES</span>
@@ -234,18 +234,41 @@ export default function ProductGrid() {
             <p className="text-base sm:text-lg text-gray-400 mt-2">Premium grafted and tissue-culture varieties</p>
           </div>
 
-          <button
-            onClick={() => setIsCartOpen(!isCartOpen)}
-            className="relative self-start sm:self-auto p-3 bg-green-600 text-white rounded-full hover:bg-green-700 transition shadow-lg hover:shadow-xl z-10"
-            title="Bulk Order Cart"
-          >
-            <ShoppingBag className="w-5 h-5 sm:w-6 sm:h-6" />
-            {totalItems > 0 && (
-              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
-                {totalItems}
-              </span>
+          {/* Cart and Scroll Controls - Same horizontal line */}
+          <div className="flex items-center justify-between w-full">
+            <button
+              onClick={() => setIsCartOpen(!isCartOpen)}
+              className="relative p-3 bg-green-600 text-white rounded-full hover:bg-green-700 transition shadow-lg hover:shadow-xl z-10"
+              title="Bulk Order Cart"
+            >
+              <ShoppingBag className="w-5 h-5 sm:w-6 sm:h-6" />
+              {totalItems > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
+                  {totalItems}
+                </span>
+              )}
+            </button>
+
+            {/* Mobile Scroll Controls - On right side, same line as cart */}
+            {isMobile && (
+              <div className="flex flex-col gap-2 z-30">
+                <button
+                  onClick={handlePrev}
+                  className="p-2 bg-white/10 hover:bg-white/20 active:bg-white/30 rounded-full transition text-white shadow-lg"
+                  aria-label="Scroll Up"
+                >
+                  <ChevronUp className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={handleNext}
+                  className="p-2 bg-white/10 hover:bg-white/20 active:bg-white/30 rounded-full transition text-white shadow-lg"
+                  aria-label="Scroll Down"
+                >
+                  <ChevronDown className="w-4 h-4" />
+                </button>
+              </div>
             )}
-          </button>
+          </div>
         </div>
 
         {/* Category View - Full Section */}
@@ -268,6 +291,7 @@ export default function ProductGrid() {
                 <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
               </button>
             </div>
+
 
             {/* Category Cards Track - Vertical stack on mobile, horizontal scroll on desktop */}
             <div
