@@ -17,7 +17,18 @@ export default function ProductGrid() {
   const [activeIndex, setActiveIndex] = useState(0)
   const [cart, setCart] = useState<CartItem[]>([])
   const [isCartOpen, setIsCartOpen] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
   const trackRef = useRef<HTMLDivElement>(null)
+
+  // Check if mobile on mount and resize
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640)
+    }
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
   
   // Initialize: first card expanded, scroll to left edge
   useEffect(() => {
@@ -179,21 +190,21 @@ export default function ProductGrid() {
     <section id="seedlings" className="relative min-h-screen bg-[#07090d] overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
         {/* Section Header with Cart Button */}
-        <div className="flex items-start justify-between mb-12">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-12">
           <div>
-            <h2 className="text-5xl md:text-6xl font-bold text-white">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white">
               SEEDLING <span className="font-light text-gray-400">VARIETIES</span>
               <br />& PRICES
             </h2>
-            <p className="text-lg text-gray-400">Premium grafted and tissue-culture varieties</p>
+            <p className="text-base sm:text-lg text-gray-400 mt-2">Premium grafted and tissue-culture varieties</p>
           </div>
 
           <button
             onClick={() => setIsCartOpen(!isCartOpen)}
-            className="relative p-3 bg-green-600 text-white rounded-full hover:bg-green-700 transition shadow-lg hover:shadow-xl z-10"
+            className="relative self-start sm:self-auto p-3 bg-green-600 text-white rounded-full hover:bg-green-700 transition shadow-lg hover:shadow-xl z-10"
             title="Bulk Order Cart"
           >
-            <ShoppingBag className="w-6 h-6" />
+            <ShoppingBag className="w-5 h-5 sm:w-6 sm:h-6" />
             {totalItems > 0 && (
               <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
                 {totalItems}
@@ -206,20 +217,20 @@ export default function ProductGrid() {
         {selectedCategory === null && (
           <div className="relative">
             {/* Navigation Controls */}
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center justify-between mb-6 sm:mb-8">
               <button
                 onClick={handlePrev}
-                className="p-3 bg-white/10 hover:bg-white/20 rounded-full transition text-white"
+                className="p-2 sm:p-3 bg-white/10 hover:bg-white/20 rounded-full transition text-white z-20"
                 aria-label="Previous"
               >
-                <ChevronLeft className="w-6 h-6" />
+                <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
               </button>
               <button
                 onClick={handleNext}
-                className="p-3 bg-white/10 hover:bg-white/20 rounded-full transition text-white"
+                className="p-2 sm:p-3 bg-white/10 hover:bg-white/20 rounded-full transition text-white z-20"
                 aria-label="Next"
               >
-                <ChevronRight className="w-6 h-6" />
+                <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
               </button>
             </div>
 
@@ -240,20 +251,27 @@ export default function ProductGrid() {
                   <div
                     key={category.value}
                     onMouseEnter={() => {
-                      setActiveIndex(index)
+                      if (!isMobile) {
+                        setActiveIndex(index)
+                      }
+                    }}
+                    onClick={() => {
+                      if (isMobile) {
+                        setActiveIndex(index)
+                      }
                     }}
                     data-category-card={category.value}
                     className="relative flex-shrink-0 snap-center"
                     style={{
-                      flexBasis: isActive ? '60vw' : '5rem',
-                      minWidth: isActive ? '40rem' : '5rem',
+                      flexBasis: isActive ? (isMobile ? '85vw' : '60vw') : (isMobile ? '4rem' : '5rem'),
+                      minWidth: isActive ? (isMobile ? '85vw' : '40rem') : (isMobile ? '4rem' : '5rem'),
                       transition: 'flex-basis 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94), min-width 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                      transform: isActive ? 'translateY(-6px)' : 'translateY(0)',
+                      transform: isActive ? (isMobile ? 'translateY(0)' : 'translateY(-6px)') : 'translateY(0)',
                       willChange: 'flex-basis, transform',
                     }}
                   >
                     <div
-                      className="h-[26rem] rounded-2xl overflow-hidden relative cursor-pointer"
+                      className="h-[20rem] sm:h-[24rem] md:h-[26rem] rounded-2xl overflow-hidden relative cursor-pointer"
                       style={{
                         boxShadow: isActive ? '0 18px 55px rgba(0, 0, 0, 0.45)' : '0 4px 15px rgba(0, 0, 0, 0.2)',
                         transition: 'box-shadow 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
@@ -294,16 +312,20 @@ export default function ProductGrid() {
                       {/* Content Container */}
                       <div 
                         className={`absolute inset-0 flex z-10 ${
-                          isActive ? 'flex-row items-center justify-start gap-4' : 'flex-col items-center justify-center'
+                          isActive 
+                            ? 'flex-col sm:flex-row items-center sm:items-center sm:justify-start gap-3 sm:gap-4' 
+                            : 'flex-col items-center justify-center'
                         }`}
                         style={{
                           transition: 'all 0.3s ease',
-                          padding: isActive ? '1.25rem 1.25rem 1.25rem 3.125rem' : '0',
+                          padding: isActive 
+                            ? (isMobile ? '1rem' : '1.25rem 1.25rem 1.25rem 3.125rem')
+                            : '0',
                         }}
                       >
                         {/* Foreground Image - Only visible when active */}
                         {isActive && (
-                          <div className="w-[133px] h-[269px] rounded-lg overflow-hidden shadow-lg flex-shrink-0">
+                          <div className="w-[100px] h-[200px] sm:w-[120px] sm:h-[240px] md:w-[133px] md:h-[269px] rounded-lg overflow-hidden shadow-lg flex-shrink-0">
                             <img
                               src={category.fgImage}
                               alt={category.label}
@@ -321,12 +343,12 @@ export default function ProductGrid() {
                         )}
 
                         {/* Text Content */}
-                        <div className={`flex flex-col ${isActive ? 'items-start' : 'items-center'}`}>
+                        <div className={`flex flex-col ${isActive ? 'items-center sm:items-start' : 'items-center'} flex-1`}>
                           <h3 
                             className={`text-white font-bold ${
                               isActive 
-                                ? 'text-4xl mb-2' 
-                                : 'text-xl'
+                                ? 'text-2xl sm:text-3xl md:text-4xl mb-2 text-center sm:text-left' 
+                                : 'text-lg sm:text-xl'
                             }`}
                             style={{
                               writingMode: isActive ? 'horizontal-tb' : 'vertical-rl',
@@ -339,12 +361,12 @@ export default function ProductGrid() {
                           
                           {isActive && (
                             <>
-                              <p className="text-base text-gray-200 mb-4 max-w-[20rem] leading-relaxed">
+                              <p className="text-sm sm:text-base text-gray-200 mb-3 sm:mb-4 max-w-[20rem] leading-relaxed text-center sm:text-left">
                                 {category.description}
                               </p>
                               <button
                                 onClick={() => handleDetailsClick(category.value, index)}
-                                className="bg-[#ff6b35] hover:bg-[#ff824f] text-white font-semibold py-2 px-5 rounded-full transition-all duration-300 text-sm"
+                                className="bg-[#ff6b35] hover:bg-[#ff824f] text-white font-semibold py-2 px-4 sm:px-5 rounded-full transition-all duration-300 text-xs sm:text-sm w-full sm:w-auto"
                               >
                                 Order Now
                               </button>
