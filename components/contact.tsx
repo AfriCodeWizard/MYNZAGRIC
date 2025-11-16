@@ -140,7 +140,7 @@ export default function Contact() {
               </div>
 
               {/* Contact Info Section - Positioned absolutely on the right */}
-              <div className="absolute right-16 md:right-20 top-[20%] bg-gray-800 w-[300px] p-10 rounded-l-[25px] hidden lg:block z-0">
+              <div className="absolute right-16 md:right-20 top-[20%] bg-black w-[300px] p-10 rounded-l-[25px] hidden lg:block z-0">
                 <h4 className="text-white text-xl font-semibold mb-5">Contact Info</h4>
                 <div className="space-y-5">
                   <div className="flex items-center text-white">
