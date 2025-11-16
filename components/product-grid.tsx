@@ -234,8 +234,8 @@ export default function ProductGrid() {
             <p className="text-base sm:text-lg text-gray-400 mt-2">Premium grafted and tissue-culture varieties</p>
           </div>
 
-          {/* Cart and Scroll Controls - Same horizontal line */}
-          <div className="flex items-center justify-between w-full">
+          {/* Cart and Scroll Controls - Same horizontal line on mobile, cart right on desktop */}
+          <div className="flex items-center gap-3 sm:justify-end">
             <button
               onClick={() => setIsCartOpen(!isCartOpen)}
               className="relative p-3 bg-green-600 text-white rounded-full hover:bg-green-700 transition shadow-lg hover:shadow-xl z-10"
@@ -251,7 +251,7 @@ export default function ProductGrid() {
 
             {/* Mobile Scroll Controls - On right side, same line as cart */}
             {isMobile && (
-              <div className="flex flex-col gap-2 z-30">
+              <div className="flex flex-col gap-2 z-30 ml-auto">
                 <button
                   onClick={handlePrev}
                   className="p-2 bg-white/10 hover:bg-white/20 active:bg-white/30 rounded-full transition text-white shadow-lg"
