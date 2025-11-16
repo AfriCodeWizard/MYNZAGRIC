@@ -1,8 +1,12 @@
 "use client"
 
 import { Heart, PenTool, Leaf, Lightbulb } from "lucide-react"
+import { useEffect, useRef, useState } from "react"
 
 function About() {
+  const imageRef = useRef<HTMLImageElement>(null)
+  const featuresRef = useRef<HTMLDivElement>(null)
+  const [maxHeight, setMaxHeight] = useState<number | null>(null)
   const features = [
     {
       icon: Heart,
@@ -27,67 +31,68 @@ function About() {
     },
   ]
 
+  useEffect(() => {
+    const updateHeight = () => {
+      if (imageRef.current && featuresRef.current) {
+        const imageHeight = imageRef.current.offsetHeight
+        setMaxHeight(imageHeight)
+      }
+    }
+
+    updateHeight()
+    window.addEventListener('resize', updateHeight)
+    const image = imageRef.current
+    if (image) {
+      image.addEventListener('load', updateHeight)
+    }
+
+    return () => {
+      window.removeEventListener('resize', updateHeight)
+      if (image) {
+        image.removeEventListener('load', updateHeight)
+      }
+    }
+  }, [])
+
   return (
     <section
       id="about"
-      className="min-h-screen flex items-center justify-center py-20 md:py-28 bg-gradient-to-b from-green-900 to-green-950"
+      className="py-20 md:py-28 bg-gradient-to-b from-green-900 to-green-950"
     >
       <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8">
-        <header className="flex justify-between items-start mb-16">
-          <div className="text-sm font-semibold tracking-widest text-gray-400">[ VALUES ]</div>
-          <nav className="text-right">
-            <ul className="space-y-4">
-              <li>
-                <a
-                  className="group text-gray-300 hover:text-white transition-colors duration-300 cursor-pointer"
-                  href="#"
-                >
-                  <div className="flex items-center justify-end space-x-4">
-                    <span className="font-medium">Premium Seedlings</span>
-                  </div>
-                  <div className="h-px bg-gray-500 mt-2 group-hover:bg-white transition-colors duration-300"></div>
-                </a>
-              </li>
-              <li>
-                <a
-                  className="group text-gray-300 hover:text-white transition-colors duration-300 cursor-pointer"
-                  href="#"
-                >
-                  <div className="flex items-center justify-end space-x-4">
-                    <span className="font-medium">Organic Farming</span>
-                  </div>
-                  <div className="h-px bg-gray-500 mt-2 group-hover:bg-white transition-colors duration-300"></div>
-                </a>
-              </li>
-            </ul>
-          </nav>
-        </header>
+        <div className="mb-16">
+          <h2 className="text-5xl md:text-6xl font-bold text-white">
+            WE ARE <span className="font-light text-gray-300">DIFFERENT</span>
+            <br />& IN EVERY WAY
+          </h2>
+        </div>
 
         <main className="grid grid-cols-1 lg:grid-cols-2 gap-12 xl:gap-20 items-start">
-          <div className="flex flex-col">
-            <h1 className="text-5xl md:text-6xl font-bold leading-tight text-white mb-12">
-              WE ARE <span className="font-light text-gray-300">DIFFERENT</span>
-              <br />& IN EVERY WAY
-            </h1>
+          <div className="flex flex-col lg:self-start">
             <img
+              ref={imageRef}
               alt="Seedlings in plant nursery trays representing quality produce from Mynzagric"
-              className="w-full max-w-sm rounded-lg shadow-lg self-start"
+              className="w-full max-w-sm rounded-lg shadow-lg"
               src="https://images.pexels.com/photos/32873207/pexels-photo-32873207.jpeg?auto=compress&cs=tinysrgb&w=800"
             />
           </div>
 
-          <div className="flex flex-col justify-center h-full">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
+          <div 
+            ref={featuresRef}
+            className="flex flex-col lg:self-start"
+            style={maxHeight ? { height: `${maxHeight}px`, maxHeight: `${maxHeight}px`, overflow: 'hidden' } : {}}
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 h-full">
               {features.map((feature, index) => {
                 const IconComponent = feature.icon
                 return (
-                  <div key={index} className="flex space-x-4">
-                    <div className="flex-shrink-0 w-12 h-12 border border-gray-400 rounded-md flex items-center justify-center text-white bg-transparent">
+                  <div key={index} className="flex space-x-4 h-full">
+                    <div className="flex-shrink-0 w-12 h-12 border border-gray-400 rounded-md flex items-start justify-center text-white bg-transparent pt-2">
                       <IconComponent className="w-5 h-5" />
                     </div>
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-white mb-3 text-base lg:text-lg">{feature.title}</h3>
-                      <p className="text-sm lg:text-base text-gray-300 leading-relaxed">{feature.description}</p>
+                    <div className="flex-1 flex flex-col h-full justify-between">
+                      <h3 className="font-semibold text-white mb-3 text-sm lg:text-base">{feature.title}</h3>
+                      <p className="text-xs lg:text-sm text-gray-300 leading-relaxed flex-1">{feature.description}</p>
                     </div>
                   </div>
                 )
