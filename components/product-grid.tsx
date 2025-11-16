@@ -33,8 +33,8 @@ export default function ProductGrid() {
       label: "Mangoes", 
       icon: "🥭",
       description: "Choose from 5 premium grafted varieties including Tommy, Apple, Van Dyke, Ngowe, and Alphonso mangoes. Fast-growing, high-yield trees that start fruiting in 2-3 years. Perfect for commercial farming or home gardens.",
-      bgImage: "https://images.unsplash.com/photo-1624896174119-241f39c6e31b?w=800&q=80",
-      fgImage: "https://images.unsplash.com/photo-1624896174119-241f39c6e31b?w=480&q=80&auto=format&fit=crop",
+      bgImage: "https://images.pexels.com/photos/16620442/pexels-photo-16620442.jpeg?auto=compress&cs=tinysrgb&w=800",
+      fgImage: "https://images.pexels.com/photos/16620442/pexels-photo-16620442.jpeg?auto=compress&cs=tinysrgb&w=480",
       bgColor: "from-blue-900 to-blue-950"
     },
     { 
@@ -272,7 +272,7 @@ export default function ProductGrid() {
                           const target = e.target as HTMLImageElement;
                           // Fallback to a different mango image if current one fails
                           if (category.value === 'mango') {
-                            target.src = 'https://images.unsplash.com/photo-1624896174119-241f39c6e31b?w=800&q=80';
+                            target.src = 'https://images.pexels.com/photos/16620442/pexels-photo-16620442.jpeg?auto=compress&cs=tinysrgb&w=800';
                           }
                         }}
                       />
@@ -313,7 +313,7 @@ export default function ProductGrid() {
                                 const target = e.target as HTMLImageElement;
                                 // Fallback to a different mango image if current one fails
                                 if (category.value === 'mango') {
-                                  target.src = 'https://images.unsplash.com/photo-1624896174119-241f39c6e31b?w=480&q=80&auto=format&fit=crop';
+                                  target.src = 'https://images.pexels.com/photos/16620442/pexels-photo-16620442.jpeg?auto=compress&cs=tinysrgb&w=480';
                                 }
                               }}
                             />
