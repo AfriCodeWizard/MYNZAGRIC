@@ -30,8 +30,8 @@ export default function Contact() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-16">
             <h2 className="text-5xl md:text-6xl font-bold text-gray-900">
-              ORDER <span className="font-light text-gray-500">YOUR</span>
-              <br />& SEEDLINGS TODAY
+              REACH US <span className="font-light text-gray-500">TO ORDER</span>
+              <br />YOUR SEEDLINGS TODAY
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mt-4">
               Place your order via WhatsApp and pay securely using Lipa na M-Pesa upon order confirmation.
