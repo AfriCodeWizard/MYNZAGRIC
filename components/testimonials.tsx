@@ -57,8 +57,8 @@ export default function Testimonials() {
 
   return (
     <section id="testimonials" className="relative overflow-hidden py-20 md:py-28 bg-[#0e0e0e] testimonials">
-      {/* Section Heading */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16 relative z-10">
+      {/* Section Heading - below navbar (z-index lower than navbar z-50) */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16 relative z-[40]">
         <h2 className="text-5xl md:text-6xl font-bold text-white">
           CUSTOMER <span className="font-light text-gray-400">SUCCESS</span>
           <br />& STORIES
@@ -69,18 +69,26 @@ export default function Testimonials() {
       </div>
 
       {/* Container for testimonial slide with fade overlays aligned to section margins */}
-      <div className="relative overflow-hidden">
-        {/* Left fade overlay - aligned with section margin */}
-        <div className="absolute left-4 sm:left-6 lg:left-8 top-0 bottom-0 w-48 z-10 pointer-events-none">
-          <div className="h-full bg-gradient-to-r from-[#0e0e0e] via-[#0e0e0e]/90 to-transparent shadow-[inset_40px_0_30px_-30px_rgba(14,14,14,0.9)]" />
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" style={{ overflow: 'hidden', clipPath: 'inset(0)' }}>
+        {/* Left fade overlay - fully opaque to hide cards completely (below navbar z-50) */}
+        <div className="absolute left-0 top-0 bottom-0 w-56 z-[45] pointer-events-none">
+          <div className="h-full bg-gradient-to-r from-[#0e0e0e] via-[#0e0e0e] to-transparent" />
         </div>
         
-        {/* Right fade overlay - aligned with section margin */}
-        <div className="absolute right-4 sm:right-6 lg:right-8 top-0 bottom-0 w-48 z-10 pointer-events-none">
-          <div className="h-full bg-gradient-to-l from-[#0e0e0e] via-[#0e0e0e]/90 to-transparent shadow-[inset_-40px_0_30px_-30px_rgba(14,14,14,0.9)]" />
+        {/* Right fade overlay - fully opaque to hide cards completely (below navbar z-50) */}
+        <div className="absolute right-0 top-0 bottom-0 w-56 z-[45] pointer-events-none">
+          <div className="h-full bg-gradient-to-l from-[#0e0e0e] via-[#0e0e0e] to-transparent" />
         </div>
 
-        <div className="testimonial-slide flex w-max relative z-0" style={{ animationPlayState: 'running' }}>
+        {/* Additional solid mask overlays for stronger fade at edges (below navbar z-50) */}
+        <div className="absolute left-0 top-0 bottom-0 w-32 z-[46] pointer-events-none">
+          <div className="h-full bg-[#0e0e0e]" />
+        </div>
+        <div className="absolute right-0 top-0 bottom-0 w-32 z-[46] pointer-events-none">
+          <div className="h-full bg-[#0e0e0e]" />
+        </div>
+
+        <div className="testimonial-slide flex w-max relative z-[40]" style={{ animationPlayState: 'running' }}>
         {duplicatedTestimonials.map((testimonial, index) => (
           <div
             key={index}

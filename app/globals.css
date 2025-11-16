@@ -170,6 +170,7 @@ html {
 }
 
 /* Testimonials infinite scroll animation */
+/* Cards appear at right margin and disappear at left margin */
 @keyframes slide-testimonials {
   0% {
     transform: translateX(0);
@@ -183,6 +184,10 @@ html {
   animation: 40s slide-testimonials infinite linear !important;
   animation-play-state: running !important;
   will-change: transform;
+  /* Position slide to start at right edge of container */
+  position: relative;
+  left: 100%;
+  margin-left: -100%;
 }
 
 .testimonials:hover .testimonial-slide {
