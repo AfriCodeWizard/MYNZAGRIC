@@ -31,14 +31,15 @@ export default function CareGuides() {
 
   return (
     <section id="care-guides" className="relative py-20 md:py-28 overflow-hidden bg-gradient-to-b from-green-50 to-white">
-      {/* Background Image with 50% opacity */}
+      {/* Background Image with 50% opacity - Sticky */}
       <div 
         className="absolute inset-0 z-0"
         style={{
-          backgroundImage: "url(https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=1920&h=1080&fit=crop&q=80)",
+          backgroundImage: "url(https://images.pexels.com/photos/32209937/pexels-photo-32209937.jpeg?auto=compress&cs=tinysrgb&w=1920)",
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
+          backgroundAttachment: 'fixed',
           opacity: 0.5,
         }}
       />

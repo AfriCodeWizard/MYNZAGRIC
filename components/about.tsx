@@ -75,9 +75,9 @@ export default function About() {
               <br />& IN EVERY WAY
             </h1>
             <img
-              alt="Fresh strawberries representing quality produce from Mynzagric"
+              alt="Seedlings in plant nursery trays representing quality produce from Mynzagric"
               className="w-full max-w-sm rounded-lg shadow-lg self-start"
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/pexels-nicola-barts-7937385-oM3XSvfpBdeTl0jQOnIDGyVnW89aZp.jpg"
+              src="https://images.pexels.com/photos/32873207/pexels-photo-32873207.jpeg?auto=compress&cs=tinysrgb&w=800"
             />
           </div>
 
