@@ -42,39 +42,39 @@ export default function Hero() {
       />
 
       {/* Main Content Container */}
-      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col min-h-screen pt-20 md:pt-24">
+      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col min-h-screen pt-[82px] md:pt-24">
         {/* Navbar */}
         <Navbar /> {/* Using the new Navbar component with animated hover effects */}
         {/* Main Content */}
-        <main className="mt-8 md:mt-16 flex-grow">
-          <div className="max-w-3xl">
-            <h1 className="text-5xl md:text-7xl text-white leading-tight">
+        <main className="mt-12 sm:mt-10 md:mt-16 flex-grow">
+          <div className="max-w-3xl pr-[120px] sm:pr-0 relative z-10">
+            <h1 className="text-4xl sm:text-5xl md:text-7xl text-white leading-[1.15] sm:leading-tight mb-4 sm:mb-5 md:mb-6">
               <span className="font-light">GROW WITH</span>
               <br />
               <span className="text-green-300 font-bold">MYNZAGRIC</span>
             </h1>
-            <p className="mt-4 md:mt-6 text-lg text-gray-200 max-w-xl">
+            <p className="mt-4 sm:mt-5 md:mt-6 text-base sm:text-lg text-gray-200 max-w-xl leading-relaxed pr-4 sm:pr-0">
               Certified grafted fruit seedlings ready for transplanting. Premium quality seedlings from Kenya's trusted
               nursery.
             </p>
           </div>
         </main>
         {/* Footer with CTA and Featured Card */}
-        <footer className="py-4 md:py-6 mt-auto">
+        <footer className="py-6 md:py-6 mt-10 sm:mt-auto pb-6 sm:pb-6 md:pb-6">
           <div className="flex items-end justify-between">
             <div className="w-full lg:w-auto">
-              <div className="flex items-center space-x-6">
+              <div className="flex flex-wrap items-center gap-4 sm:gap-6">
                 <a
                   href="https://wa.me/254700000000"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-white text-gray-900 px-8 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-colors"
+                  className="bg-white text-gray-900 px-7 sm:px-8 py-2.5 sm:py-3 rounded-lg font-semibold hover:bg-gray-200 transition-colors text-sm sm:text-base whitespace-nowrap shadow-md"
                 >
                   Get Started
                 </a>
                 <a
                   href="#seedlings"
-                  className="text-white border-b border-white/50 pb-1 font-semibold hover:border-white transition-colors"
+                  className="text-white border-b border-white/50 pb-1 font-semibold hover:border-white transition-colors text-sm sm:text-base"
                 >
                   Explore Products
                 </a>
@@ -83,10 +83,10 @@ export default function Hero() {
           </div>
         </footer>
         
-        {/* Right Side Cards - Aligned on same vertical line with equal spacing from edge */}
-        {/* Satisfied Clients Card - Top Right - Perfect Square */}
-        <div className="absolute top-20 right-8 hidden xl:block">
-          <div className="relative bg-black/20 backdrop-blur-md border border-white/20 rounded-2xl p-6 text-white overflow-hidden aspect-square w-auto h-auto">
+        {/* Right Side Cards - Responsive positioning */}
+        {/* Satisfied Clients Card - Responsive positioning */}
+        <div className="absolute top-28 sm:top-32 right-4 sm:right-8 xl:right-8 z-[5]">
+          <div className="relative bg-black/30 backdrop-blur-md border border-white/30 rounded-xl sm:rounded-2xl p-3.5 sm:p-6 text-white overflow-hidden w-[95px] h-[95px] sm:w-auto sm:h-auto sm:aspect-square shadow-lg sm:shadow-xl">
             {/* Animated White Glow on Left */}
             <div 
               className="absolute left-0 top-0 bottom-0 w-1 bg-white/80 blur-sm"
@@ -95,21 +95,21 @@ export default function Hero() {
               }}
             />
             <div className="text-left h-full flex flex-col justify-center">
-              <p className="text-2xl font-bold">{count}+</p>
-              <p className="text-sm">Satisfied Clients</p>
-              <div className="flex -space-x-2 mt-4 justify-start">
-                <div className="w-8 h-8 rounded-full border-2 border-white/50 bg-transparent" />
-                <div className="w-8 h-8 rounded-full border-2 border-white/50 bg-transparent" />
-                <div className="w-8 h-8 rounded-full border-2 border-white/50 bg-transparent" />
+              <p className="text-lg sm:text-2xl font-bold">{count}+</p>
+              <p className="text-[10px] sm:text-sm leading-tight mt-0.5 sm:mt-1">Satisfied Clients</p>
+              <div className="flex -space-x-1.5 sm:-space-x-2 mt-1.5 sm:mt-4 justify-start">
+                <div className="w-4 h-4 sm:w-8 sm:h-8 rounded-full border-2 border-white/50 bg-transparent" />
+                <div className="w-4 h-4 sm:w-8 sm:h-8 rounded-full border-2 border-white/50 bg-transparent" />
+                <div className="w-4 h-4 sm:w-8 sm:h-8 rounded-full border-2 border-white/50 bg-transparent" />
               </div>
             </div>
           </div>
         </div>
         
-        {/* Featured Project Card - Bottom Right - Aligned with top card */}
-        <div className="absolute bottom-8 right-8 hidden lg:block">
+        {/* Featured Project Card - Above buttons on mobile, original position on desktop */}
+        <div className="absolute bottom-32 sm:bottom-36 md:bottom-40 right-4 sm:right-4 md:right-8 lg:bottom-8 lg:right-8 z-[5]">
           <div 
-            className="relative bg-gradient-to-tr from-white/10 to-white/40 backdrop-blur-md border border-white/20 p-6 text-white max-w-sm overflow-hidden" 
+            className="relative bg-gradient-to-tr from-white/15 to-white/45 backdrop-blur-md border border-white/30 p-4 sm:p-6 text-white overflow-hidden w-[200px] sm:w-[260px] md:w-[280px] lg:max-w-sm shadow-lg sm:shadow-xl" 
             style={{ borderRadius: '12px' }}
           >
             {/* Diagonal Transparency Gradient Overlay - from bottom-left (transparent) to top-right (opaque) */}
@@ -123,20 +123,20 @@ export default function Hero() {
             />
             <div className="relative z-10">
               {/* Top Icons Row */}
-              <div className="flex items-start justify-between mb-3">
+              <div className="flex items-start justify-between mb-2 sm:mb-3">
                 {/* Location Pin Icon - Top Left */}
-                <MapPin className="w-5 h-5 text-white/80" strokeWidth={2} />
+                <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-white/80" strokeWidth={2} />
                 {/* Dark Green Circular Button - Top Right */}
-                <button className="bg-green-900/80 hover:bg-green-900 p-2 rounded-full transition-colors shrink-0">
-                  <ArrowUpRight className="w-4 h-4 text-white" strokeWidth={2} />
+                <button className="bg-green-900/80 hover:bg-green-900 p-1.5 sm:p-2 rounded-full transition-colors shrink-0">
+                  <ArrowUpRight className="w-3 h-3 sm:w-4 sm:h-4 text-white" strokeWidth={2} />
                 </button>
               </div>
               
               {/* Title */}
-              <h3 className="font-bold text-lg mb-2">Premium Seedlings</h3>
+              <h3 className="font-bold text-sm sm:text-lg mb-1 sm:mb-2">Premium Seedlings</h3>
               
               {/* Description */}
-              <p className="text-sm text-gray-300">
+              <p className="text-xs sm:text-sm text-gray-300 leading-tight">
                 Grafted and tissue-cultured disease-resistant seedlings for beautiful, sustainable produce.
               </p>
             </div>

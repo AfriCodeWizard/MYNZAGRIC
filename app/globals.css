@@ -169,6 +169,33 @@ html {
   display: none;
 }
 
+/* Mobile care guides scrollable menu */
+.mobile-care-guides-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.mobile-care-guides-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.mobile-care-guides-scroll[data-solid-background="true"]::-webkit-scrollbar-thumb {
+  background: rgb(209 213 219);
+  border-radius: 3px;
+}
+
+.mobile-care-guides-scroll[data-solid-background="true"]::-webkit-scrollbar-thumb:hover {
+  background: rgb(156 163 175);
+}
+
+.mobile-care-guides-scroll[data-solid-background="false"]::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+.mobile-care-guides-scroll[data-solid-background="false"]::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
 /* Testimonials infinite scroll animation */
 /* Cards appear at right margin and disappear at left margin */
 @keyframes slide-testimonials {

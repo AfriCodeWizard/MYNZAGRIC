@@ -339,10 +339,21 @@ export default function Navbar() {
               <div
                 className={cn(
                   "overflow-hidden transition-all duration-300 ease-in-out",
-                  isCareGuidesOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+                  isCareGuidesOpen ? "max-h-[70vh] opacity-100" : "max-h-0 opacity-0"
                 )}
               >
-                <div className="pl-4 pr-2 pt-2 space-y-1">
+                <div 
+                  className={cn(
+                    "pl-4 pr-2 pt-2 space-y-1 overflow-y-auto",
+                    "mobile-care-guides-scroll"
+                  )}
+                  style={{
+                    maxHeight: '70vh',
+                    scrollbarWidth: 'thin',
+                    scrollbarColor: shouldShowSolidBackground ? 'rgb(209 213 219) transparent' : 'rgba(255, 255, 255, 0.3) transparent',
+                  }}
+                  data-solid-background={shouldShowSolidBackground}
+                >
                   {seedlings.map((seedling) => (
                     <Link
                       key={seedling.id}

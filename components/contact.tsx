@@ -41,15 +41,15 @@ export default function Contact() {
           <div className="max-w-[calc(5xl+5px)] mx-auto">
             <div className="bg-white rounded-[20px] sm:rounded-[25px] shadow-[20px_22px_44px_rgba(0,0,0,0.1)] relative overflow-hidden">
               {/* Contact Form */}
-              <div className="p-5 sm:p-6 md:p-8 pr-4 sm:pr-16 md:pr-28 lg:pr-40">
+              <div className="p-5 sm:p-6 md:p-8 pr-14 sm:pr-16 md:pr-28 lg:pr-40">
                 <div className="mb-5 sm:mb-6">
                   <h3 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-gray-900 mb-2">Contact Us</h3>
-                  <p className="text-gray-600 text-xs sm:text-sm">
+                  <p className="text-gray-600 text-xs sm:text-sm pr-2">
                     Feel free to contact us any time. We will get back to you as soon as we can!
                   </p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-4 max-w-full sm:max-w-[calc(100%-200px)] md:max-w-[calc(100%-340px)] lg:max-w-[calc(100%-380px)]">
+                <form onSubmit={handleSubmit} className="space-y-4 max-w-full sm:max-w-[calc(100%-200px)] md:max-w-[calc(100%-340px)] lg:max-w-[calc(100%-380px)] pr-2">
                   <input
                     type="text"
                     name="name"
@@ -90,7 +90,7 @@ export default function Contact() {
               </div>
 
               {/* Right Edge Vertical Strip - Social Icons */}
-              <div className="absolute right-0 top-0 bottom-0 w-12 sm:w-16 md:w-20 bg-gradient-to-br from-green-600 to-green-700 rounded-tr-[20px] sm:rounded-tr-[25px] rounded-br-[20px] sm:rounded-br-[25px] flex items-center justify-center z-10">
+              <div className="absolute right-0 top-0 bottom-0 w-12 sm:w-16 md:w-20 bg-gradient-to-br from-green-600 to-green-700 rounded-tr-[20px] sm:rounded-tr-[25px] rounded-br-[20px] sm:rounded-br-[25px] flex items-center justify-center z-0">
                 <div className="flex flex-col gap-3 sm:gap-4 md:gap-5 items-center justify-center p-2 sm:p-3">
                       <a
                         href="https://wa.me/254700000000"
