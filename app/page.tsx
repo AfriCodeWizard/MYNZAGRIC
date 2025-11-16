@@ -2,7 +2,6 @@
 import Hero from "@/components/hero"
 import About from "@/components/about"
 import ProductGrid from "@/components/product-grid"
-import FeaturedCollections from "@/components/featured-collections"
 import CareGuides from "@/components/care-guides"
 import Testimonials from "@/components/testimonials"
 import Contact from "@/components/contact"
@@ -14,7 +13,6 @@ export default function Home() {
       <Hero />
       <About />
       <ProductGrid />
-      <FeaturedCollections />
       <CareGuides />
       <Testimonials />
       <Contact />
