@@ -1,11 +1,8 @@
 "use client"
 
-import { useState } from "react"
 import { Heart, PenTool, Leaf, Lightbulb } from "lucide-react"
 
-export default function About() {
-  const [darkMode] = useState(false)
-
+function About() {
   const features = [
     {
       icon: Heart,
@@ -102,3 +99,5 @@ export default function About() {
     </section>
   )
 }
+
+export default About
