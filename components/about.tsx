@@ -33,9 +33,9 @@ export default function About() {
   return (
     <section
       id="about"
-      className="min-h-screen flex items-center justify-center p-4 lg:p-8 bg-gradient-to-b from-green-900 to-green-950"
+      className="min-h-screen flex items-center justify-center py-20 md:py-28 bg-gradient-to-b from-green-900 to-green-950"
     >
-      <div className="max-w-7xl w-full mx-auto">
+      <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8">
         <header className="flex justify-between items-start mb-16">
           <div className="text-sm font-semibold tracking-widest text-gray-400">[ VALUES ]</div>
           <nav className="text-right">

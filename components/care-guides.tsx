@@ -48,7 +48,7 @@ export default function CareGuides() {
       <div className="absolute inset-0 z-0 bg-gradient-to-b from-white/20 to-white/30" />
       
       {/* Content */}
-      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-16">
           <h2 className="text-5xl md:text-6xl font-bold text-gray-900">
             WHY CHOOSE <span className="font-light text-gray-500">MYNZAGRIC</span>
