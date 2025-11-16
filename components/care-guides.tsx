@@ -30,29 +30,24 @@ export default function CareGuides() {
   ]
 
   return (
-    <section id="care-guides" className="relative py-20 md:py-28 overflow-hidden">
-      {/* Background Image */}
+    <section id="care-guides" className="relative py-20 md:py-28 overflow-hidden bg-gradient-to-b from-green-50 to-white">
+      {/* Background Image with 50% opacity */}
       <div 
-        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
+        className="absolute inset-0 z-0"
         style={{
-          backgroundImage: "url('https://images.unsplash.com/photo-1508615070457-7baeba4003ab?w=1920&q=80&auto=format&fit=crop')",
-          filter: 'brightness(0.75) saturate(75%)',
+          backgroundImage: "url(https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=1920&h=1080&fit=crop&q=80)",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          opacity: 0.5,
         }}
       />
       
-      {/* Dark Gradient Overlay */}
-      <div 
-        className="absolute inset-0 z-[1]"
-        style={{ 
-          background: 'linear-gradient(to bottom, transparent 40%, rgba(0, 0, 0, 0.7) 100%)',
-        }}
-      />
-      
-      {/* Light Gradient Overlay for text readability */}
-      <div className="absolute inset-0 z-[1] bg-gradient-to-b from-green-50/70 to-white/70" />
+      {/* Light Gradient Overlay for text readability - minimal opacity */}
+      <div className="absolute inset-0 z-0 bg-gradient-to-b from-white/20 to-white/30" />
       
       {/* Content */}
-      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-16">
           <h2 className="text-5xl md:text-6xl font-bold text-gray-900">
             WHY CHOOSE <span className="font-light text-gray-500">MYNZAGRIC</span>
