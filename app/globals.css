@@ -169,3 +169,23 @@ html {
   display: none;
 }
 
+/* Testimonials infinite scroll animation */
+@keyframes slide-testimonials {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.testimonial-slide {
+  animation: 40s slide-testimonials infinite linear !important;
+  animation-play-state: running !important;
+  will-change: transform;
+}
+
+.testimonials:hover .testimonial-slide {
+  animation-play-state: paused !important;
+}
+

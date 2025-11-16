@@ -1,50 +1,91 @@
+"use client"
+
 export default function Testimonials() {
   const testimonials = [
     {
       name: "Samuel Kipchoge",
-      role: "Farm Owner, Uasin Gishu",
       text: "Mynzagric seedlings have transformed my farm. The quality is unmatched and they really care about your success.",
-      image: "👨‍🌾",
     },
     {
       name: "Grace Mwangi",
-      role: "Horticulturist, Kiambu",
       text: "The care guides are incredibly detailed. I got a 95% survival rate with the Hass avocados. Highly recommend!",
-      image: "👩‍🌾",
     },
     {
       name: "David Ochieng",
-      role: "Fruit Exporter, Nakuru",
       text: "Been ordering from Mynzagric for 3 years. Consistent quality, great support. They are the real deal.",
-      image: "👨‍💼",
+    },
+    {
+      name: "Jane Kamau",
+      text: "Excellent seedlings and amazing customer service. My mango orchard is thriving thanks to Mynzagric!",
+    },
+    {
+      name: "Peter Muthoni",
+      text: "The citrus varieties I got are producing exceptional fruits. Best investment I've made in my farm!",
+    },
+    {
+      name: "Mary Wanjiru",
+      text: "Fast delivery and healthy seedlings. My berry garden is flourishing with their quality plants.",
+    },
+    {
+      name: "James Otieno",
+      text: "Professional service from start to finish. The grafted mangoes are showing amazing growth results.",
+    },
+    {
+      name: "Sarah Njeri",
+      text: "Outstanding customer support and premium quality seedlings. My avocado farm has never been better!",
+    },
+    {
+      name: "Michael Kariuki",
+      text: "Trusted supplier for all my farming needs. Their seedlings consistently outperform expectations.",
+    },
+    {
+      name: "Anne Mwende",
+      text: "Top-notch quality and excellent care instructions. Highly recommend for serious farmers!",
+    },
+    {
+      name: "Paul Njoroge",
+      text: "The tissue-cultured seedlings are exceptional. Quick establishment and vigorous growth.",
+    },
+    {
+      name: "Ruth Akinyi",
+      text: "Reliable delivery and exceptional seedling quality. My fruit farm is now a thriving business!",
     },
   ]
 
-  return (
-    <section id="testimonials" className="py-20 md:py-28 bg-gradient-to-b from-white to-green-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-16">
-          <h2 className="text-5xl md:text-6xl font-bold text-gray-900">
-            CUSTOMER <span className="font-light text-gray-500">SUCCESS</span>
-            <br />& STORIES
-          </h2>
-          <p className="text-lg text-gray-600">
-            Join hundreds of Kenyan farmers achieving remarkable harvests with Mynzagric
-          </p>
-        </div>
+  // Duplicate testimonials for seamless loop
+  const duplicatedTestimonials = [...testimonials, ...testimonials]
 
-        <div className="grid md:grid-cols-3 gap-8">
-          {testimonials.map((testimonial, index) => (
-            <div key={index} className="bg-white p-8 rounded-xl border border-green-100 hover:shadow-lg transition">
-              <div className="text-5xl mb-4">{testimonial.image}</div>
-              <p className="text-gray-700 mb-6 italic leading-relaxed">"{testimonial.text}"</p>
-              <div>
-                <p className="font-bold text-gray-900">{testimonial.name}</p>
-                <p className="text-gray-600 text-sm">{testimonial.role}</p>
-              </div>
-            </div>
-          ))}
-        </div>
+  return (
+    <section id="testimonials" className="relative overflow-hidden py-20 md:py-28 bg-[#0e0e0e] testimonials">
+      {/* Section Heading */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16 relative z-10">
+        <h2 className="text-5xl md:text-6xl font-bold text-white">
+          CUSTOMER <span className="font-light text-gray-400">SUCCESS</span>
+          <br />& STORIES
+        </h2>
+        <p className="text-lg text-gray-300 max-w-2xl mt-4">
+          Join hundreds of Kenyan farmers achieving remarkable harvests with Mynzagric
+        </p>
+      </div>
+
+      {/* Gradient overlays for fade effect - positioned only around testimonial cards, well below navbar and heading */}
+      <div className="absolute left-0 top-[350px] md:top-[400px] w-48 bottom-0 bg-gradient-to-r from-[#0e0e0e] to-transparent z-0 pointer-events-none" />
+      <div className="absolute right-0 top-[350px] md:top-[400px] w-48 bottom-0 bg-gradient-to-l from-[#0e0e0e] to-transparent z-0 pointer-events-none" />
+
+      <div className="testimonial-slide flex w-max" style={{ animationPlayState: 'running' }}>
+        {duplicatedTestimonials.map((testimonial, index) => (
+          <div
+            key={index}
+            className="bg-white/8 text-white backdrop-blur-md rounded-xl p-5 mx-5 w-[280px] flex-shrink-0 shadow-[0_0_12px_rgba(34,197,94,0.15)] transition-transform duration-300 hover:-translate-y-1"
+          >
+            <p className="text-[15px] leading-[1.4] mb-2.5">
+              "{testimonial.text}"
+            </p>
+            <h4 className="text-sm font-semibold text-green-400 m-0">
+              {testimonial.name}
+            </h4>
+          </div>
+        ))}
       </div>
     </section>
   )

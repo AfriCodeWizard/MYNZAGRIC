@@ -48,7 +48,7 @@ export default function Navbar() {
       setIsScrolled(scrollY > 10)
 
       // Check if navbar is over light sections
-      const lightSectionIds = ['seedlings', 'care-guides', 'testimonials', 'contact']
+      const lightSectionIds = ['seedlings', 'care-guides', 'contact']
       const navbarHeight = 80 // Approximate navbar height
       
       let overLightSection = false
