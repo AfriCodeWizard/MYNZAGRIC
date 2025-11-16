@@ -30,13 +30,13 @@ export default function ProductGrid() {
     return () => window.removeEventListener('resize', checkMobile)
   }, [])
   
-  // Initialize: first card expanded, scroll to left edge
+  // Initialize: first card expanded, scroll to left edge (desktop only)
   useEffect(() => {
-    if (trackRef.current && selectedCategory === null) {
+    if (trackRef.current && selectedCategory === null && !isMobile) {
       // Scroll to the very left (position 0) so first card is at left edge
       trackRef.current.scrollTo({ left: 0, behavior: 'auto' })
     }
-  }, []) // Only run on mount
+  }, [isMobile]) // Run when mobile state changes
 
   const categories = [
     { 
@@ -93,9 +93,9 @@ export default function ProductGrid() {
     return seedlings.filter((s) => s.category === selectedCategory)
   }, [selectedCategory])
 
-  // Handle scrolling when active card changes - smooth transitions
+  // Handle scrolling when active card changes - smooth transitions (desktop only)
   useEffect(() => {
-    if (trackRef.current && selectedCategory === null) {
+    if (trackRef.current && selectedCategory === null && !isMobile) {
       // Small delay to allow flex-basis transition to start
       const timeoutId = setTimeout(() => {
         if (trackRef.current) {
@@ -127,7 +127,42 @@ export default function ProductGrid() {
       
       return () => clearTimeout(timeoutId)
     }
-  }, [activeIndex, selectedCategory])
+  }, [activeIndex, selectedCategory, isMobile])
+
+  // Handle scrolling to active card on mobile (vertical scroll)
+  useEffect(() => {
+    if (trackRef.current && selectedCategory === null && isMobile) {
+      const timeoutId = setTimeout(() => {
+        if (trackRef.current) {
+          const cards = Array.from(trackRef.current.children) as HTMLElement[]
+          
+          if (cards[activeIndex]) {
+            const card = cards[activeIndex]
+            const cardTop = card.offsetTop
+            const cardHeight = card.offsetHeight
+            const trackHeight = trackRef.current.offsetHeight
+            const trackScrollTop = trackRef.current.scrollTop
+            
+            // Calculate scroll position to center the active card
+            const scrollPosition = cardTop - (trackHeight / 2) + (cardHeight / 2)
+            const maxScroll = trackRef.current.scrollHeight - trackHeight
+            const clampedScroll = Math.max(0, Math.min(scrollPosition, maxScroll))
+            
+            // Only scroll if the card is not already visible
+            const cardBottom = cardTop + cardHeight
+            const visibleTop = trackScrollTop
+            const visibleBottom = trackScrollTop + trackHeight
+            
+            if (cardTop < visibleTop || cardBottom > visibleBottom) {
+              trackRef.current.scrollTo({ top: clampedScroll, behavior: 'smooth' })
+            }
+          }
+        }
+      }, 50)
+      
+      return () => clearTimeout(timeoutId)
+    }
+  }, [activeIndex, selectedCategory, isMobile])
 
   const handleDetailsClick = (categoryValue: string, index: number) => {
     setActiveIndex(index)
@@ -216,8 +251,8 @@ export default function ProductGrid() {
         {/* Category View - Full Section */}
         {selectedCategory === null && (
           <div className="relative">
-            {/* Navigation Controls */}
-            <div className="flex items-center justify-between mb-6 sm:mb-8">
+            {/* Navigation Controls - Hidden on mobile, visible on desktop */}
+            <div className="hidden sm:flex items-center justify-between mb-6 sm:mb-8">
               <button
                 onClick={handlePrev}
                 className="p-2 sm:p-3 bg-white/10 hover:bg-white/20 rounded-full transition text-white z-20"
@@ -234,13 +269,17 @@ export default function ProductGrid() {
               </button>
             </div>
 
-            {/* Category Cards Track */}
+            {/* Category Cards Track - Vertical stack on mobile, horizontal scroll on desktop */}
             <div
               ref={trackRef}
-              className="flex gap-5 overflow-x-auto scrollbar-hide pb-10"
+              className={`gap-4 sm:gap-5 pb-10 ${
+                isMobile 
+                  ? 'flex flex-col' 
+                  : 'flex overflow-x-auto scrollbar-hide'
+              }`}
               style={{
                 scrollBehavior: 'smooth',
-                scrollSnapType: 'x mandatory',
+                scrollSnapType: isMobile ? 'y mandatory' : 'x mandatory',
               }}
             >
               {categories.map((category, index) => {
@@ -261,20 +300,35 @@ export default function ProductGrid() {
                       }
                     }}
                     data-category-card={category.value}
-                    className="relative flex-shrink-0 snap-center"
+                    className={`relative snap-center ${
+                      isMobile ? 'w-full' : 'flex-shrink-0'
+                    }`}
                     style={{
-                      flexBasis: isActive ? (isMobile ? '85vw' : '60vw') : (isMobile ? '4rem' : '5rem'),
-                      minWidth: isActive ? (isMobile ? '85vw' : '40rem') : (isMobile ? '4rem' : '5rem'),
-                      transition: 'flex-basis 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94), min-width 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                      flexBasis: isMobile 
+                        ? 'auto' 
+                        : (isActive ? '60vw' : '5rem'),
+                      minWidth: isMobile 
+                        ? '100%' 
+                        : (isActive ? '40rem' : '5rem'),
+                      height: isMobile 
+                        ? (isActive ? 'auto' : '4rem')
+                        : 'auto',
+                      transition: isMobile
+                        ? 'height 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+                        : 'flex-basis 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94), min-width 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
                       transform: isActive ? (isMobile ? 'translateY(0)' : 'translateY(-6px)') : 'translateY(0)',
-                      willChange: 'flex-basis, transform',
+                      willChange: isMobile ? 'height, transform' : 'flex-basis, transform',
                     }}
                   >
                     <div
-                      className="h-[20rem] sm:h-[24rem] md:h-[26rem] rounded-2xl overflow-hidden relative cursor-pointer"
+                      className={`rounded-2xl overflow-hidden relative cursor-pointer ${
+                        isMobile 
+                          ? (isActive ? 'min-h-[20rem]' : 'h-16')
+                          : 'h-[20rem] sm:h-[24rem] md:h-[26rem]'
+                      }`}
                       style={{
                         boxShadow: isActive ? '0 18px 55px rgba(0, 0, 0, 0.45)' : '0 4px 15px rgba(0, 0, 0, 0.2)',
-                        transition: 'box-shadow 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                        transition: 'box-shadow 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94), height 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
                       }}
                     >
                       {/* Background Image */}
@@ -313,19 +367,25 @@ export default function ProductGrid() {
                       <div 
                         className={`absolute inset-0 flex z-10 ${
                           isActive 
-                            ? 'flex-col sm:flex-row items-center sm:items-center sm:justify-start gap-3 sm:gap-4' 
+                            ? (isMobile 
+                                ? 'flex-row items-center justify-start gap-3' 
+                                : 'flex-col sm:flex-row items-center sm:items-center sm:justify-start gap-3 sm:gap-4')
                             : 'flex-col items-center justify-center'
                         }`}
                         style={{
                           transition: 'all 0.3s ease',
                           padding: isActive 
                             ? (isMobile ? '1rem' : '1.25rem 1.25rem 1.25rem 3.125rem')
-                            : '0',
+                            : (isMobile ? '0.5rem' : '0'),
                         }}
                       >
                         {/* Foreground Image - Only visible when active */}
                         {isActive && (
-                          <div className="w-[100px] h-[200px] sm:w-[120px] sm:h-[240px] md:w-[133px] md:h-[269px] rounded-lg overflow-hidden shadow-lg flex-shrink-0">
+                          <div className={`rounded-lg overflow-hidden shadow-lg flex-shrink-0 ${
+                            isMobile 
+                              ? 'w-[100px] h-[180px]' 
+                              : 'w-[100px] h-[200px] sm:w-[120px] sm:h-[240px] md:w-[133px] md:h-[269px]'
+                          }`}>
                             <img
                               src={category.fgImage}
                               alt={category.label}
@@ -343,16 +403,16 @@ export default function ProductGrid() {
                         )}
 
                         {/* Text Content */}
-                        <div className={`flex flex-col ${isActive ? 'items-center sm:items-start' : 'items-center'} flex-1`}>
+                        <div className={`flex flex-col ${isActive ? (isMobile ? 'items-start flex-1' : 'items-center sm:items-start') : 'items-center'} ${isActive && isMobile ? 'flex-1' : ''}`}>
                           <h3 
                             className={`text-white font-bold ${
                               isActive 
-                                ? 'text-2xl sm:text-3xl md:text-4xl mb-2 text-center sm:text-left' 
-                                : 'text-lg sm:text-xl'
+                                ? (isMobile ? 'text-xl mb-2 text-left' : 'text-2xl sm:text-3xl md:text-4xl mb-2 text-center sm:text-left')
+                                : (isMobile ? 'text-lg' : 'text-lg sm:text-xl')
                             }`}
                             style={{
-                              writingMode: isActive ? 'horizontal-tb' : 'vertical-rl',
-                              transform: isActive ? 'none' : 'rotate(180deg)',
+                              writingMode: isActive ? 'horizontal-tb' : (isMobile ? 'horizontal-tb' : 'vertical-rl'),
+                              transform: isActive ? 'none' : (isMobile ? 'none' : 'rotate(180deg)'),
                               transition: 'all 0.3s ease',
                             }}
                           >
@@ -361,12 +421,19 @@ export default function ProductGrid() {
                           
                           {isActive && (
                             <>
-                              <p className="text-sm sm:text-base text-gray-200 mb-3 sm:mb-4 max-w-[20rem] leading-relaxed text-center sm:text-left">
+                              <p className={`text-xs sm:text-base text-gray-200 mb-2 sm:mb-4 leading-relaxed ${
+                                isMobile ? 'text-left' : 'max-w-[20rem] text-center sm:text-left'
+                              }`}>
                                 {category.description}
                               </p>
                               <button
-                                onClick={() => handleDetailsClick(category.value, index)}
-                                className="bg-[#ff6b35] hover:bg-[#ff824f] text-white font-semibold py-2 px-4 sm:px-5 rounded-full transition-all duration-300 text-xs sm:text-sm w-full sm:w-auto"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  handleDetailsClick(category.value, index)
+                                }}
+                                className={`bg-[#ff6b35] hover:bg-[#ff824f] active:bg-[#ff5a25] text-white font-semibold py-2 px-4 sm:py-2.5 sm:px-5 rounded-full transition-all duration-300 text-xs sm:text-sm z-20 relative ${
+                                  isMobile ? 'w-auto self-start' : 'w-full sm:w-auto'
+                                }`}
                               >
                                 Order Now
                               </button>
@@ -378,12 +445,12 @@ export default function ProductGrid() {
                   </div>
                 )
               })}
-              {/* Right padding to ensure last card is fully visible */}
-              <div className="flex-shrink-0 w-4"></div>
+              {/* Right padding to ensure last card is fully visible - Only on desktop */}
+              {!isMobile && <div className="flex-shrink-0 w-4"></div>}
           </div>
 
-            {/* Pagination Dots */}
-            <div className="flex justify-center gap-2 mt-8">
+            {/* Pagination Dots - Hidden on mobile, visible on desktop */}
+            <div className="hidden sm:flex justify-center gap-2 mt-8">
               {categories.map((_, index) => {
                 const isActive = activeIndex === index
                 return (
