@@ -68,11 +68,19 @@ export default function Testimonials() {
         </p>
       </div>
 
-      {/* Gradient overlays for fade effect - positioned only around testimonial cards, well below navbar and heading */}
-      <div className="absolute left-0 top-[350px] md:top-[400px] w-48 bottom-0 bg-gradient-to-r from-[#0e0e0e] to-transparent z-0 pointer-events-none" />
-      <div className="absolute right-0 top-[350px] md:top-[400px] w-48 bottom-0 bg-gradient-to-l from-[#0e0e0e] to-transparent z-0 pointer-events-none" />
+      {/* Container for testimonial slide with fade overlays aligned to section margins */}
+      <div className="relative overflow-hidden">
+        {/* Left fade overlay - aligned with section margin */}
+        <div className="absolute left-4 sm:left-6 lg:left-8 top-0 bottom-0 w-48 z-10 pointer-events-none">
+          <div className="h-full bg-gradient-to-r from-[#0e0e0e] via-[#0e0e0e]/90 to-transparent shadow-[inset_40px_0_30px_-30px_rgba(14,14,14,0.9)]" />
+        </div>
+        
+        {/* Right fade overlay - aligned with section margin */}
+        <div className="absolute right-4 sm:right-6 lg:right-8 top-0 bottom-0 w-48 z-10 pointer-events-none">
+          <div className="h-full bg-gradient-to-l from-[#0e0e0e] via-[#0e0e0e]/90 to-transparent shadow-[inset_-40px_0_30px_-30px_rgba(14,14,14,0.9)]" />
+        </div>
 
-      <div className="testimonial-slide flex w-max" style={{ animationPlayState: 'running' }}>
+        <div className="testimonial-slide flex w-max relative z-0" style={{ animationPlayState: 'running' }}>
         {duplicatedTestimonials.map((testimonial, index) => (
           <div
             key={index}
@@ -83,9 +91,10 @@ export default function Testimonials() {
             </p>
             <h4 className="text-sm font-semibold text-green-400 m-0">
               {testimonial.name}
-            </h4>
-          </div>
-        ))}
+          </h4>
+        </div>
+      ))}
+        </div>
       </div>
     </section>
   )
