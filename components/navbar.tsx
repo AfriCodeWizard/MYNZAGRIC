@@ -149,6 +149,7 @@ export default function Navbar() {
                   style={{ 
                     objectFit: 'contain',
                     backgroundColor: 'transparent',
+                    filter: 'brightness(1.3) contrast(1.2)',
                   }}
                 />
                 {/* Color Logo - Visible when navbar is shown */}
