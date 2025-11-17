@@ -12,12 +12,22 @@ interface CartItem {
   price: number
 }
 
+const kenyanCounties = [
+  "Baringo", "Bomet", "Bungoma", "Busia", "Elgeyo-Marakwet", "Embu", "Garissa", "Homa Bay",
+  "Isiolo", "Kajiado", "Kakamega", "Kericho", "Kiambu", "Kilifi", "Kirinyaga", "Kisii",
+  "Kisumu", "Kitui", "Kwale", "Laikipia", "Lamu", "Machakos", "Makueni", "Mandera",
+  "Marsabit", "Meru", "Migori", "Mombasa", "Murang'a", "Nairobi", "Nakuru", "Nandi",
+  "Narok", "Nyamira", "Nyandarua", "Nyeri", "Samburu", "Siaya", "Taita Taveta", "Tana River",
+  "Tharaka-Nithi", "Trans Nzoia", "Turkana", "Uasin Gishu", "Vihiga", "Wajir", "West Pokot"
+].sort()
+
 export default function ProductGrid() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [activeIndex, setActiveIndex] = useState(0)
   const [cart, setCart] = useState<CartItem[]>([])
   const [isCartOpen, setIsCartOpen] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
+  const [deliveryLocation, setDeliveryLocation] = useState<string>("")
   const trackRef = useRef<HTMLDivElement>(null)
 
   // Check if mobile on mount and resize
@@ -215,28 +225,29 @@ export default function ProductGrid() {
 
   const generateWhatsAppMessage = () => {
     const items = cart
-      .map((item, index) => `${index + 1}. ${item.name}\n   Quantity: ${item.quantity}\n   Price: KES ${(item.price * item.quantity).toLocaleString()}`)
+      .map((item, index) => `${index + 1}. *${item.name}*\n   Quantity: ${item.quantity}\n   Price: KES ${(item.price * item.quantity).toLocaleString()}`)
       .join("\n\n")
     
-    const message = `🌱 *ORDER REQUEST - MYNZAGRIC* 🌱
+    const locationText = deliveryLocation ? `\n*Delivery Location:* ${deliveryLocation}\n` : ""
+    
+    const message = `*ORDER REQUEST - MYNZAGRIC*
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+─────────────────────────
 
-📦 *ORDER ITEMS:*
+*ORDER ITEMS:*
 
 ${items}
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+─────────────────────────
 
-💰 *ORDER SUMMARY:*
+*ORDER SUMMARY:*
 Subtotal: KES ${totalPrice.toLocaleString()}
-Delivery Fee: *Pending upon order confirmation*
+Delivery Fee: *Pending upon order confirmation*${locationText}
+─────────────────────────
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Please confirm availability and provide delivery details.
 
-✅ Please confirm availability and provide delivery details.
-
-Thank you! 🙏`
+Thank you!`
     
     return encodeURIComponent(message)
   }
@@ -606,7 +617,26 @@ Thank you! 🙏`
                   </div>
 
                   <div className="border-t border-green-100 p-6 space-y-4">
-                    <div className="space-y-3">
+                    <div className="space-y-4">
+                      <div>
+                        <label htmlFor="delivery-location" className="block text-sm font-medium text-gray-700 mb-2">
+                          Delivery Location <span className="text-red-500">*</span>
+                        </label>
+                        <select
+                          id="delivery-location"
+                          value={deliveryLocation}
+                          onChange={(e) => setDeliveryLocation(e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-gray-900 bg-white"
+                          required
+                        >
+                          <option value="">Select County</option>
+                          {kenyanCounties.map((county) => (
+                            <option key={county} value={county}>
+                              {county}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
                       <div className="flex justify-between items-center border-t border-gray-200 pt-3">
                         <div className="flex flex-col">
                           <span className="text-gray-600">Delivery Fee:</span>
@@ -620,10 +650,36 @@ Thank you! 🙏`
                       </div>
                     </div>
                     <a
-                      href={`https://wa.me/254713764658?text=${generateWhatsAppMessage()}`}
+                      href={deliveryLocation ? `https://wa.me/254713764658?text=${generateWhatsAppMessage()}` : "#"}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 transition text-center block shadow-md hover:shadow-lg"
+                      className={`w-full font-bold py-3 rounded-lg transition text-center block shadow-md hover:shadow-lg ${
+                        deliveryLocation
+                          ? "bg-green-600 text-white hover:bg-green-700"
+                          : "bg-gray-300 text-gray-500 cursor-not-allowed pointer-events-none"
+                      }`}
+                      onClick={(e) => {
+                        if (!deliveryLocation) {
+                          e.preventDefault()
+                          alert("Please select a delivery location")
+                          return
+                        }
+                        
+                        // Try to auto-send on mobile devices
+                        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+                        if (isMobile) {
+                          // On mobile, try the whatsapp:// protocol which may auto-send
+                          const message = generateWhatsAppMessage()
+                          const whatsappUrl = `whatsapp://send?phone=254713764658&text=${message}`
+                          window.location.href = whatsappUrl
+                          e.preventDefault()
+                          
+                          // Fallback after a short delay
+                          setTimeout(() => {
+                            window.open(`https://wa.me/254713764658?text=${message}`, '_blank')
+                          }, 500)
+                        }
+                      }}
                     >
                       📱 Order on WhatsApp
                     </a>
