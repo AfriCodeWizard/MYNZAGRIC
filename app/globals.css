@@ -232,7 +232,9 @@ html {
   margin-left: -100%;
 }
 
-.testimonials:hover .testimonial-slide {
+/* Pause animation only when hovering over individual cards, not the entire section */
+/* Use :has() to pause when any card inside the slide is hovered */
+.testimonial-slide:has(.testimonial-card:hover) {
   animation-play-state: paused !important;
 }
 
