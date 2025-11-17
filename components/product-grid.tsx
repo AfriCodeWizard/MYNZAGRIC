@@ -607,16 +607,12 @@ Thank you! 🙏`
 
                   <div className="border-t border-green-100 p-6 space-y-4">
                     <div className="space-y-3">
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-600">Subtotal:</span>
-                        <span className="font-semibold text-gray-900">KES {totalPrice.toLocaleString()}</span>
-                      </div>
                       <div className="flex justify-between items-center border-t border-gray-200 pt-3">
                         <div className="flex flex-col">
                           <span className="text-gray-600">Delivery Fee:</span>
-                          <span className="text-xs text-gray-500 italic">Pending upon order confirmation</span>
+                          <span className="text-xs text-red-500 italic">Pending upon order confirmation</span>
                         </div>
-                        <span className="font-semibold text-gray-500">—</span>
+                        <span className="font-semibold text-red-500">—</span>
                       </div>
                       <div className="flex justify-between items-center border-t-2 border-green-200 pt-3 mt-2">
                         <span className="font-bold text-gray-900">Total:</span>
