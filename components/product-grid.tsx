@@ -1,9 +1,10 @@
 "use client"
 
 import { useState, useMemo, useEffect, useRef } from "react"
+import Link from "next/link"
 import ProductCard from "./product-card"
 import { seedlings } from "@/lib/seedlings-data"
-import { X, ShoppingBag, Plus, Minus, ArrowLeft, ChevronLeft, ChevronRight, ChevronUp, ChevronDown } from "lucide-react"
+import { X, ShoppingBag, Plus, Minus, ArrowLeft, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, ArrowUpRight } from "lucide-react"
 
 interface CartItem {
   id: string
@@ -481,17 +482,18 @@ Thank you!`
                               }`}>
                                 {category.description}
                               </p>
-                              <button
+                              <Link
+                                href={`/seedlings/${category.value}`}
                                 onClick={(e) => {
                                   e.stopPropagation()
-                                  handleDetailsClick(category.value, index)
                                 }}
-                                className={`bg-[#ff6b35] hover:bg-[#ff824f] active:bg-[#ff5a25] text-white font-semibold py-2 px-4 sm:py-2.5 sm:px-5 rounded-full transition-all duration-300 text-xs sm:text-sm z-20 relative ${
+                                className={`bg-[#ff6b35] hover:bg-[#ff824f] active:bg-[#ff5a25] text-white font-semibold py-2 px-4 sm:py-2.5 sm:px-5 rounded-full transition-all duration-300 text-xs sm:text-sm z-20 relative flex items-center justify-center gap-2 ${
                                   isMobile ? 'w-auto self-start' : 'w-full sm:w-auto'
                                 }`}
                               >
-                                Order Now
-                              </button>
+                                View Products
+                                <ArrowUpRight className="w-4 h-4" />
+                              </Link>
                             </>
                           )}
                         </div>
