@@ -98,8 +98,8 @@ export default function Footer() {
             <h4 className="font-bold mb-6 text-white">Contact</h4>
             <ul className="space-y-3 text-green-100 text-sm">
               <li>
-                <a href="tel:+254700000000" className="hover:text-white transition">
-                  +254 700 000 000
+                <a href="tel:+254713764658" className="hover:text-white transition">
+                  +254 713 764 658
                 </a>
               </li>
               <li>
@@ -116,7 +116,7 @@ export default function Footer() {
             <h4 className="font-bold mb-6 text-white">Follow Us</h4>
             <div className="flex gap-3">
               <a
-                href="https://x.com/mynzagric"
+                href="https://x.com/mynzagric254?t=wIbif2p_S4AI0GBH17nQBQ&s=09"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-3 bg-green-800 rounded-lg hover:bg-green-700 transition"
@@ -127,7 +127,7 @@ export default function Footer() {
                 </svg>
               </a>
               <a
-                href="https://instagram.com/mynzagric"
+                href="https://www.instagram.com/mynzagric254?igsh=czJrdjBoYW5rYnl3"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-3 bg-green-800 rounded-lg hover:bg-green-700 transition"
@@ -138,7 +138,7 @@ export default function Footer() {
                 </svg>
               </a>
               <a
-                href="https://tiktok.com/@mynzagric"
+                href="https://www.tiktok.com/@mynzagricafrica?_r=1&_t=ZM-91Rcpl2IfPM"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-3 bg-green-800 rounded-lg hover:bg-green-700 transition"

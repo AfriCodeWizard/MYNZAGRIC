@@ -65,7 +65,7 @@ export default function Hero() {
             <div className="w-full lg:w-auto">
               <div className="flex flex-wrap items-center gap-4 sm:gap-6">
                 <a
-                  href="https://wa.me/254700000000"
+                  href="https://wa.me/254713764658"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="bg-white text-gray-900 px-7 sm:px-8 py-2.5 sm:py-3 rounded-lg font-semibold hover:bg-gray-200 transition-colors text-sm sm:text-base whitespace-nowrap shadow-md"

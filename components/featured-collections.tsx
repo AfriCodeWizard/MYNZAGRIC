@@ -71,7 +71,7 @@ export default function FeaturedCollections() {
   const handleAddCollection = (collection: Collection) => {
     const whatsappMessage = `Hi! I'm interested in the ${collection.title} collection with ${collection.seedlings.map((s) => s.name).join(", ")}. Total: KES ${collection.price.toLocaleString()}`
     const encodedMessage = encodeURIComponent(whatsappMessage)
-    window.open(`https://wa.me/254700000000?text=${encodedMessage}`, "_blank")
+    window.open(`https://wa.me/254713764658?text=${encodedMessage}`, "_blank")
   }
 
   return (
@@ -140,7 +140,7 @@ export default function FeaturedCollections() {
             Can't find the perfect combination? Contact us to create a custom collection
           </p>
           <a
-            href="https://wa.me/254700000000?text=Hi! I'd like to create a custom seedling collection"
+            href="https://wa.me/254713764658?text=Hi! I'd like to create a custom seedling collection"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-block bg-white border-2 border-emerald-600 text-emerald-600 hover:bg-emerald-50 font-semibold py-2 px-6 rounded-lg transition-colors duration-300"

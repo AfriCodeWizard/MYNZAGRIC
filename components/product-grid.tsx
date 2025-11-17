@@ -591,7 +591,7 @@ export default function ProductGrid() {
                       <span className="text-2xl font-bold text-green-600">KES {totalPrice.toLocaleString()}</span>
                     </div>
                     <a
-                      href={`https://wa.me/254700000000?text=${generateWhatsAppMessage()}`}
+                      href={`https://wa.me/254713764658?text=${generateWhatsAppMessage()}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="w-full bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 transition text-center block"
