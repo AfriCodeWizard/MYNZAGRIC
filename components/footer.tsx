@@ -27,9 +27,9 @@ export default function Footer() {
   }, [])
 
   return (
-    <footer className="relative bg-gradient-to-b from-green-900 to-green-950 text-white py-16 md:py-20 overflow-hidden">
+    <footer className="relative bg-gradient-to-b from-green-900 to-green-950 text-white py-16 md:py-20 overflow-hidden" style={{ zIndex: 1 }}>
       {/* Bubble Animation Layer */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true" style={{ zIndex: 1 }}>
         {bubbles.map((bubble, index) => (
           <Bubble
             key={index}
@@ -42,7 +42,7 @@ export default function Footer() {
       </div>
 
       {/* Footer Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" style={{ zIndex: 1 }}>
         <div className="grid md:grid-cols-4 gap-8 mb-12">
           {/* Brand */}
           <div>
