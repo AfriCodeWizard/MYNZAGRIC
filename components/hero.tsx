@@ -47,13 +47,13 @@ export default function Hero() {
         <Navbar /> {/* Using the new Navbar component with animated hover effects */}
         {/* Main Content */}
         <main className="mt-12 sm:mt-10 md:mt-16 flex-grow">
-          <div className="max-w-3xl pr-[120px] sm:pr-0 relative z-10">
+          <div className="max-w-3xl relative z-10">
             <h1 className="text-4xl sm:text-5xl md:text-7xl text-white leading-[1.15] sm:leading-tight mb-4 sm:mb-5 md:mb-6">
               <span className="font-light">GROW WITH</span>
               <br />
               <span className="text-green-300 font-bold">MYNZAGRIC</span>
             </h1>
-            <p className="mt-4 sm:mt-5 md:mt-6 text-base sm:text-lg text-gray-200 max-w-xl leading-relaxed pr-4 sm:pr-0">
+            <p className="mt-4 sm:mt-5 md:mt-6 text-base sm:text-lg text-gray-200 max-w-xl leading-relaxed">
               Certified grafted fruit seedlings ready for transplanting. Premium quality seedlings from Kenya's trusted
               nursery.
             </p>

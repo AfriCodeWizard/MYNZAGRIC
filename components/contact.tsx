@@ -44,7 +44,7 @@ export default function Contact() {
               <div className="p-5 sm:p-6 md:p-8 pr-14 sm:pr-16 md:pr-28 lg:pr-40">
                 <div className="mb-5 sm:mb-6">
                   <h3 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-gray-900 mb-2">Contact Us</h3>
-                  <p className="text-gray-600 text-xs sm:text-sm pr-2">
+                  <p className="text-gray-600 text-xs sm:text-sm">
                     Feel free to contact us any time. We will get back to you as soon as we can!
                   </p>
                 </div>

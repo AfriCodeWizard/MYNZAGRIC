@@ -124,6 +124,21 @@
   body {
     @apply bg-background text-foreground;
   }
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    overflow-x: hidden;
+  }
+  main {
+    width: 100%;
+    margin: 0 auto;
+  }
+  section {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
 
 /* Smooth scroll behavior */
