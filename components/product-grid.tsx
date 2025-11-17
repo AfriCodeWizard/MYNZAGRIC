@@ -215,9 +215,29 @@ export default function ProductGrid() {
 
   const generateWhatsAppMessage = () => {
     const items = cart
-      .map((item) => `${item.name} (Qty: ${item.quantity}) - KES ${item.price * item.quantity}`)
-      .join("\n")
-    const message = `Hi Mynzagric, I'd like to order:\n\n${items}\n\nTotal: KES ${totalPrice}`
+      .map((item, index) => `${index + 1}. ${item.name}\n   Quantity: ${item.quantity}\n   Price: KES ${(item.price * item.quantity).toLocaleString()}`)
+      .join("\n\n")
+    
+    const message = `🌱 *ORDER REQUEST - MYNZAGRIC* 🌱
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📦 *ORDER ITEMS:*
+
+${items}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💰 *ORDER SUMMARY:*
+Subtotal: KES ${totalPrice.toLocaleString()}
+Delivery Fee: *Pending upon order confirmation*
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ Please confirm availability and provide delivery details.
+
+Thank you! 🙏`
+    
     return encodeURIComponent(message)
   }
 
@@ -586,17 +606,30 @@ export default function ProductGrid() {
                   </div>
 
                   <div className="border-t border-green-100 p-6 space-y-4">
-                    <div className="flex justify-between items-center">
-                      <span className="font-bold text-gray-900">Total:</span>
-                      <span className="text-2xl font-bold text-green-600">KES {totalPrice.toLocaleString()}</span>
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-600">Subtotal:</span>
+                        <span className="font-semibold text-gray-900">KES {totalPrice.toLocaleString()}</span>
+                      </div>
+                      <div className="flex justify-between items-center border-t border-gray-200 pt-3">
+                        <div className="flex flex-col">
+                          <span className="text-gray-600">Delivery Fee:</span>
+                          <span className="text-xs text-gray-500 italic">Pending upon order confirmation</span>
+                        </div>
+                        <span className="font-semibold text-gray-500">—</span>
+                      </div>
+                      <div className="flex justify-between items-center border-t-2 border-green-200 pt-3 mt-2">
+                        <span className="font-bold text-gray-900">Total:</span>
+                        <span className="text-2xl font-bold text-green-600">KES {totalPrice.toLocaleString()}</span>
+                      </div>
                     </div>
                     <a
                       href={`https://wa.me/254713764658?text=${generateWhatsAppMessage()}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 transition text-center block"
+                      className="w-full bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 transition text-center block shadow-md hover:shadow-lg"
                     >
-                      Order on WhatsApp
+                      📱 Order on WhatsApp
                     </a>
                     <button
                       onClick={() => setCart([])}
