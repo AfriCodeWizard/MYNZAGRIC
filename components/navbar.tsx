@@ -10,33 +10,44 @@ import { cn } from "@/lib/utils"
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const [isCareGuidesOpen, setIsCareGuidesOpen] = useState(false)
+  const [isProductsOpen, setIsProductsOpen] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
   const [isScrolled, setIsScrolled] = useState(false)
   const [isOverLightSection, setIsOverLightSection] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const productsDropdownRef = useRef<HTMLDivElement>(null)
 
-  // Close dropdown when clicking outside
+  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsCareGuidesOpen(false)
-        setActiveDropdown(null)
+        if (activeDropdown === "care-guides") {
+          setActiveDropdown(null)
+        }
+      }
+      if (productsDropdownRef.current && !productsDropdownRef.current.contains(event.target as Node)) {
+        setIsProductsOpen(false)
+        if (activeDropdown === "products") {
+          setActiveDropdown(null)
+        }
       }
     }
 
-    if (isCareGuidesOpen) {
+    if (isCareGuidesOpen || isProductsOpen) {
       document.addEventListener("mousedown", handleClickOutside)
     }
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside)
     }
-  }, [isCareGuidesOpen])
+  }, [isCareGuidesOpen, isProductsOpen, activeDropdown])
 
   // Close mobile menu when route changes
   useEffect(() => {
     setIsOpen(false)
     setIsCareGuidesOpen(false)
+    setIsProductsOpen(false)
   }, [])
 
   // Scroll detection for navbar background
@@ -196,7 +207,126 @@ export default function Navbar() {
           {/* Desktop Navigation - Centered */}
           <div className="hidden lg:flex items-center justify-center absolute left-1/2 -translate-x-1/2 space-x-1">
             <NavLink href="#about" label="About" shouldShowSolidBackground={shouldShowSolidBackground} />
-            <NavLink href="#seedlings" label="Seedlings" shouldShowSolidBackground={shouldShowSolidBackground} />
+
+            {/* Products Dropdown */}
+            <div
+              ref={productsDropdownRef}
+              className="relative"
+              onMouseEnter={() => {
+                setIsProductsOpen(true)
+                setActiveDropdown("products")
+              }}
+              onMouseLeave={(e) => {
+                const relatedTarget = e.relatedTarget as HTMLElement | null
+                if (relatedTarget && productsDropdownRef.current?.contains(relatedTarget)) {
+                  return
+                }
+                setIsProductsOpen(false)
+                setActiveDropdown(null)
+              }}
+            >
+              <button
+                className={cn(
+                  "relative px-4 py-2 uppercase text-sm font-medium transition-colors duration-300",
+                  "focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-transparent rounded",
+                  shouldShowSolidBackground
+                    ? "text-gray-900 hover:text-green-600"
+                    : "text-white hover:text-green-300"
+                )}
+                aria-expanded={isProductsOpen}
+                aria-haspopup="true"
+                aria-label="Products Menu"
+                onKeyDown={(e) => handleKeyDown(e, () => setIsProductsOpen(!isProductsOpen))}
+              >
+                Products
+                <ChevronDown
+                  className={cn(
+                    "inline-block ml-2 w-4 h-4 transition-all duration-300",
+                    isProductsOpen && "rotate-180",
+                    shouldShowSolidBackground ? "text-gray-900" : "text-white"
+                  )}
+                  aria-hidden="true"
+                />
+                <span
+                  className={cn(
+                    "absolute bottom-0 left-1/2 h-0.5 transition-all duration-300 ease-out",
+                    "transform -translate-x-1/2",
+                    isProductsOpen ? "w-full" : "w-0",
+                    shouldShowSolidBackground ? "bg-green-600" : "bg-green-300"
+                  )}
+                  aria-hidden="true"
+                />
+              </button>
+
+              {/* Products Dropdown Menu */}
+              {isProductsOpen && (
+                <>
+                  <div
+                    className="absolute top-full left-1/2 -translate-x-1/2 w-64 h-2"
+                    style={{ zIndex: 9998 }}
+                    onMouseEnter={() => {
+                      setIsProductsOpen(true)
+                      setActiveDropdown("products")
+                    }}
+                  />
+                  <div
+                    className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-64 bg-white rounded-lg shadow-2xl border border-gray-100"
+                    role="menu"
+                    aria-orientation="vertical"
+                    onMouseEnter={() => {
+                      setIsProductsOpen(true)
+                      setActiveDropdown("products")
+                    }}
+                    onMouseLeave={() => {
+                      setIsProductsOpen(false)
+                      setActiveDropdown(null)
+                    }}
+                    style={{ zIndex: 9999 }}
+                  >
+                    <div className="p-2">
+                      <Link
+                        href="#seedlings"
+                        className="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-green-50 hover:text-green-700 transition-colors"
+                        role="menuitem"
+                        onClick={() => {
+                          setIsProductsOpen(false)
+                          setActiveDropdown(null)
+                        }}
+                      >
+                        Seedlings
+                      </Link>
+                      <div className="mt-1">
+                        <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                          Frutopia Value Pack
+                        </div>
+                        <Link
+                          href="#frutopia"
+                          className="block px-6 py-2 text-sm text-gray-700 rounded-md hover:bg-green-50 hover:text-green-700 transition-colors"
+                          role="menuitem"
+                          onClick={() => {
+                            setIsProductsOpen(false)
+                            setActiveDropdown(null)
+                          }}
+                        >
+                          All Value Packs
+                        </Link>
+                        <Link
+                          href="#frutopia"
+                          className="block px-6 py-2 text-sm text-gray-700 rounded-md hover:bg-green-50 hover:text-green-700 transition-colors"
+                          role="menuitem"
+                          onClick={() => {
+                            setIsProductsOpen(false)
+                            setActiveDropdown(null)
+                          }}
+                        >
+                          Drip Irrigation Kits
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
 
             {/* Care Guides Dropdown */}
             <div
@@ -349,7 +479,49 @@ export default function Navbar() {
             shouldShowSolidBackground ? "bg-white/95" : "bg-black/60"
           )}>
             <MobileNavLink href="#about" label="About" onClick={() => setIsOpen(false)} shouldShowSolidBackground={shouldShowSolidBackground} />
-            <MobileNavLink href="#seedlings" label="Seedlings" onClick={() => setIsOpen(false)} shouldShowSolidBackground={shouldShowSolidBackground} />
+
+            {/* Mobile Products Dropdown */}
+            <div>
+              <button
+                onClick={() => setIsProductsOpen(!isProductsOpen)}
+                className={cn(
+                  "w-full flex items-center justify-between px-4 py-3 uppercase text-sm font-medium rounded-md transition-colors",
+                  "focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2",
+                  shouldShowSolidBackground
+                    ? "text-gray-900 hover:bg-gray-100 focus:ring-offset-white"
+                    : "text-white hover:bg-white/10 focus:ring-offset-black/60"
+                )}
+                aria-expanded={isProductsOpen}
+                aria-haspopup="true"
+              >
+                Products
+                <ChevronDown
+                  className={cn(
+                    "w-4 h-4 transition-all duration-300",
+                    isProductsOpen && "rotate-180",
+                    shouldShowSolidBackground ? "text-gray-900" : "text-white"
+                  )}
+                  aria-hidden="true"
+                />
+              </button>
+              <div
+                className={cn(
+                  "overflow-hidden transition-all duration-300 ease-in-out",
+                  isProductsOpen ? "max-h-[50vh] opacity-100" : "max-h-0 opacity-0"
+                )}
+              >
+                <div className="pl-4 pr-2 pt-2 space-y-1">
+                  <MobileNavLink href="#seedlings" label="Seedlings" onClick={() => { setIsOpen(false); setIsProductsOpen(false); }} shouldShowSolidBackground={shouldShowSolidBackground} />
+                  <div className="px-3 py-2 text-xs font-semibold uppercase tracking-wide"
+                    style={shouldShowSolidBackground ? { color: '#6b7280' } : { color: 'rgba(255, 255, 255, 0.7)' }}
+                  >
+                    Frutopia Value Pack
+                  </div>
+                  <MobileNavLink href="#frutopia" label="All Value Packs" onClick={() => { setIsOpen(false); setIsProductsOpen(false); }} shouldShowSolidBackground={shouldShowSolidBackground} />
+                  <MobileNavLink href="#frutopia" label="Drip Irrigation Kits" onClick={() => { setIsOpen(false); setIsProductsOpen(false); }} shouldShowSolidBackground={shouldShowSolidBackground} />
+                </div>
+              </div>
+            </div>
 
             {/* Mobile Care Guides Dropdown */}
             <div>

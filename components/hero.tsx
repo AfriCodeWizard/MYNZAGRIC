@@ -57,6 +57,20 @@ export default function Hero() {
               Certified grafted fruit seedlings ready for transplanting. Premium quality seedlings from Kenya's trusted
               nursery.
             </p>
+            <div className="mt-6 sm:mt-8 bg-green-600/20 border border-green-500/30 rounded-lg p-4 sm:p-5 max-w-xl">
+              <p className="text-green-300 font-semibold text-sm sm:text-base mb-2">
+                🌱 NEW: FRUTOPIA VALUE PACK
+              </p>
+              <p className="text-white text-sm leading-relaxed">
+                Complete 1-acre packages with premium seedlings + <strong className="text-green-300">precision drip irrigation systems</strong>. Everything you need to start farming!
+              </p>
+              <a
+                href="#frutopia"
+                className="inline-block mt-3 text-green-300 hover:text-green-200 font-medium text-sm transition-colors"
+              >
+                Explore Value Packs →
+              </a>
+            </div>
           </div>
         </main>
         {/* Footer with CTA and Featured Card */}
@@ -133,11 +147,11 @@ export default function Hero() {
               </div>
               
               {/* Title */}
-              <h3 className="font-bold text-sm sm:text-lg mb-1 sm:mb-2">Premium Seedlings</h3>
+              <h3 className="font-bold text-sm sm:text-lg mb-1 sm:mb-2">Frutopia Value Pack</h3>
               
               {/* Description */}
               <p className="text-xs sm:text-sm text-gray-300 leading-tight">
-                Grafted and tissue-cultured disease-resistant seedlings for beautiful, sustainable produce.
+                Complete farming solutions with seedlings + <strong className="text-green-300">drip irrigation kits</strong>. Start your 1-acre farm today!
               </p>
             </div>
           </div>
