@@ -101,29 +101,50 @@ export default function Navbar() {
 
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-50 w-full pt-4"
-      style={{ pointerEvents: "none" }}
+      className="fixed top-0 left-0 right-0 z-50 w-full"
+      style={{ 
+        pointerEvents: "none", 
+        top: 0,
+        position: 'fixed',
+      }}
     >
-      {/* Animated Background Layer - Drops from top with padding */}
-      <div
-        className={cn(
-          "absolute top-4 left-4 right-4 sm:left-6 sm:right-6 lg:left-8 lg:right-8 transition-all duration-500 ease-in-out",
-          shouldShowSolidBackground
-            ? "bg-white shadow-lg opacity-100 translate-y-0 rounded-[10px]"
-            : "bg-white opacity-0 -translate-y-full shadow-none rounded-[10px]"
-        )}
-        style={{
-          transition: "opacity 500ms ease-in-out, transform 500ms ease-in-out, box-shadow 500ms ease-in-out",
-          pointerEvents: "none",
-          overflow: "visible",
-          height: "calc(100% - 1rem)",
-          zIndex: 1,
-        }}
-      />
+      {/* Wrapper to maintain consistent top spacing */}
+      <div style={{ paddingTop: '1rem', width: '100%', height: '100%', position: 'relative' }}>
+        {/* Animated Background Layer - Drops from top with padding */}
+        <div
+          className={cn(
+            "absolute left-4 right-4 sm:left-6 sm:right-6 lg:left-8 lg:right-8 transition-all duration-500 ease-in-out",
+            shouldShowSolidBackground
+              ? "bg-white shadow-lg opacity-100 translate-y-0 rounded-[10px]"
+              : "bg-white opacity-0 -translate-y-full shadow-none rounded-[10px]"
+          )}
+          style={{
+            top: '1rem',
+            transition: "opacity 500ms ease-in-out, transform 500ms ease-in-out, box-shadow 500ms ease-in-out",
+            pointerEvents: "none",
+            overflow: "visible",
+            height: "calc(100% - 1rem)",
+            zIndex: 1,
+          }}
+        />
 
-      {/* Navbar Content - Always visible on transparent background */}
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10" aria-label="Main navigation" style={{ overflow: "visible", pointerEvents: "auto" }}>
-        <div className="flex justify-between items-center h-16 md:h-20 relative" style={{ overflow: "visible" }}>
+        {/* Navbar Content - Always visible on transparent background */}
+        <nav 
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10" 
+          aria-label="Main navigation" 
+          style={{ 
+            overflow: "visible", 
+            pointerEvents: "auto",
+          }}
+        >
+        <div 
+          className="flex justify-between items-center h-16 md:h-20 relative" 
+          style={{ 
+            overflow: "visible",
+            marginTop: 0,
+            top: 0,
+          }}
+        >
           {/* Logo */}
           <div className="flex-shrink-0 z-50 relative">
             <Link
@@ -398,6 +419,7 @@ export default function Navbar() {
           </nav>
         </div>
       </nav>
+      </div>
     </header>
   )
 }
