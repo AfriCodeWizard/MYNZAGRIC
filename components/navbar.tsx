@@ -134,23 +134,40 @@ export default function Navbar() {
               )}
               aria-label="Mynzagric Home"
             >
-              <Image
-                src="/mynzAgric-logoOficial-_1_.webp"
-                alt="Mynzagric Logo"
-                width={180}
-                height={50}
-                className={cn(
-                  "h-14 md:h-[70px] w-auto",
-                  shouldShowSolidBackground 
-                    ? "mix-blend-multiply" 
-                    : ""
-                )}
-                priority
-                style={{ 
-                  objectFit: 'contain',
-                  backgroundColor: 'transparent',
-                }}
-              />
+              <div className="relative h-14 md:h-[70px] w-[180px] md:w-[200px]">
+                {/* White Logo - Visible when navbar is transparent */}
+                <Image
+                  src="/mynzAgric logoOficial (white).webp"
+                  alt="Mynzagric Logo"
+                  width={180}
+                  height={50}
+                  className={cn(
+                    "absolute inset-0 h-full w-auto transition-opacity duration-300",
+                    shouldShowSolidBackground ? "opacity-0" : "opacity-100"
+                  )}
+                  priority
+                  style={{ 
+                    objectFit: 'contain',
+                    backgroundColor: 'transparent',
+                  }}
+                />
+                {/* Color Logo - Visible when navbar is shown */}
+                <Image
+                  src="/mynzAgric logoOficial (color).webp"
+                  alt="Mynzagric Logo"
+                  width={180}
+                  height={50}
+                  className={cn(
+                    "absolute inset-0 h-full w-auto transition-opacity duration-300",
+                    shouldShowSolidBackground ? "opacity-100" : "opacity-0"
+                  )}
+                  priority
+                  style={{ 
+                    objectFit: 'contain',
+                    backgroundColor: 'transparent',
+                  }}
+                />
+              </div>
             </Link>
           </div>
 

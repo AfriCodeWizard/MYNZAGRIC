@@ -48,7 +48,7 @@ export default function Footer() {
           <div>
             <Link href="/" className="inline-block mb-4 hover:opacity-80 transition-opacity">
               <Image
-                src="/mynzAgric-logoOficial-_1_.webp"
+                src="/mynzAgric logoOficial (color).webp"
                 alt="Mynzagric Logo"
                 width={200}
                 height={60}
@@ -57,7 +57,6 @@ export default function Footer() {
                 style={{ 
                   objectFit: 'contain',
                   backgroundColor: 'transparent',
-                  mixBlendMode: 'multiply',
                 }}
               />
             </Link>
