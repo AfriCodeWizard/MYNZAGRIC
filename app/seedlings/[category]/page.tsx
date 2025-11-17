@@ -5,6 +5,7 @@ import Link from "next/link"
 import { ArrowLeft, ShoppingBag, Plus, Minus, X, Phone, Leaf } from "lucide-react"
 import { seedlings } from "@/lib/seedlings-data"
 import Navbar from "@/components/navbar"
+import Footer from "@/components/footer"
 
 interface CartItem {
   id: string
@@ -382,6 +383,8 @@ Thank you!`
           </div>
         </div>
       )}
+      
+      <Footer />
     </div>
   )
 }

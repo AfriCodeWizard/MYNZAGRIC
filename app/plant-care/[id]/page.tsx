@@ -17,6 +17,7 @@ import {
 } from "lucide-react"
 import { seedlings } from "@/lib/seedlings-data"
 import Navbar from "@/components/navbar"
+import Footer from "@/components/footer"
 
 const categoryColors: Record<string, { bgColor: string; image: string }> = {
   mango: {
@@ -369,6 +370,8 @@ export default function PlantCarePage({ params }: { params: Promise<{ id: string
           </div>
         </div>
       </section>
+
+      <Footer />
     </div>
   )
 }

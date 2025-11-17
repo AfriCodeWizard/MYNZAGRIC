@@ -5,6 +5,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { ArrowLeft, Check, X, Droplets, Sprout, GraduationCap, Package, DollarSign, Calendar, Phone, Mail } from "lucide-react"
 import Navbar from "@/components/navbar"
+import Footer from "@/components/footer"
 
 interface ValuePackDetail {
   id: string
@@ -396,6 +397,8 @@ Thank you!`
           </div>
         </div>
       </section>
+
+      <Footer />
     </div>
   )
 }
