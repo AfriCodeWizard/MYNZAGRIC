@@ -199,7 +199,7 @@ export default function PlantCarePage({ params }: { params: Promise<{ id: string
             {/* Complete Care Guide Section */}
             <div className="mb-12 md:mb-16">
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-3 text-center md:text-left">
-                Complete <span className="text-green-400">Care Guide</span>
+                Complete <span className="font-light text-green-400">Care Guide</span>
               </h2>
               <p className="text-gray-400 text-base sm:text-lg mb-12 max-w-3xl mx-auto md:mx-0 text-center md:text-left">
                 Detailed care instructions for growing your {seedling.name} seedling successfully
@@ -233,7 +233,7 @@ export default function PlantCarePage({ params }: { params: Promise<{ id: string
             {/* Timeline Section */}
             <div className="mb-12 md:mb-16 bg-white/5 backdrop-blur-sm rounded-2xl p-8 sm:p-12 border border-white/10">
               <h2 className="text-3xl sm:text-4xl font-bold text-white mb-8 sm:mb-12 text-center md:text-left">
-                Growing <span className="text-green-400">Timeline</span>
+                Growing <span className="font-light text-green-400">Timeline</span>
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div className="bg-white/5 rounded-xl p-6 border-l-4 border-green-500">
@@ -262,7 +262,7 @@ export default function PlantCarePage({ params }: { params: Promise<{ id: string
             {/* Common Issues Section */}
             <div className="mb-12 md:mb-16">
               <h2 className="text-3xl sm:text-4xl font-bold text-white mb-8 sm:mb-12 text-center md:text-left">
-                Common <span className="text-green-400">Issues & Solutions</span>
+                Common <span className="font-light text-green-400">Issues & Solutions</span>
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-all duration-300">
