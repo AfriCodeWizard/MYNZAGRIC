@@ -546,7 +546,7 @@ Thank you!`
                   <div 
                     className="absolute right-0 top-full mt-2 w-96 bg-white rounded-lg shadow-2xl border border-gray-100 z-[10000] flex flex-col"
                     style={{ 
-                      maxHeight: 'calc(100vh - 120px)',
+                      height: 'calc(100vh - 100px)',
                       maxWidth: 'calc(100vw - 32px)'
                     }}
                     onClick={(e) => e.stopPropagation()}
