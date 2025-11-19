@@ -2,6 +2,7 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
+import CartProviderWrapper from "@/components/cart-provider-wrapper"
 import "./globals.css"
 
 const geist = Geist({
@@ -31,8 +32,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geist.variable} ${geistMono.variable}`}>
       <body className={`${geist.className} antialiased`}>
-        {children}
-        <Analytics />
+        <CartProviderWrapper>
+          {children}
+          <Analytics />
+        </CartProviderWrapper>
       </body>
     </html>
   )

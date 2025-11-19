@@ -4,32 +4,15 @@ import { useState, useMemo, useEffect, useRef } from "react"
 import Link from "next/link"
 import ProductCard from "./product-card"
 import { seedlings } from "@/lib/seedlings-data"
-import { X, ShoppingBag, Plus, Minus, ArrowLeft, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, ArrowUpRight } from "lucide-react"
-
-interface CartItem {
-  id: string
-  name: string
-  quantity: number
-  price: number
-}
-
-const kenyanCounties = [
-  "Baringo", "Bomet", "Bungoma", "Busia", "Elgeyo-Marakwet", "Embu", "Garissa", "Homa Bay",
-  "Isiolo", "Kajiado", "Kakamega", "Kericho", "Kiambu", "Kilifi", "Kirinyaga", "Kisii",
-  "Kisumu", "Kitui", "Kwale", "Laikipia", "Lamu", "Machakos", "Makueni", "Mandera",
-  "Marsabit", "Meru", "Migori", "Mombasa", "Murang'a", "Nairobi", "Nakuru", "Nandi",
-  "Narok", "Nyamira", "Nyandarua", "Nyeri", "Samburu", "Siaya", "Taita Taveta", "Tana River",
-  "Tharaka-Nithi", "Trans Nzoia", "Turkana", "Uasin Gishu", "Vihiga", "Wajir", "West Pokot"
-].sort()
+import { ArrowLeft, ArrowUpRight, ChevronLeft, ChevronRight, ChevronUp, ChevronDown } from "lucide-react"
+import { useCart } from "@/contexts/cart-context"
 
 export default function ProductGrid() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [activeIndex, setActiveIndex] = useState(0)
-  const [cart, setCart] = useState<CartItem[]>([])
-  const [isCartOpen, setIsCartOpen] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
-  const [deliveryLocation, setDeliveryLocation] = useState<string>("")
   const trackRef = useRef<HTMLDivElement>(null)
+  const { addToCart } = useCart()
 
   // Check if mobile on mount and resize
   useEffect(() => {
@@ -198,60 +181,6 @@ export default function ProductGrid() {
     }
   }
 
-  const addToCart = (seedling: any) => {
-    setCart((prevCart) => {
-      const existingItem = prevCart.find((item) => item.id === seedling.id)
-      if (existingItem) {
-        return prevCart.map((item) => (item.id === seedling.id ? { ...item, quantity: item.quantity + 1 } : item))
-      }
-      return [...prevCart, { id: seedling.id, name: seedling.name, quantity: 1, price: seedling.price }]
-    })
-  }
-
-  const updateQuantity = (id: string, quantity: number) => {
-    if (quantity <= 0) {
-      removeFromCart(id)
-    } else {
-      setCart((prevCart) => prevCart.map((item) => (item.id === id ? { ...item, quantity } : item)))
-    }
-  }
-
-  const removeFromCart = (id: string) => {
-    setCart((prevCart) => prevCart.filter((item) => item.id !== id))
-  }
-
-  const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
-  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0)
-
-
-  const generateWhatsAppMessage = () => {
-    const items = cart
-      .map((item, index) => `${index + 1}. *${item.name}*\n   Quantity: ${item.quantity}\n   Price: KES ${(item.price * item.quantity).toLocaleString()}`)
-      .join("\n\n")
-    
-    const locationText = deliveryLocation ? `\n*Delivery Location:* ${deliveryLocation}\n` : ""
-    
-    const message = `*ORDER REQUEST - MYNZAGRIC*
-
-─────────────────────────
-
-*ORDER ITEMS:*
-
-${items}
-
-─────────────────────────
-
-*ORDER SUMMARY:*
-Subtotal: KES ${totalPrice.toLocaleString()}
-Delivery Fee: *Pending upon order confirmation*${locationText}
-─────────────────────────
-
-Please confirm availability and provide delivery details.
-
-Thank you!`
-    
-    return encodeURIComponent(message)
-  }
 
   return (
     <section id="seedlings" className="relative min-h-screen bg-[#07090d] overflow-hidden">
@@ -266,24 +195,10 @@ Thank you!`
             <p className="text-base sm:text-lg text-gray-400 mt-2">Premium grafted and tissue-culture varieties</p>
           </div>
 
-          {/* Cart and Scroll Controls - Same horizontal line on mobile, cart right on desktop */}
-          <div className="flex items-center gap-3 sm:justify-end">
-            <button
-              onClick={() => setIsCartOpen(!isCartOpen)}
-              className="relative p-3 bg-green-600 text-white rounded-full hover:bg-green-700 transition shadow-lg hover:shadow-xl z-10"
-              title="Bulk Order Cart"
-            >
-              <ShoppingBag className="w-5 h-5 sm:w-6 sm:h-6" />
-              {totalItems > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
-                  {totalItems}
-                </span>
-              )}
-            </button>
-
-            {/* Mobile Scroll Controls - On right side, same line as cart */}
-            {isMobile && (
-              <div className="flex flex-col gap-2 z-30 ml-auto">
+          {/* Mobile Scroll Controls */}
+          {isMobile && (
+            <div className="flex items-center gap-3 justify-end">
+              <div className="flex flex-col gap-2 z-30">
                 <button
                   onClick={handlePrev}
                   className="p-2 bg-white/10 hover:bg-white/20 active:bg-white/30 rounded-full transition text-white shadow-lg"
@@ -299,8 +214,8 @@ Thank you!`
                   <ChevronDown className="w-4 h-4" />
                 </button>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
         {/* Category View - Full Section */}
@@ -574,137 +489,6 @@ Thank you!`
           </div>
         )}
 
-        {isCartOpen && (
-          <div className="fixed inset-0 bg-black/50 flex items-end md:items-center md:justify-end z-50">
-            <div className="w-full md:w-96 bg-white rounded-t-2xl md:rounded-lg shadow-2xl md:mr-4 md:mb-4 flex flex-col max-h-96 md:max-h-[600px]">
-              <div className="flex items-center justify-between p-6 border-b border-green-100">
-                <h3 className="text-xl font-bold text-gray-900">Bulk Order</h3>
-                <button onClick={() => setIsCartOpen(false)} className="text-gray-500 hover:text-gray-700">
-                  <X className="w-6 h-6" />
-                </button>
-              </div>
-
-              {cart.length > 0 ? (
-                <>
-                  <div className="flex-1 overflow-y-auto p-6 space-y-4">
-                    {cart.map((item) => (
-                      <div key={item.id} className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
-                        <div className="flex-1">
-                          <p className="font-medium text-gray-900 text-sm line-clamp-1">{item.name}</p>
-                          <p className="text-sm text-green-600 font-bold">KES {item.price}</p>
-                        </div>
-                        <div className="flex items-center gap-2 bg-white rounded-lg border border-green-200">
-                          <button
-                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                            className="p-1 hover:bg-gray-100 transition"
-                          >
-                            <Minus className="w-4 h-4 text-green-600" />
-                          </button>
-                          <span className="w-8 text-center font-bold text-gray-900">{item.quantity}</span>
-                          <button
-                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                            className="p-1 hover:bg-gray-100 transition"
-                          >
-                            <Plus className="w-4 h-4 text-green-600" />
-                          </button>
-                        </div>
-                        <button
-                          onClick={() => removeFromCart(item.id)}
-                          className="text-red-500 hover:text-red-700 transition"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="border-t border-green-100 p-6 space-y-4">
-                    <div className="space-y-4">
-                      <div>
-                        <label htmlFor="delivery-location" className="block text-sm font-medium text-gray-700 mb-2">
-                          Delivery Location <span className="text-red-500">*</span>
-                        </label>
-                        <select
-                          id="delivery-location"
-                          value={deliveryLocation}
-                          onChange={(e) => setDeliveryLocation(e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-gray-900 bg-white"
-                          required
-                        >
-                          <option value="">Select County</option>
-                          {kenyanCounties.map((county) => (
-                            <option key={county} value={county}>
-                              {county}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      <div className="flex justify-between items-center border-t border-gray-200 pt-3">
-                        <div className="flex flex-col">
-                          <span className="text-gray-600">Delivery Fee:</span>
-                          <span className="text-xs text-red-500 italic">Pending upon order confirmation</span>
-                        </div>
-                        <span className="font-semibold text-red-500">—</span>
-                      </div>
-                      <div className="flex justify-between items-center border-t-2 border-green-200 pt-3 mt-2">
-                        <span className="font-bold text-gray-900">Total:</span>
-                        <span className="text-2xl font-bold text-green-600">KES {totalPrice.toLocaleString()}</span>
-                      </div>
-                    </div>
-                    <a
-                      href={deliveryLocation ? `https://wa.me/254713764658?text=${generateWhatsAppMessage()}` : "#"}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`w-full font-bold py-3 rounded-lg transition text-center block shadow-md hover:shadow-lg ${
-                        deliveryLocation
-                          ? "bg-green-600 text-white hover:bg-green-700"
-                          : "bg-gray-300 text-gray-500 cursor-not-allowed pointer-events-none"
-                      }`}
-                      onClick={(e) => {
-                        if (!deliveryLocation) {
-                          e.preventDefault()
-                          alert("Please select a delivery location")
-                          return
-                        }
-                        
-                        // Try to auto-send on mobile devices
-                        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
-                        if (isMobile) {
-                          // On mobile, try the whatsapp:// protocol which may auto-send
-                          const message = generateWhatsAppMessage()
-                          const whatsappUrl = `whatsapp://send?phone=254713764658&text=${message}`
-                          window.location.href = whatsappUrl
-                          e.preventDefault()
-                          
-                          // Fallback after a short delay
-                          setTimeout(() => {
-                            window.open(`https://wa.me/254713764658?text=${message}`, '_blank')
-                          }, 500)
-                        }
-                      }}
-                    >
-                      📱 Order on WhatsApp
-                    </a>
-                    <button
-                      onClick={() => setCart([])}
-                      className="w-full text-gray-600 font-medium py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
-                    >
-                      Clear Cart
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <div className="flex-1 flex items-center justify-center">
-                  <div className="text-center">
-                    <ShoppingBag className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                    <p className="text-gray-500">Your cart is empty</p>
-                    <p className="text-sm text-gray-400">Add seedlings to start building your order</p>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
       </div>
     </section>
   )
