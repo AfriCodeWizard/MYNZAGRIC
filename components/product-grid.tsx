@@ -260,7 +260,7 @@ Thank you!`
         <div className="flex flex-col gap-4 mb-12">
           <div>
             <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white">
-              SEEDLING <span className="font-light text-gray-400">VARIETIES</span>
+              SEEDLING <span className="font-light text-green-400">VARIETIES</span>
               <br />& PRICES
             </h2>
             <p className="text-base sm:text-lg text-gray-400 mt-2">Premium grafted and tissue-culture varieties</p>
@@ -544,7 +544,7 @@ Thank you!`
                 </button>
                 <div className="text-right">
                   <h3 className="text-3xl font-bold text-gray-900">
-                    {categories.find((c) => c.value === selectedCategory)?.label} Varieties
+                    {categories.find((c) => c.value === selectedCategory)?.label} <span className="font-light text-green-400">Varieties</span>
                   </h3>
                   <p className="text-sm text-gray-600 mt-1">
                     {filteredSeedlings.length} {filteredSeedlings.length === 1 ? 'item' : 'items'} available
