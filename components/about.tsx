@@ -62,7 +62,7 @@ function About() {
       <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-16">
           <h2 className="text-5xl md:text-6xl font-bold text-white">
-            WE ARE <span className="font-light text-gray-300">DIFFERENT</span>
+            WE ARE <span className="font-light text-green-400">DIFFERENT</span>
             <br />& IN EVERY WAY
           </h2>
         </div>

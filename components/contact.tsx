@@ -26,14 +26,14 @@ export default function Contact() {
 
   return (
     <>
-      <section id="contact" className="py-20 md:py-28 bg-gray-100">
+      <section id="contact" className="py-20 md:py-28 bg-[#07090d]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-12 sm:mb-16">
-            <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900">
-              REACH US <span className="font-light text-gray-500">TO ORDER</span>
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white">
+              REACH US <span className="font-light text-green-400">TO ORDER</span>
               <br />YOUR SEEDLINGS TODAY
             </h2>
-            <p className="text-base sm:text-lg text-gray-600 max-w-2xl mt-3 sm:mt-4">
+            <p className="text-base sm:text-lg text-gray-300 max-w-2xl mt-3 sm:mt-4">
               Place your order via WhatsApp and pay securely using Lipa na M-Pesa upon order confirmation.
             </p>
           </div>
@@ -43,7 +43,7 @@ export default function Contact() {
               {/* Contact Form */}
               <div className="p-5 sm:p-6 md:p-8 pr-14 sm:pr-16 md:pr-28 lg:pr-40">
                 <div className="mb-5 sm:mb-6">
-                  <h3 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-gray-900 mb-2">Contact Us</h3>
+                  <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2">Contact Us</h3>
                   <p className="text-gray-600 text-xs sm:text-sm">
                     Feel free to contact us any time. We will get back to you as soon as we can!
                   </p>
@@ -186,12 +186,12 @@ export default function Contact() {
       </section>
 
       {/* Map Section */}
-      <section className="py-12 bg-white">
+      <section className="py-12 bg-[#07090d]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-12">
-              <h4 className="text-2xl font-semibold text-gray-900 mb-3">Find Us on Google Map</h4>
-              <p className="text-gray-600">
+              <h4 className="text-2xl font-bold text-white mb-3">Find Us on Google Map</h4>
+              <p className="text-gray-300">
                 Visit our nursery location or contact us for delivery services across Kenya.
               </p>
             </div>

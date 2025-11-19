@@ -50,8 +50,8 @@ export default function CareGuides() {
       {/* Content */}
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-16">
-          <h2 className="text-5xl md:text-6xl font-bold text-gray-900">
-            WHY CHOOSE <span className="font-light text-gray-500">MYNZAGRIC</span>
+          <h2 className="text-5xl md:text-6xl font-bold text-white">
+            WHY CHOOSE <span className="font-light text-green-400">MYNZAGRIC</span>
           </h2>
           <p className="text-lg text-gray-600">
             Trusted by farmers across Kenya for premium fruit seedlings and agricultural expertise
@@ -70,7 +70,7 @@ export default function CareGuides() {
                 <div className="mb-4 p-4 bg-green-50 rounded-lg w-fit group-hover:bg-green-100 transition">
                   <Icon className="w-6 h-6 text-green-700" />
                 </div>
-                <h3 className="font-bold text-lg text-gray-900 mb-2">{reason.title}</h3>
+                <h3 className="font-bold text-lg text-white mb-2">{reason.title}</h3>
                 <p className="text-gray-600 text-sm leading-relaxed">{reason.description}</p>
               </div>
             )

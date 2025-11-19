@@ -60,7 +60,7 @@ export default function Testimonials() {
       {/* Section Heading - must be below navbar z-50 */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12 sm:mb-16 relative" style={{ zIndex: 1 }}>
         <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white" style={{ zIndex: 1, position: 'relative' }}>
-          CUSTOMER <span className="font-light text-gray-400">SUCCESS</span>
+          CUSTOMER <span className="font-light text-green-400">SUCCESS</span>
           <br />& STORIES
         </h2>
         <p className="text-base sm:text-lg text-gray-300 max-w-2xl mt-3 sm:mt-4" style={{ zIndex: 1, position: 'relative' }}>

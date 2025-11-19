@@ -75,14 +75,14 @@ export default function FeaturedCollections() {
   }
 
   return (
-    <section className="w-full bg-gradient-to-b from-white to-emerald-50 py-20 px-4">
+    <section className="w-full bg-[#07090d] py-20 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Section Heading */}
         <div className="mb-16">
-          <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-4">
-            CURATED <span className="font-light text-gray-500">COLLECTIONS</span>
+          <h2 className="text-5xl md:text-6xl font-bold text-white mb-4">
+            CURATED <span className="font-light text-green-400">COLLECTIONS</span>
           </h2>
-          <p className="text-gray-600 text-lg max-w-2xl">
+          <p className="text-gray-300 text-lg max-w-2xl">
             Handpicked combinations of seedlings that grow beautifully together, designed for maximum productivity and
             aesthetic appeal
           </p>
