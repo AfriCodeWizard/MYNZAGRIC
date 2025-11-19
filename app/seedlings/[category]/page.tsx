@@ -1,18 +1,12 @@
 "use client"
 
-import { use, useState } from "react"
+import { use } from "react"
 import Link from "next/link"
-import { ArrowLeft, ShoppingBag, Plus, Minus, X, Phone, Leaf } from "lucide-react"
+import { ArrowLeft, Leaf } from "lucide-react"
 import { seedlings } from "@/lib/seedlings-data"
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
-
-interface CartItem {
-  id: string
-  name: string
-  quantity: number
-  price: number
-}
+import { useCart } from "@/contexts/cart-context"
 
 const categories: Record<string, {
   label: string
@@ -58,14 +52,6 @@ const categories: Record<string, {
   }
 }
 
-const kenyanCounties = [
-  "Baringo", "Bomet", "Bungoma", "Busia", "Elgeyo-Marakwet", "Embu", "Garissa", "Homa Bay",
-  "Isiolo", "Kajiado", "Kakamega", "Kericho", "Kiambu", "Kilifi", "Kirinyaga", "Kisii",
-  "Kisumu", "Kitui", "Kwale", "Laikipia", "Lamu", "Machakos", "Makueni", "Mandera",
-  "Marsabit", "Meru", "Migori", "Mombasa", "Murang'a", "Nairobi", "Nakuru", "Nandi",
-  "Narok", "Nyamira", "Nyandarua", "Nyeri", "Samburu", "Siaya", "Taita Taveta", "Tana River",
-  "Tharaka-Nithi", "Trans Nzoia", "Turkana", "Uasin Gishu", "Vihiga", "Wajir", "West Pokot"
-].sort()
 
 export default function SeedlingsCategoryPage({ params }: { params: Promise<{ category: string }> }) {
   const resolvedParams = use(params)
@@ -104,66 +90,7 @@ function SeedlingsCategoryContent({
   categoryData: typeof categories[string]
   seedlings: typeof seedlings
 }) {
-  const [cart, setCart] = useState<CartItem[]>([])
-  const [isCartOpen, setIsCartOpen] = useState(false)
-  const [deliveryLocation, setDeliveryLocation] = useState<string>("")
-
-  const addToCart = (seedling: typeof seedlings[0]) => {
-    setCart((prevCart) => {
-      const existingItem = prevCart.find((item) => item.id === seedling.id)
-      if (existingItem) {
-        return prevCart.map((item) =>
-          item.id === seedling.id ? { ...item, quantity: item.quantity + 1 } : item
-        )
-      }
-      return [...prevCart, { id: seedling.id, name: seedling.name, quantity: 1, price: seedling.price }]
-    })
-  }
-
-  const updateQuantity = (id: string, quantity: number) => {
-    if (quantity <= 0) {
-      setCart((prevCart) => prevCart.filter((item) => item.id !== id))
-      return
-    }
-    setCart((prevCart) =>
-      prevCart.map((item) => (item.id === id ? { ...item, quantity } : item))
-    )
-  }
-
-  const removeFromCart = (id: string) => {
-    setCart((prevCart) => prevCart.filter((item) => item.id !== id))
-  }
-
-  const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
-
-  const generateWhatsAppMessage = () => {
-    const items = cart
-      .map((item, index) => `${index + 1}. *${item.name}*\n   Quantity: ${item.quantity}\n   Price: KES ${(item.price * item.quantity).toLocaleString()}`)
-      .join("\n\n")
-
-    const locationText = deliveryLocation ? `\n*Delivery Location:* ${deliveryLocation}\n` : ""
-
-    const message = `*ORDER REQUEST - MYNZAGRIC*
-
-─────────────────────────
-
-*ORDER ITEMS:*
-
-${items}
-
-─────────────────────────
-
-*ORDER SUMMARY:*
-Subtotal: KES ${totalPrice.toLocaleString()}
-Delivery Fee: *Pending upon order confirmation*${locationText}
-─────────────────────────
-
-Please confirm availability and provide delivery details.
-
-Thank you!`
-
-    return encodeURIComponent(message)
-  }
+  const { addToCart } = useCart()
 
   return (
     <div className="min-h-screen bg-[#07090d]">
@@ -242,10 +169,9 @@ Thank you!`
 
                   <div className="flex gap-2">
                     <button
-                      onClick={() => addToCart(seedling)}
+                      onClick={() => addToCart({ id: seedling.id, name: seedling.name, price: seedling.price })}
                       className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2"
                     >
-                      <ShoppingBag className="w-4 h-4" />
                       Add to Cart
                     </button>
                     <Link
@@ -263,126 +189,6 @@ Thank you!`
         </div>
       </section>
 
-      {/* Cart Button */}
-      {cart.length > 0 && (
-        <button
-          onClick={() => setIsCartOpen(true)}
-          className="fixed bottom-6 right-6 bg-green-600 hover:bg-green-700 text-white font-bold p-4 rounded-full shadow-lg transition-all duration-300 z-40 flex items-center gap-2"
-        >
-          <ShoppingBag className="w-6 h-6" />
-          <span className="bg-white text-green-600 rounded-full px-2 py-1 text-sm font-bold">
-            {cart.reduce((sum, item) => sum + item.quantity, 0)}
-          </span>
-        </button>
-      )}
-
-      {/* Cart Modal */}
-      {isCartOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-end md:items-center md:justify-end z-50">
-          <div className="w-full md:w-96 bg-white rounded-t-2xl md:rounded-lg shadow-2xl md:mr-4 md:mb-4 flex flex-col max-h-[90vh] md:max-h-[600px]">
-            <div className="flex items-center justify-between p-6 border-b border-green-100">
-              <h3 className="text-xl font-bold text-gray-900">Bulk Order</h3>
-              <button onClick={() => setIsCartOpen(false)} className="text-gray-500 hover:text-gray-700">
-                <X className="w-6 h-6" />
-              </button>
-            </div>
-
-            {cart.length > 0 ? (
-              <>
-                <div className="flex-1 overflow-y-auto p-6 space-y-4">
-                  {cart.map((item) => (
-                    <div key={item.id} className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
-                      <div className="flex-1">
-                        <p className="font-medium text-gray-900 text-sm line-clamp-1">{item.name}</p>
-                        <p className="text-sm text-green-600 font-bold">KES {item.price}</p>
-                      </div>
-                      <div className="flex items-center gap-2 bg-white rounded-lg border border-green-200">
-                        <button
-                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                          className="p-1 hover:bg-gray-100 transition"
-                        >
-                          <Minus className="w-4 h-4 text-green-600" />
-                        </button>
-                        <span className="w-8 text-center font-bold text-gray-900">{item.quantity}</span>
-                        <button
-                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                          className="p-1 hover:bg-gray-100 transition"
-                        >
-                          <Plus className="w-4 h-4 text-green-600" />
-                        </button>
-                      </div>
-                      <button
-                        onClick={() => removeFromCart(item.id)}
-                        className="p-1 hover:bg-red-50 transition rounded"
-                      >
-                        <X className="w-4 h-4 text-red-600" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="p-6 border-t border-green-100 bg-gray-50 space-y-4">
-                  <div>
-                    <label htmlFor="delivery-location" className="block text-sm font-medium text-gray-700 mb-2">
-                      Delivery Location <span className="text-red-500">*</span>
-                    </label>
-                    <select
-                      id="delivery-location"
-                      value={deliveryLocation}
-                      onChange={(e) => setDeliveryLocation(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-gray-900 bg-white"
-                      required
-                    >
-                      <option value="">Select County</option>
-                      {kenyanCounties.map((county) => (
-                        <option key={county} value={county}>
-                          {county}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="flex justify-between items-center border-t border-gray-200 pt-3">
-                    <div className="flex flex-col">
-                      <span className="text-gray-600">Delivery Fee:</span>
-                      <span className="text-xs text-red-500 italic">Pending upon order confirmation</span>
-                    </div>
-                    <span className="font-semibold text-red-500">—</span>
-                  </div>
-                  <div className="flex justify-between items-center border-t-2 border-green-200 pt-3 mt-2">
-                    <span className="font-bold text-gray-900">Total:</span>
-                    <span className="text-2xl font-bold text-green-600">KES {totalPrice.toLocaleString()}</span>
-                  </div>
-                  <button
-                    onClick={() => {
-                      if (!deliveryLocation) {
-                        alert("Please select a delivery location")
-                        return
-                      }
-                      window.open(`https://wa.me/254713764658?text=${generateWhatsAppMessage()}`, '_blank')
-                    }}
-                    disabled={!deliveryLocation}
-                    className={`w-full py-3 rounded-lg font-bold text-white transition-colors flex items-center justify-center gap-2 ${
-                      deliveryLocation
-                        ? 'bg-green-600 hover:bg-green-700'
-                        : 'bg-gray-400 cursor-not-allowed'
-                    }`}
-                  >
-                    <Phone className="w-5 h-5" />
-                    Order on WhatsApp
-                  </button>
-                </div>
-              </>
-            ) : (
-              <div className="flex-1 flex items-center justify-center p-6">
-                <div className="text-center">
-                  <ShoppingBag className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                  <p className="text-gray-600">Your cart is empty</p>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
       
       <Footer />
     </div>

@@ -22,6 +22,7 @@ export default function Navbar() {
   const productsDropdownRef = useRef<HTMLDivElement>(null)
   const cartRef = useRef<HTMLDivElement>(null)
   const { cart, addToCart, updateQuantity, removeFromCart, clearCart, totalItems, totalPrice, showCartNotification } = useCart()
+  
 
   // Cart animation effect - enhanced with longer duration
   useEffect(() => {
@@ -500,11 +501,12 @@ Thank you!`
             <NavLink href="#contact" label="Contact" shouldShowSolidBackground={shouldShowSolidBackground} />
           </div>
 
-          {/* Cart Icon - Only visible when items exist */}
-          {totalItems > 0 && (
-            <div className="hidden lg:flex items-center ml-4" style={{
-              animation: 'slideInRight 0.5s ease-out'
-            }}>
+          {/* Right side - Cart Icon - Only visible when items exist */}
+          <div className="flex items-center">
+            {totalItems > 0 && (
+              <div className="hidden lg:flex items-center ml-4 z-50 relative" style={{
+                animation: 'slideInRight 0.5s ease-out'
+              }}>
               <div ref={cartRef} className="relative">
                 <button
                   onClick={() => setIsCartOpen(!isCartOpen)}
@@ -656,63 +658,64 @@ Thank you!`
                   </div>
                 )}
               </div>
-            </div>
-          )}
-
-          {/* Mobile Cart Icon - Only visible when items exist */}
-          {totalItems > 0 && (
-            <div className="lg:hidden ml-2 relative" style={{
-              animation: 'slideInRight 0.5s ease-out'
-            }}>
-              <button
-                onClick={() => setIsCartOpen(!isCartOpen)}
-                className={cn(
-                  "relative p-2.5 rounded-full transition-all duration-300",
-                  "focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2",
-                  cartAnimation && "animate-bounce",
-                  shouldShowSolidBackground
-                    ? "bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg hover:shadow-xl"
-                    : "bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg hover:shadow-xl"
-                )}
-                aria-label="Shopping Cart"
-              >
-                <ShoppingBag className="w-5 h-5" />
-                <span className={cn(
-                  "absolute -top-1 -right-1 bg-gradient-to-br from-red-500 to-pink-500 text-white text-xs font-bold rounded-full",
-                  "w-5 h-5 flex items-center justify-center shadow-lg border-2 border-white",
-                  cartAnimation && "scale-150 animate-pulse"
-                )}>
-                  {totalItems}
-                </span>
-                {showCartNotification && (
-                  <>
-                    <span className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-75" />
-                    <span className="absolute inset-0 rounded-full bg-yellow-400 animate-ping opacity-50" style={{ animationDelay: '0.2s' }} />
-                    <span className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-25" style={{ animationDelay: '0.4s' }} />
-                  </>
-                )}
-                {/* Glow effect on hover */}
-                <span className="absolute inset-0 rounded-full bg-green-400 opacity-0 hover:opacity-20 blur-md transition-opacity duration-300" />
-              </button>
-            </div>
-          )}
-
-          {/* Mobile menu button */}
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className={cn(
-              "lg:hidden inline-flex items-center justify-center p-2 rounded-md transition-colors",
-              "focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-transparent",
-              shouldShowSolidBackground
-                ? "text-gray-900 hover:bg-gray-100"
-                : "text-white hover:bg-white/10"
+              </div>
             )}
-            aria-expanded={isOpen}
-            aria-label="Toggle navigation menu"
-            aria-controls="mobile-menu"
-          >
-            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+            
+            {/* Mobile Cart Icon - Only visible when items exist */}
+            {totalItems > 0 && (
+              <div className="lg:hidden ml-2 relative z-50" style={{
+                animation: 'slideInRight 0.5s ease-out'
+              }}>
+                <button
+                  onClick={() => setIsCartOpen(!isCartOpen)}
+                  className={cn(
+                    "relative p-2.5 rounded-full transition-all duration-300",
+                    "focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2",
+                    cartAnimation && "animate-bounce",
+                    shouldShowSolidBackground
+                      ? "bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg hover:shadow-xl"
+                      : "bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg hover:shadow-xl"
+                  )}
+                  aria-label="Shopping Cart"
+                >
+                  <ShoppingBag className="w-5 h-5" />
+                  <span className={cn(
+                    "absolute -top-1 -right-1 bg-gradient-to-br from-red-500 to-pink-500 text-white text-xs font-bold rounded-full",
+                    "w-5 h-5 flex items-center justify-center shadow-lg border-2 border-white",
+                    cartAnimation && "scale-150 animate-pulse"
+                  )}>
+                    {totalItems}
+                  </span>
+                  {showCartNotification && (
+                    <>
+                      <span className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-75" />
+                      <span className="absolute inset-0 rounded-full bg-yellow-400 animate-ping opacity-50" style={{ animationDelay: '0.2s' }} />
+                      <span className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-25" style={{ animationDelay: '0.4s' }} />
+                    </>
+                  )}
+                  {/* Glow effect on hover */}
+                  <span className="absolute inset-0 rounded-full bg-green-400 opacity-0 hover:opacity-20 blur-md transition-opacity duration-300" />
+                </button>
+              </div>
+            )}
+
+            {/* Mobile menu button */}
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className={cn(
+                "lg:hidden inline-flex items-center justify-center p-2 rounded-md transition-colors",
+                "focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-transparent",
+                shouldShowSolidBackground
+                  ? "text-gray-900 hover:bg-gray-100"
+                  : "text-white hover:bg-white/10"
+              )}
+              aria-expanded={isOpen}
+              aria-label="Toggle navigation menu"
+              aria-controls="mobile-menu"
+            >
+              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Navigation */}
@@ -841,6 +844,126 @@ Thank you!`
           </nav>
         </div>
       </nav>
+
+      {/* Mobile Cart Dropdown/Modal */}
+      {isCartOpen && totalItems > 0 && (
+        <div className="lg:hidden fixed inset-0 bg-black/50 z-[10000] flex items-end" onClick={() => setIsCartOpen(false)}>
+          <div ref={cartRef} className="w-full bg-white rounded-t-2xl shadow-2xl max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              <h3 className="text-lg font-bold text-gray-900">Shopping Cart</h3>
+              <button
+                onClick={() => setIsCartOpen(false)}
+                className="text-gray-500 hover:text-gray-700 transition"
+                aria-label="Close cart"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {cart.length > 0 ? (
+              <>
+                <div className="flex-1 overflow-y-auto p-4 space-y-3">
+                  {cart.map((item) => (
+                    <div key={item.id} className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-gray-900 text-sm truncate">{item.name}</p>
+                        <p className="text-sm text-green-600 font-bold">KES {item.price.toLocaleString()}</p>
+                      </div>
+                      <div className="flex items-center gap-2 bg-white rounded-lg border border-green-200">
+                        <button
+                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                          className="p-1 hover:bg-gray-100 transition"
+                          aria-label="Decrease quantity"
+                        >
+                          <Minus className="w-4 h-4 text-green-600" />
+                        </button>
+                        <span className="w-8 text-center font-bold text-gray-900">{item.quantity}</span>
+                        <button
+                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                          className="p-1 hover:bg-gray-100 transition"
+                          aria-label="Increase quantity"
+                        >
+                          <Plus className="w-4 h-4 text-green-600" />
+                        </button>
+                      </div>
+                      <button
+                        onClick={() => removeFromCart(item.id)}
+                        className="text-red-500 hover:text-red-700 transition p-1"
+                        aria-label="Remove item"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="border-t border-gray-200 p-4 space-y-4">
+                  <div>
+                    <label htmlFor="delivery-location-mobile" className="block text-sm font-medium text-gray-700 mb-2">
+                      Delivery Location <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      id="delivery-location-mobile"
+                      value={deliveryLocation}
+                      onChange={(e) => setDeliveryLocation(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-900 bg-white text-sm"
+                      required
+                    >
+                      <option value="">Select County</option>
+                      {kenyanCounties.map((county) => (
+                        <option key={county} value={county}>
+                          {county}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="flex justify-between items-center border-t border-gray-200 pt-3">
+                    <span className="font-bold text-gray-900">Total:</span>
+                    <span className="text-xl font-bold text-green-600">KES {totalPrice.toLocaleString()}</span>
+                  </div>
+                  <a
+                    href={deliveryLocation ? `https://wa.me/254713764658?text=${generateWhatsAppMessage()}` : "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => {
+                      if (!deliveryLocation) {
+                        e.preventDefault()
+                        alert("Please select a delivery location")
+                        return
+                      }
+                      setIsCartOpen(false)
+                    }}
+                    className={cn(
+                      "w-full font-bold py-3 rounded-lg transition text-center block shadow-md hover:shadow-lg",
+                      deliveryLocation
+                        ? "bg-green-600 text-white hover:bg-green-700"
+                        : "bg-gray-300 text-gray-500 cursor-not-allowed pointer-events-none"
+                    )}
+                  >
+                    📱 Order on WhatsApp
+                  </a>
+                  <button
+                    onClick={() => {
+                      clearCart()
+                      setIsCartOpen(false)
+                    }}
+                    className="w-full text-gray-600 font-medium py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm"
+                  >
+                    Clear Cart
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div className="flex-1 flex items-center justify-center p-8">
+                <div className="text-center">
+                  <ShoppingBag className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                  <p className="text-gray-500 text-sm">Your cart is empty</p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
       </div>
     </header>
   )
