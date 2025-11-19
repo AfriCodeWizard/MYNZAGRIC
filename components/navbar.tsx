@@ -592,8 +592,8 @@ Thank you!`
                           ))}
                         </div>
 
-                        <div className="border-t border-gray-200 p-4 space-y-4">
-                          <div>
+                        <div className="border-t border-gray-200 p-4 space-y-4 overflow-visible">
+                          <div className="relative z-[10001]">
                             <label htmlFor="delivery-location-nav" className="block text-sm font-medium text-gray-700 mb-2">
                               Delivery Location <span className="text-red-500">*</span>
                             </label>
@@ -601,8 +601,9 @@ Thank you!`
                               id="delivery-location-nav"
                               value={deliveryLocation}
                               onChange={(e) => setDeliveryLocation(e.target.value)}
-                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-900 bg-white text-sm"
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-900 bg-white text-sm relative z-[10001]"
                               required
+                              style={{ position: 'relative', zIndex: 10001 }}
                             >
                               <option value="">Select County</option>
                               {kenyanCounties.map((county) => (
@@ -897,8 +898,8 @@ Thank you!`
                   ))}
                 </div>
 
-                <div className="border-t border-gray-200 p-4 space-y-4">
-                  <div>
+                <div className="border-t border-gray-200 p-4 space-y-4 overflow-visible">
+                  <div className="relative z-[10001]">
                     <label htmlFor="delivery-location-mobile" className="block text-sm font-medium text-gray-700 mb-2">
                       Delivery Location <span className="text-red-500">*</span>
                     </label>
@@ -906,8 +907,9 @@ Thank you!`
                       id="delivery-location-mobile"
                       value={deliveryLocation}
                       onChange={(e) => setDeliveryLocation(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-900 bg-white text-sm"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-900 bg-white text-sm relative z-[10001]"
                       required
+                      style={{ position: 'relative', zIndex: 10001 }}
                     >
                       <option value="">Select County</option>
                       {kenyanCounties.map((county) => (
