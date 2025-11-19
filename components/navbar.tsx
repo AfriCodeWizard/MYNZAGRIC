@@ -544,13 +544,20 @@ Thank you!`
                 {/* Cart Dropdown */}
                 {isCartOpen && (
                   <div 
-                    className="absolute right-0 top-full mt-2 w-96 bg-white rounded-lg shadow-2xl border border-gray-100 z-[10000] max-h-[600px] flex flex-col"
+                    className="absolute right-0 top-full mt-2 w-96 bg-white rounded-lg shadow-2xl border border-gray-100 z-[10000] flex flex-col"
+                    style={{ 
+                      maxHeight: 'calc(100vh - 120px)',
+                      maxWidth: 'calc(100vw - 32px)'
+                    }}
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <div className="flex items-center justify-between p-4 border-b border-gray-200">
+                    <div className="flex items-center justify-between p-4 border-b border-gray-200 flex-shrink-0">
                       <h3 className="text-lg font-bold text-gray-900">Shopping Cart</h3>
                       <button
-                        onClick={() => setIsCartOpen(false)}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setIsCartOpen(false)
+                        }}
                         className="text-gray-500 hover:text-gray-700 transition"
                         aria-label="Close cart"
                       >
@@ -560,7 +567,7 @@ Thank you!`
 
                     {cart.length > 0 ? (
                       <>
-                        <div className="flex-1 overflow-y-auto p-4 space-y-3 max-h-[400px]">
+                        <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-0">
                           {cart.map((item) => (
                             <div key={item.id} className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
                               <div className="flex-1 min-w-0">
@@ -604,7 +611,7 @@ Thank you!`
                           ))}
                         </div>
 
-                        <div className="border-t border-gray-200 p-4 space-y-4 overflow-visible">
+                        <div className="border-t border-gray-200 p-4 space-y-4 overflow-visible flex-shrink-0 bg-white">
                           <div className="relative z-[10001]">
                             <label htmlFor="delivery-location-nav" className="block text-sm font-medium text-gray-700 mb-2">
                               Delivery Location <span className="text-red-500">*</span>
@@ -638,6 +645,7 @@ Thank you!`
                             target="_blank"
                             rel="noopener noreferrer"
                             onClick={(e) => {
+                              e.stopPropagation()
                               if (!deliveryLocation) {
                                 e.preventDefault()
                                 alert("Please select a delivery location")
@@ -865,12 +873,19 @@ Thank you!`
 
       {/* Mobile Cart Dropdown/Modal */}
       {isCartOpen && totalItems > 0 && (
-        <div className="lg:hidden fixed inset-0 bg-black/50 z-[10000] flex items-end" onClick={() => setIsCartOpen(false)}>
-          <div ref={cartRef} className="w-full bg-white rounded-t-2xl shadow-2xl max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+        <div className="lg:hidden fixed inset-0 bg-black/50 z-[10000] flex items-end" onClick={(e) => {
+          if (e.target === e.currentTarget) {
+            setIsCartOpen(false)
+          }
+        }}>
+          <div className="w-full bg-white rounded-t-2xl shadow-2xl max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-4 border-b border-gray-200 flex-shrink-0">
               <h3 className="text-lg font-bold text-gray-900">Shopping Cart</h3>
               <button
-                onClick={() => setIsCartOpen(false)}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setIsCartOpen(false)
+                }}
                 className="text-gray-500 hover:text-gray-700 transition"
                 aria-label="Close cart"
               >
@@ -880,7 +895,7 @@ Thank you!`
 
             {cart.length > 0 ? (
               <>
-                <div className="flex-1 overflow-y-auto p-4 space-y-3">
+                <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-0">
                   {cart.map((item) => (
                     <div key={item.id} className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
                       <div className="flex-1 min-w-0">
@@ -924,7 +939,7 @@ Thank you!`
                   ))}
                 </div>
 
-                <div className="border-t border-gray-200 p-4 space-y-4 overflow-visible">
+                <div className="border-t border-gray-200 p-4 space-y-4 overflow-visible flex-shrink-0 bg-white">
                   <div className="relative z-[10001]">
                     <label htmlFor="delivery-location-mobile" className="block text-sm font-medium text-gray-700 mb-2">
                       Delivery Location <span className="text-red-500">*</span>
@@ -958,6 +973,7 @@ Thank you!`
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={(e) => {
+                      e.stopPropagation()
                       if (!deliveryLocation) {
                         e.preventDefault()
                         alert("Please select a delivery location")
