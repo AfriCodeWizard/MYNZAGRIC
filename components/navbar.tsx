@@ -543,7 +543,10 @@ Thank you!`
 
                 {/* Cart Dropdown */}
                 {isCartOpen && (
-                  <div className="absolute right-0 top-full mt-2 w-96 bg-white rounded-lg shadow-2xl border border-gray-100 z-[10000] max-h-[600px] flex flex-col">
+                  <div 
+                    className="absolute right-0 top-full mt-2 w-96 bg-white rounded-lg shadow-2xl border border-gray-100 z-[10000] max-h-[600px] flex flex-col"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <div className="flex items-center justify-between p-4 border-b border-gray-200">
                       <h3 className="text-lg font-bold text-gray-900">Shopping Cart</h3>
                       <button
@@ -566,7 +569,10 @@ Thank you!`
                               </div>
                               <div className="flex items-center gap-2 bg-white rounded-lg border border-green-200">
                                 <button
-                                  onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    updateQuantity(item.id, item.quantity - 1)
+                                  }}
                                   className="p-1 hover:bg-gray-100 transition"
                                   aria-label="Decrease quantity"
                                 >
@@ -574,7 +580,10 @@ Thank you!`
                                 </button>
                                 <span className="w-8 text-center font-bold text-gray-900">{item.quantity}</span>
                                 <button
-                                  onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    updateQuantity(item.id, item.quantity + 1)
+                                  }}
                                   className="p-1 hover:bg-gray-100 transition"
                                   aria-label="Increase quantity"
                                 >
@@ -582,7 +591,10 @@ Thank you!`
                                 </button>
                               </div>
                               <button
-                                onClick={() => removeFromCart(item.id)}
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  removeFromCart(item.id)
+                                }}
                                 className="text-red-500 hover:text-red-700 transition p-1"
                                 aria-label="Remove item"
                               >
@@ -600,7 +612,11 @@ Thank you!`
                             <select
                               id="delivery-location-nav"
                               value={deliveryLocation}
-                              onChange={(e) => setDeliveryLocation(e.target.value)}
+                              onChange={(e) => {
+                                e.stopPropagation()
+                                setDeliveryLocation(e.target.value)
+                              }}
+                              onClick={(e) => e.stopPropagation()}
                               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-900 bg-white text-sm relative z-[10001]"
                               required
                               style={{ position: 'relative', zIndex: 10001 }}
@@ -638,7 +654,8 @@ Thank you!`
                             📱 Order on WhatsApp
                           </a>
                           <button
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.stopPropagation()
                               clearCart()
                               setIsCartOpen(false)
                             }}
@@ -872,7 +889,10 @@ Thank you!`
                       </div>
                       <div className="flex items-center gap-2 bg-white rounded-lg border border-green-200">
                         <button
-                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            updateQuantity(item.id, item.quantity - 1)
+                          }}
                           className="p-1 hover:bg-gray-100 transition"
                           aria-label="Decrease quantity"
                         >
@@ -880,7 +900,10 @@ Thank you!`
                         </button>
                         <span className="w-8 text-center font-bold text-gray-900">{item.quantity}</span>
                         <button
-                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            updateQuantity(item.id, item.quantity + 1)
+                          }}
                           className="p-1 hover:bg-gray-100 transition"
                           aria-label="Increase quantity"
                         >
@@ -888,7 +911,10 @@ Thank you!`
                         </button>
                       </div>
                       <button
-                        onClick={() => removeFromCart(item.id)}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          removeFromCart(item.id)
+                        }}
                         className="text-red-500 hover:text-red-700 transition p-1"
                         aria-label="Remove item"
                       >
@@ -906,7 +932,11 @@ Thank you!`
                     <select
                       id="delivery-location-mobile"
                       value={deliveryLocation}
-                      onChange={(e) => setDeliveryLocation(e.target.value)}
+                      onChange={(e) => {
+                        e.stopPropagation()
+                        setDeliveryLocation(e.target.value)
+                      }}
+                      onClick={(e) => e.stopPropagation()}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-900 bg-white text-sm relative z-[10001]"
                       required
                       style={{ position: 'relative', zIndex: 10001 }}
@@ -945,7 +975,8 @@ Thank you!`
                     📱 Order on WhatsApp
                   </a>
                   <button
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation()
                       clearCart()
                       setIsCartOpen(false)
                     }}
