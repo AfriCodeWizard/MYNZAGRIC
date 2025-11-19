@@ -23,11 +23,11 @@ export default function Navbar() {
   const cartRef = useRef<HTMLDivElement>(null)
   const { cart, addToCart, updateQuantity, removeFromCart, clearCart, totalItems, totalPrice, showCartNotification } = useCart()
 
-  // Cart animation effect
+  // Cart animation effect - enhanced with longer duration
   useEffect(() => {
     if (showCartNotification && totalItems > 0) {
       setCartAnimation(true)
-      const timer = setTimeout(() => setCartAnimation(false), 600)
+      const timer = setTimeout(() => setCartAnimation(false), 1000)
       return () => clearTimeout(timer)
     }
   }, [showCartNotification, totalItems])
@@ -502,7 +502,9 @@ Thank you!`
 
           {/* Cart Icon - Only visible when items exist */}
           {totalItems > 0 && (
-            <div className="hidden lg:flex items-center ml-4">
+            <div className="hidden lg:flex items-center ml-4" style={{
+              animation: 'slideInRight 0.5s ease-out'
+            }}>
               <div ref={cartRef} className="relative">
                 <button
                   onClick={() => setIsCartOpen(!isCartOpen)}
@@ -511,24 +513,30 @@ Thank you!`
                     "focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2",
                     cartAnimation && "animate-bounce",
                     shouldShowSolidBackground
-                      ? "bg-green-600 hover:bg-green-700 text-white shadow-lg"
-                      : "bg-green-600 hover:bg-green-700 text-white shadow-lg"
+                      ? "bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg hover:shadow-xl"
+                      : "bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg hover:shadow-xl"
                   )}
                   aria-label="Shopping Cart"
                 >
                   <ShoppingBag className="w-5 h-5" />
-                  {/* Item count badge */}
+                  {/* Item count badge with colorful animation */}
                   <span className={cn(
-                    "absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full",
-                    "w-5 h-5 flex items-center justify-center shadow-md",
-                    cartAnimation && "scale-150"
+                    "absolute -top-1 -right-1 bg-gradient-to-br from-red-500 to-pink-500 text-white text-xs font-bold rounded-full",
+                    "w-5 h-5 flex items-center justify-center shadow-lg border-2 border-white",
+                    cartAnimation && "scale-150 animate-pulse"
                   )}>
                     {totalItems}
                   </span>
-                  {/* Pulse animation when item added */}
+                  {/* Multiple colorful pulse rings when item added */}
                   {showCartNotification && (
-                    <span className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-75" />
+                    <>
+                      <span className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-75" />
+                      <span className="absolute inset-0 rounded-full bg-yellow-400 animate-ping opacity-50" style={{ animationDelay: '0.2s' }} />
+                      <span className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-25" style={{ animationDelay: '0.4s' }} />
+                    </>
                   )}
+                  {/* Glow effect on hover */}
+                  <span className="absolute inset-0 rounded-full bg-green-400 opacity-0 hover:opacity-20 blur-md transition-opacity duration-300" />
                 </button>
 
                 {/* Cart Dropdown */}
@@ -653,7 +661,9 @@ Thank you!`
 
           {/* Mobile Cart Icon - Only visible when items exist */}
           {totalItems > 0 && (
-            <div className="lg:hidden ml-2 relative">
+            <div className="lg:hidden ml-2 relative" style={{
+              animation: 'slideInRight 0.5s ease-out'
+            }}>
               <button
                 onClick={() => setIsCartOpen(!isCartOpen)}
                 className={cn(
@@ -661,22 +671,28 @@ Thank you!`
                   "focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2",
                   cartAnimation && "animate-bounce",
                   shouldShowSolidBackground
-                    ? "bg-green-600 hover:bg-green-700 text-white shadow-lg"
-                    : "bg-green-600 hover:bg-green-700 text-white shadow-lg"
+                    ? "bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg hover:shadow-xl"
+                    : "bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg hover:shadow-xl"
                 )}
                 aria-label="Shopping Cart"
               >
                 <ShoppingBag className="w-5 h-5" />
                 <span className={cn(
-                  "absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full",
-                  "w-5 h-5 flex items-center justify-center shadow-md",
-                  cartAnimation && "scale-150"
+                  "absolute -top-1 -right-1 bg-gradient-to-br from-red-500 to-pink-500 text-white text-xs font-bold rounded-full",
+                  "w-5 h-5 flex items-center justify-center shadow-lg border-2 border-white",
+                  cartAnimation && "scale-150 animate-pulse"
                 )}>
                   {totalItems}
                 </span>
                 {showCartNotification && (
-                  <span className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-75" />
+                  <>
+                    <span className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-75" />
+                    <span className="absolute inset-0 rounded-full bg-yellow-400 animate-ping opacity-50" style={{ animationDelay: '0.2s' }} />
+                    <span className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-25" style={{ animationDelay: '0.4s' }} />
+                  </>
                 )}
+                {/* Glow effect on hover */}
+                <span className="absolute inset-0 rounded-full bg-green-400 opacity-0 hover:opacity-20 blur-md transition-opacity duration-300" />
               </button>
             </div>
           )}
