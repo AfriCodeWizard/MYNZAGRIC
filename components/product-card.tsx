@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Leaf, TrendingUp, ShoppingCart, Star } from "lucide-react"
+import { Leaf, ShoppingCart, Star } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 
@@ -42,7 +42,7 @@ export default function ProductCard({
       "relative bg-white rounded-lg overflow-hidden shadow-lg transition-all duration-300 h-full flex flex-col",
       "hover:shadow-2xl border border-gray-200",
       isExpanded && "shadow-2xl"
-    )}>
+    )} data-product-card="new-design">
       {/* Icon/Image Container */}
       <div className="relative h-56 bg-gradient-to-br from-green-100 to-green-50 flex items-center justify-center overflow-hidden">
         <div className="text-8xl transform transition-transform duration-300 hover:scale-110">
@@ -90,7 +90,7 @@ export default function ProductCard({
           </div>
         </div>
 
-        {/* Product Title */}
+        {/* Product Title - Redesigned */}
         <h3 className="text-2xl font-black uppercase text-gray-900 mb-2 leading-tight mt-2">
           {seedling.name}
         </h3>
