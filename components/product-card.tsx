@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Leaf, ShoppingCart, Star } from "lucide-react"
+import { Leaf, ShoppingCart, Plus, Star } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 
@@ -38,96 +38,267 @@ export default function ProductCard({
   const categoryLabel = seedling.category.charAt(0).toUpperCase() + seedling.category.slice(1)
 
   return (
-    <div className={cn(
-      "relative bg-white rounded-lg overflow-hidden shadow-lg transition-all duration-300 h-full flex flex-col",
-      "hover:shadow-2xl border border-gray-200",
-      isExpanded && "shadow-2xl"
-    )} data-product-card="new-design">
-      {/* Icon/Image Container */}
-      <div className="relative h-56 bg-gradient-to-br from-green-100 to-green-50 flex items-center justify-center overflow-hidden">
-        <div className="text-8xl transform transition-transform duration-300 hover:scale-110">
-          {seedling.icon}
+    <div 
+      className={cn(
+        "relative bg-white overflow-hidden text-center rounded-lg",
+        isExpanded && "expanded"
+      )}
+      style={{
+        boxShadow: '0px 5px 43px rgba(0, 0, 0, 0.48)',
+        padding: 0,
+        maxWidth: '360px',
+        width: '100%',
+      }}
+    >
+      {/* Image/Icon Container - CodePen style */}
+      <div className="relative w-full overflow-hidden">
+        <div className="w-full bg-gradient-to-br from-green-100 to-green-50 flex items-center justify-center" style={{ minHeight: '180px' }}>
+          <div className="text-8xl transform transition-transform duration-300 hover:scale-110">
+            {seedling.icon}
+          </div>
         </div>
       </div>
 
-      {/* Content Section with diagonal overlay */}
-      <div className="relative z-10 bg-white pt-8 pb-4 px-6 flex-grow flex flex-col">
-        {/* Diagonal background accent */}
-        <div className="absolute top-0 left-0 w-[200%] h-24 bg-white transform -rotate-[8deg] -translate-y-12 -translate-x-[10%] -z-10" />
+      {/* Content Section - CodePen style */}
+      <div 
+        className="relative z-10 bg-white pt-4 pb-2 px-4 flex flex-col"
+        style={{
+          position: 'relative',
+          minHeight: '240px',
+        }}
+      >
+        {/* Diagonal background accent - CodePen exact measurements */}
+        <div 
+          className="absolute bg-white"
+          style={{
+            content: '',
+            width: '200%',
+            height: '100px',
+            position: 'absolute',
+            display: 'block',
+            backgroundColor: '#fff',
+            transform: 'rotate(-8deg)',
+            top: '-50px',
+            left: '-10%',
+            zIndex: -1,
+          }}
+        />
 
-        {/* Buy Button - Floating */}
+        {/* Buy Button - CodePen exact measurements with cart-plus icon */}
         <button
           onClick={handleAddToCart}
           className={cn(
-            "absolute top-0 right-6 -translate-y-1/2 z-20 w-[70px] h-[70px] rounded-full",
-            "bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700",
-            "text-white shadow-xl transition-all duration-300 flex items-center justify-center",
-            "hover:scale-110 active:scale-95",
-            isExpanded && "w-[750px] h-[750px] -right-[375px] -top-[375px] pointer-events-none"
+            "absolute rounded-full text-white transition-all duration-300",
+            "flex items-center justify-center hover:scale-110 active:scale-95",
+            "hover:bg-green-600",
+            isExpanded && "pointer-events-none"
           )}
+          style={{
+            display: 'block',
+            top: '-80px',
+            right: '30px',
+            zIndex: 2,
+            width: '70px',
+            height: '70px',
+            backgroundColor: '#10b981', // green-500 for website theme
+            fontSize: '36px',
+            color: '#fff',
+            transition: 'all 0.3s ease',
+            borderRadius: '50%',
+            position: 'absolute',
+            ...(isExpanded && {
+              width: '750px',
+              height: '750px',
+              right: '-375px',
+              top: '-375px',
+            }),
+          }}
           title="Add to Cart"
           disabled={isExpanded}
         >
-          <ShoppingCart className={cn(
-            "w-8 h-8 transition-opacity duration-300",
-            isExpanded && "opacity-0"
-          )} />
+          <div className="relative flex items-center justify-center" style={{ width: '100%', height: '100%', position: 'relative' }}>
+            <ShoppingCart 
+              className={cn(
+                "transition-opacity duration-300",
+                isExpanded && "opacity-0"
+              )}
+              style={{
+                width: '24px',
+                height: '24px',
+              }}
+            />
+            <Plus 
+              className={cn(
+                "absolute transition-opacity duration-300",
+                isExpanded && "opacity-0"
+              )}
+              style={{
+                width: '14px',
+                height: '14px',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+              }}
+            />
+          </div>
         </button>
 
-        {/* Success Checkmark Overlay */}
-        <div className={cn(
-          "absolute top-1/2 left-[37%] -translate-x-1/2 -translate-y-1/2 z-[999] opacity-0 transition-opacity duration-300 pointer-events-none",
-          isExpanded && "opacity-100 delay-[600ms]"
-        )}>
-          <div className="relative w-16 h-16">
-            {/* Checkmark lines - using borders */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-              {/* First line (shorter, rotated 45deg) */}
-              <div className="absolute w-10 h-[4px] bg-white rounded-full top-[8px] left-[-20px] transform rotate-45" />
-              {/* Second line (longer, rotated -45deg) */}
-              <div className="absolute w-[88px] h-[4px] bg-white rounded-full top-[-16px] left-[8px] transform -rotate-45" />
-            </div>
+        {/* Success Checkmark Overlay - CodePen exact measurements */}
+        <div 
+          className={cn(
+            "absolute pointer-events-none transition-opacity duration-300",
+            isExpanded && "opacity-100 delay-[600ms]"
+          )}
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '37%',
+            transform: 'translate(-50%, -50%)',
+            opacity: isExpanded ? 1 : 0,
+            zIndex: 999,
+            ...(isExpanded && {
+              transition: 'opacity 0.3s 0.6s',
+            }),
+          }}
+        >
+          <div className="relative" style={{ width: '88px', height: '40px', position: 'relative' }}>
+            {/* Checkmark - First line (CodePen exact: 40px width, 20px height, rotate 45deg) */}
+            <div 
+              className="absolute bg-white"
+              style={{
+                content: '',
+                display: 'block',
+                position: 'absolute',
+                backgroundColor: '#fff',
+                width: '40px',
+                height: '20px',
+                transform: 'rotate(45deg)',
+                top: '10px',
+                left: '0px',
+              }}
+            />
+            {/* Checkmark - Second line (CodePen exact: 88px width, 20px height, rotate -45deg) */}
+            <div 
+              className="absolute bg-white"
+              style={{
+                content: '',
+                display: 'block',
+                position: 'absolute',
+                backgroundColor: '#fff',
+                width: '88px',
+                height: '20px',
+                transform: 'rotate(-45deg)',
+                top: '-6px',
+                left: '8px',
+              }}
+            />
           </div>
         </div>
 
-        {/* Product Title - Redesigned */}
-        <h3 className="text-2xl font-black uppercase text-gray-900 mb-2 leading-tight mt-2">
+        {/* Product Title - CodePen exact measurements, slightly reduced */}
+        <h3 
+          className="font-black uppercase mb-1"
+          style={{
+            fontSize: '1.8em',
+            fontWeight: 900,
+            textTransform: 'uppercase',
+            margin: 0,
+            fontFamily: 'var(--font-acme), sans-serif',
+            color: '#1f2937',
+          }}
+        >
           {seedling.name}
         </h3>
 
-        {/* Category Description */}
-        <div className="text-green-700 font-medium text-sm mb-4 italic">
+        {/* Category Description - CodePen exact measurements, slightly reduced */}
+        <div 
+          className="mb-2 italic"
+          style={{
+            fontFamily: 'var(--font-satisfy), cursive',
+            fontSize: '1.1em',
+            color: '#059669', // green-600 for website theme
+          }}
+        >
           {categoryLabel} Variety
         </div>
 
-        {/* Price with decorative lines */}
-        <div className="relative flex items-center justify-center my-6">
-          <span className="absolute left-0 top-1/2 h-[1px] w-12 bg-gray-300" />
-          <span className="text-3xl font-black text-green-600 px-4">
+        {/* Price with decorative lines - CodePen exact measurements, slightly reduced */}
+        <div 
+          className="relative inline-block font-black"
+          style={{
+            fontSize: '1.8em',
+            fontWeight: 900,
+            display: 'block',
+            width: '100px',
+            margin: '10px auto 0',
+            position: 'relative',
+            fontFamily: 'var(--font-satisfy), cursive',
+            color: '#059669', // green-600 for website theme
+          }}
+        >
+          <span 
+            className="absolute"
+            style={{
+              content: '',
+              height: '1px',
+              width: '50px',
+              display: 'block',
+              position: 'absolute',
+              backgroundColor: '#ddd',
+              top: '18px',
+              left: '-50px',
+            }}
+          />
+          <span>
             KES {seedling.price.toLocaleString()}
           </span>
-          <span className="absolute right-0 top-1/2 h-[1px] w-12 bg-gray-300" />
+          <span 
+            className="absolute"
+            style={{
+              content: '',
+              height: '1px',
+              width: '50px',
+              display: 'block',
+              position: 'absolute',
+              backgroundColor: '#ddd',
+              top: '18px',
+              right: '-50px',
+            }}
+          />
         </div>
 
-        {/* Footer Section */}
-        <div className="mt-auto pt-4 border-t border-gray-200">
-          {/* Star Rating */}
-          <div className="flex items-center justify-center gap-1 mb-4">
+        {/* Footer Section - CodePen exact measurements, reduced - pushed to bottom */}
+        <div className="mt-auto">
+          {/* Star Rating - CodePen style */}
+          <ul 
+            className="flex items-center justify-center gap-1 list-none p-0 m-0"
+            style={{
+              listStyle: 'none',
+              padding: 0,
+              margin: '0.6em 0',
+            }}
+          >
             {[1, 2, 3, 4, 5].map((star) => (
-              <Star
-                key={star}
-                className={cn(
-                  "w-4 h-4 transition-colors",
-                  star <= 4 ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
-                )}
-              />
+              <li key={star} style={{ color: '#EFD829' }}>
+                <Star
+                  className={cn(
+                    "w-4 h-4 transition-colors",
+                    star <= 4 ? "fill-yellow-400 text-yellow-400" : "text-gray-300 fill-none"
+                  )}
+                />
+              </li>
             ))}
-          </div>
+          </ul>
 
-          {/* Plant Care Guide Link */}
+          {/* Plant Care Guide Link - Maintained from original, consistent height */}
           <Link
             href={`/plant-care/${seedling.id}`}
-            className="w-full inline-flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 rounded-lg transition-all duration-200 text-sm shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]"
+            className="w-full inline-flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold py-1.5 rounded-lg transition-all duration-200 text-sm shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] mt-2"
+            style={{
+              height: '36px',
+              display: 'flex',
+              alignItems: 'center',
+            }}
           >
             <Leaf className="w-4 h-4" />
             View Care Guide
@@ -137,3 +308,6 @@ export default function ProductCard({
     </div>
   )
 }
+
+
+
