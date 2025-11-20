@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Leaf, ShoppingCart, Plus, Star } from "lucide-react"
+import { Leaf, ShoppingCart, Star } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 
@@ -40,7 +40,7 @@ export default function ProductCard({
   return (
     <div 
       className={cn(
-        "relative bg-white overflow-hidden text-center rounded-lg",
+        "relative bg-white overflow-hidden text-center rounded-lg group",
         isExpanded && "expanded"
       )}
       style={{
@@ -91,6 +91,8 @@ export default function ProductCard({
             "absolute rounded-full text-white transition-all duration-300",
             "flex items-center justify-center hover:scale-110 active:scale-95",
             "hover:bg-green-600",
+            "group-hover:animate-pulse group-hover:scale-110 group-hover:shadow-2xl",
+            "group-hover:shadow-green-500/50",
             isExpanded && "pointer-events-none"
           )}
           style={{
@@ -116,28 +118,24 @@ export default function ProductCard({
           title="Add to Cart"
           disabled={isExpanded}
         >
+          {/* Animated glow ring on card hover */}
+          <div 
+            className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+            style={{
+              boxShadow: '0 0 0 0 rgba(16, 185, 129, 0.7)',
+              animation: 'pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            }}
+          />
           <div className="relative flex items-center justify-center" style={{ width: '100%', height: '100%', position: 'relative' }}>
             <ShoppingCart 
               className={cn(
-                "transition-opacity duration-300",
+                "transition-all duration-300 group-hover:rotate-12",
                 isExpanded && "opacity-0"
               )}
               style={{
-                width: '24px',
-                height: '24px',
-              }}
-            />
-            <Plus 
-              className={cn(
-                "absolute transition-opacity duration-300",
-                isExpanded && "opacity-0"
-              )}
-              style={{
-                width: '14px',
-                height: '14px',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
+                width: '30px',
+                height: '30px',
+                strokeWidth: 2.5,
               }}
             />
           </div>
