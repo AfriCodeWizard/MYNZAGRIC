@@ -46,35 +46,21 @@ export default function Hero() {
         {/* Navbar */}
         <Navbar /> {/* Using the new Navbar component with animated hover effects */}
         {/* Main Content */}
-        <main className="mt-12 sm:mt-10 md:mt-16 flex-grow">
+        <main className="mt-8 sm:mt-6 md:mt-12 flex-grow flex flex-col justify-center">
           <div className="max-w-3xl relative z-10">
-            <h1 className="text-4xl sm:text-5xl md:text-7xl text-white leading-[1.15] sm:leading-tight mb-4 sm:mb-5 md:mb-6">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-white leading-[1.15] sm:leading-tight mb-3 sm:mb-4 md:mb-5">
               <span className="font-light text-green-400">GROW WITH</span>
               <br />
               <span className="font-bold text-white">MYNZAGRIC</span>
             </h1>
-            <p className="mt-4 sm:mt-5 md:mt-6 text-base sm:text-lg text-gray-200 max-w-xl leading-relaxed">
+            <p className="mt-3 sm:mt-4 md:mt-5 text-base sm:text-lg text-gray-200 max-w-xl leading-relaxed">
               Certified grafted fruit seedlings ready for transplanting. Premium quality seedlings from Kenya's trusted
               nursery.
             </p>
-            <div className="mt-6 sm:mt-8 bg-green-600/20 border border-green-500/30 rounded-lg p-4 sm:p-5 max-w-xl">
-              <p className="text-green-300 font-semibold text-sm sm:text-base mb-2">
-                🌱 NEW: FRUTOPIA VALUE PACK
-              </p>
-              <p className="text-white text-sm leading-relaxed">
-                Complete 1-acre packages with premium seedlings + <strong className="text-green-300">precision drip irrigation systems</strong>. Everything you need to start farming!
-              </p>
-              <a
-                href="#frutopia"
-                className="inline-block mt-3 text-green-300 hover:text-green-200 font-medium text-sm transition-colors"
-              >
-                Explore Value Packs →
-              </a>
-            </div>
           </div>
         </main>
         {/* Footer with CTA and Featured Card */}
-        <footer className="py-6 md:py-6 mt-10 sm:mt-auto pb-6 sm:pb-6 md:pb-6">
+        <footer className="py-4 md:py-5 mt-6 sm:mt-4 pb-4 sm:pb-5 md:pb-6">
           <div className="flex items-end justify-between">
             <div className="w-full lg:w-auto">
               <div className="flex flex-wrap items-center gap-4 sm:gap-6">
@@ -121,9 +107,9 @@ export default function Hero() {
         </div>
         
         {/* Featured Project Card - Above buttons on mobile, original position on desktop */}
-        <div className="absolute bottom-32 sm:bottom-36 md:bottom-40 right-4 sm:right-4 md:right-8 lg:bottom-8 lg:right-8 z-[5]">
+        <div className="absolute bottom-24 sm:bottom-28 md:bottom-32 right-4 sm:right-4 md:right-8 lg:bottom-8 lg:right-8 z-[5]">
           <div 
-            className="relative bg-gradient-to-tr from-white/15 to-white/45 backdrop-blur-md border border-white/30 p-4 sm:p-6 text-white overflow-hidden w-[200px] sm:w-[260px] md:w-[280px] lg:max-w-sm shadow-lg sm:shadow-xl" 
+            className="relative bg-gradient-to-tr from-white/15 to-white/45 backdrop-blur-md border border-white/30 p-3 sm:p-5 md:p-6 text-white overflow-hidden w-[180px] sm:w-[240px] md:w-[260px] lg:max-w-sm shadow-lg sm:shadow-xl" 
             style={{ borderRadius: '12px' }}
           >
             {/* Diagonal Transparency Gradient Overlay - from bottom-left (transparent) to top-right (opaque) */}

@@ -402,7 +402,7 @@ export default function ProductGrid() {
                                 onClick={(e) => {
                                   e.stopPropagation()
                                 }}
-                                className={`bg-[#ff6b35] hover:bg-[#ff824f] active:bg-[#ff5a25] text-white font-semibold py-2 px-4 sm:py-2.5 sm:px-5 rounded-full transition-all duration-300 text-xs sm:text-sm z-20 relative flex items-center justify-center gap-2 ${
+                                className={`bg-green-600 hover:bg-green-700 active:bg-green-800 text-white font-semibold py-2 px-4 sm:py-2.5 sm:px-5 rounded-full transition-all duration-300 text-xs sm:text-sm z-20 relative flex items-center justify-center gap-2 ${
                                   isMobile ? 'w-auto self-start' : 'w-full sm:w-auto'
                                 }`}
                               >
@@ -433,7 +433,7 @@ export default function ProductGrid() {
                     }}
                     className={`rounded-full transition-all duration-300 ${
                       isActive 
-                        ? 'bg-[#ff6b35] w-8 h-2' 
+                        ? 'bg-green-600 w-8 h-2' 
                         : 'bg-gray-600 w-2 h-2 hover:bg-gray-500'
                     }`}
                     aria-label={`Go to ${categories[index].label}`}
