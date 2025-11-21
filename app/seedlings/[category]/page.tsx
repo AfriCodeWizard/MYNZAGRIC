@@ -3,6 +3,7 @@
 import { use } from "react"
 import Link from "next/link"
 import { ArrowLeft, Leaf } from "lucide-react"
+import ProductCard from "@/components/product-card"
 import { seedlings } from "@/lib/seedlings-data"
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
@@ -87,8 +88,8 @@ function SeedlingsCategoryContent({
   seedlings
 }: {
   category: string
-  categoryData: typeof categories[string]
-  seedlings: typeof seedlings
+  categoryData: (typeof categories)[string]
+  seedlings: Array<any>
 }) {
   const { addToCart } = useCart()
 
@@ -138,52 +139,7 @@ function SeedlingsCategoryContent({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
             {seedlings.map((seedling) => (
-              <div
-                key={seedling.id}
-                className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:bg-white/10 transition-all duration-300 group"
-              >
-                {/* Image */}
-                <div className="relative h-48 overflow-hidden">
-                  <div className={`absolute inset-0 bg-gradient-to-br ${categoryData.bgColor} opacity-50`} />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-6xl">{categoryData.icon}</span>
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="p-5">
-                  <div className="flex items-start justify-between mb-3">
-                    <h3 className="font-bold text-white text-lg line-clamp-2 flex-1">
-                      {seedling.name}
-                    </h3>
-                  </div>
-
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-2xl font-bold text-green-400">
-                      KES {seedling.price.toLocaleString()}
-                    </span>
-                    <span className="text-xs text-gray-400 bg-gray-700/50 px-2 py-1 rounded">
-                      per seedling
-                    </span>
-                  </div>
-
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => addToCart({ id: seedling.id, name: seedling.name, price: seedling.price })}
-                      className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2"
-                    >
-                      Add to Cart
-                    </button>
-                    <Link
-                      href={`/plant-care/${seedling.id}`}
-                      className="bg-white/10 hover:bg-white/20 text-white p-2.5 rounded-lg transition-colors flex items-center justify-center"
-                      title="View Plant Care Guide"
-                    >
-                      <Leaf className="w-4 h-4" />
-                    </Link>
-                  </div>
-                </div>
-              </div>
+              <ProductCard key={seedling.id} seedling={seedling} onAddToCart={addToCart} />
             ))}
           </div>
         </div>

@@ -53,8 +53,8 @@ export default function ProductCard({
       {/* Image/Icon Container - CodePen style */}
       <div className="relative w-full overflow-hidden">
         <div className="w-full bg-gradient-to-br from-green-100 to-green-50 flex items-center justify-center" style={{ minHeight: '180px' }}>
-          <div className="text-8xl transform transition-transform duration-300 hover:scale-110">
-            {seedling.icon}
+        <div className="text-8xl transform transition-transform duration-300 hover:scale-110">
+          {seedling.icon}
           </div>
         </div>
       </div>
@@ -130,7 +130,7 @@ export default function ProductCard({
             <ShoppingCart 
               className={cn(
                 "transition-all duration-300 group-hover:rotate-12",
-                isExpanded && "opacity-0"
+            isExpanded && "opacity-0"
               )}
               style={{
                 width: '30px',
@@ -145,7 +145,7 @@ export default function ProductCard({
         <div 
           className={cn(
             "absolute pointer-events-none transition-opacity duration-300",
-            isExpanded && "opacity-100 delay-[600ms]"
+          isExpanded && "opacity-100 delay-[600ms]"
           )}
           style={{
             position: 'absolute',
@@ -278,12 +278,12 @@ export default function ProductCard({
           >
             {[1, 2, 3, 4, 5].map((star) => (
               <li key={star} style={{ color: '#EFD829' }}>
-                <Star
-                  className={cn(
-                    "w-4 h-4 transition-colors",
+              <Star
+                className={cn(
+                  "w-4 h-4 transition-colors",
                     star <= 4 ? "fill-yellow-400 text-yellow-400" : "text-gray-300 fill-none"
-                  )}
-                />
+                )}
+              />
               </li>
             ))}
           </ul>
