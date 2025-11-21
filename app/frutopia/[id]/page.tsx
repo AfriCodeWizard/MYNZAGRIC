@@ -391,38 +391,55 @@ Thank you!`
             </div>
           </div>
 
-          {/* Drip Irrigation Highlight */}
-          <div className="bg-gradient-to-r from-green-600/20 to-green-700/20 border-2 border-green-500/40 rounded-2xl p-6 sm:p-8 mb-8">
-            <div className="flex items-start gap-6">
-              <div className="bg-green-600/40 p-4 rounded-xl ring-2 ring-green-400/50 flex-shrink-0">
-                <Droplets className="w-8 h-8 text-green-300" />
-              </div>
-              <div className="flex-1">
-                <h3 className="text-2xl sm:text-3xl font-bold text-green-300 mb-3">
+          {/* Drip Irrigation Highlight - CodePen Design */}
+          <div className="mb-8 drip-irrigation-card" style={{ filter: 'drop-shadow(2px 2px 5px rgba(0, 0, 0, 0.5))' }}>
+            <div className="drip-irrigation-grid">
+              {/* Text Section */}
+              <div className="drip-text-section flex flex-col">
+                <div className="text-xs sm:text-sm text-green-400 font-semibold uppercase tracking-wider mb-2">
+                  Drip Irrigation
+                </div>
+                <h3 className="text-2xl sm:text-3xl font-bold text-green-300 italic mb-3">
                   Precision Drip Irrigation System Included
                 </h3>
-                <p className="text-gray-300 leading-relaxed mb-4 text-base sm:text-lg">
+                <p className="text-gray-300 leading-relaxed text-sm sm:text-base mb-4">
                   Our button dripper irrigation system is designed for maximum water efficiency and optimal plant growth. This professional-grade system ensures:
                 </p>
-                <ul className="space-y-2 text-gray-300">
+                <ul className="space-y-2 text-gray-300 text-sm sm:text-base">
                   <li className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
+                    <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 mt-0.5 flex-shrink-0" />
                     <span>Precise water delivery directly to plant roots</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
+                    <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 mt-0.5 flex-shrink-0" />
                     <span>Reduced water waste and lower operational costs</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
+                    <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 mt-0.5 flex-shrink-0" />
                     <span>Professional installation guidance included</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
+                    <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 mt-0.5 flex-shrink-0" />
                     <span>Compatible with all modern water sources</span>
                   </li>
                 </ul>
               </div>
+
+              {/* Image Section - 3 images horizontally with diagonal edges */}
+              {[
+                'https://images.pexels.com/photos/4061662/pexels-photo-4061662.jpeg?auto=compress&cs=tinysrgb&w=800',
+                'https://images.pexels.com/photos/1072824/pexels-photo-1072824.jpeg?auto=compress&cs=tinysrgb&w=800',
+                'https://images.unsplash.com/photo-1593113598332-cd288d649433?w=800&q=80'
+              ].map((imgSrc, idx) => (
+                <figure key={idx} className="drip-image-wrapper">
+                  <Image
+                    src={imgSrc}
+                    alt={`Drip irrigation system ${idx + 1}`}
+                    fill
+                    className="object-cover"
+                  />
+                </figure>
+              ))}
             </div>
           </div>
 
