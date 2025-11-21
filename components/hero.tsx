@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect } from "react"
-import { MapPin, ArrowUpRight } from "lucide-react"
+import { ArrowUpRight } from "lucide-react"
 import Navbar from "@/components/navbar" // Import the Navbar component
 
 export default function Hero() {
@@ -109,7 +109,7 @@ export default function Hero() {
         {/* Featured Project Card - Above buttons on mobile, original position on desktop */}
         <div className="absolute bottom-24 sm:bottom-28 md:bottom-32 right-4 sm:right-4 md:right-8 lg:bottom-8 lg:right-8 z-[5]">
           <div 
-            className="relative bg-gradient-to-tr from-white/15 to-white/45 backdrop-blur-md border border-white/30 p-3 sm:p-5 md:p-6 text-white overflow-hidden w-[180px] sm:w-[240px] md:w-[260px] lg:max-w-sm shadow-lg sm:shadow-xl" 
+            className="relative bg-gradient-to-tr from-white/15 to-white/45 backdrop-blur-md border border-white/30 p-4 sm:p-5 md:p-6 text-white overflow-hidden w-[200px] sm:w-[280px] md:w-[320px] lg:w-[340px] shadow-lg sm:shadow-xl" 
             style={{ borderRadius: '12px' }}
           >
             {/* Diagonal Transparency Gradient Overlay - from bottom-left (transparent) to top-right (opaque) */}
@@ -121,22 +121,19 @@ export default function Hero() {
                 mixBlendMode: 'multiply',
               }}
             />
-            <div className="relative z-10">
-              {/* Top Icons Row */}
-              <div className="flex items-start justify-between mb-2 sm:mb-3">
-                {/* Location Pin Icon - Top Left */}
-                <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-white/80" strokeWidth={2} />
-                {/* Dark Green Circular Button - Top Right */}
+            <div className="relative z-10 flex flex-col h-full">
+              {/* Top Right Button */}
+              <div className="flex items-start justify-end mb-3 sm:mb-4">
                 <button className="bg-green-900/80 hover:bg-green-900 p-1.5 sm:p-2 rounded-full transition-colors shrink-0">
                   <ArrowUpRight className="w-3 h-3 sm:w-4 sm:h-4 text-white" strokeWidth={2} />
                 </button>
               </div>
               
               {/* Title */}
-              <h3 className="font-bold text-sm sm:text-lg mb-1 sm:mb-2">Frutopia Value Pack</h3>
+              <h3 className="font-bold text-base sm:text-lg md:text-xl mb-2 sm:mb-3">Frutopia Value Pack</h3>
               
               {/* Description */}
-              <p className="text-xs sm:text-sm text-gray-300 leading-tight">
+              <p className="text-xs sm:text-sm md:text-base text-gray-300 leading-relaxed flex-grow">
                 Complete farming solutions with seedlings + <strong className="text-green-300">drip irrigation kits</strong>. Start your 1-acre farm today!
               </p>
             </div>
