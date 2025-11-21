@@ -277,20 +277,29 @@ html {
 
 .drip-irrigation-grid {
   display: grid;
-  /* twice the number of img columns */
-  grid-template-columns: repeat(calc(2 * var(--n)), 1fr);
+  /* Mobile: stack vertically */
+  grid-template-columns: 1fr;
   gap: var(--g);
   background-color: #171717;
-  min-height: 400px;
+  min-height: auto;
   /* to hide what overflows of the last image */
   overflow: hidden;
   border-radius: 5px;
 }
 
+/* Tablet and up: horizontal layout with diagonal clipping */
+@media (min-width: 768px) {
+  .drip-irrigation-grid {
+    /* twice the number of img columns */
+    grid-template-columns: repeat(calc(2 * var(--n)), 1fr);
+    min-height: 400px;
+  }
+}
+
 .drip-text-section {
   gap: 0.75rem;
-  /* text section takes up half the columns */
-  grid-column-end: span var(--n);
+  /* Mobile: full width */
+  grid-column-end: span 1;
   /* needed for its pseudo */
   position: relative;
   /* so its pseudo is above parent backdrop */
@@ -300,27 +309,34 @@ html {
   background-color: #171717;
 }
 
-.drip-text-section::after {
-  position: absolute;
-  /* attach to top & bottom */
-  inset: 0 auto;
-  /* prevent it from covering text content */
-  z-index: -1;
-  /* same background as parent */
-  background: inherit;
-  content: '';
-  /* the 1px difference is to prevent hairline gaps */
-  left: calc(100% - 1px);
-  /* aspect-ratio for fixed angle method - creates the diagonal edge */
-  aspect-ratio: tan(var(--a));
-  /* 1px extra to avoid hairline gaps */
-  padding-left: calc(var(--g) + 1px);
-  clip-path: polygon(
-    /* top edge points */
-    0 0, calc(var(--g) + 1px) 0,
-    /* bottom edge points */
-    100% 100%, 0 100%
-  );
+/* Tablet and up: text section takes up half the columns */
+@media (min-width: 768px) {
+  .drip-text-section {
+    grid-column-end: span var(--n);
+  }
+  
+  .drip-text-section::after {
+    position: absolute;
+    /* attach to top & bottom */
+    inset: 0 auto;
+    /* prevent it from covering text content */
+    z-index: -1;
+    /* same background as parent */
+    background: inherit;
+    content: '';
+    /* the 1px difference is to prevent hairline gaps */
+    left: calc(100% - 1px);
+    /* aspect-ratio for fixed angle method - creates the diagonal edge */
+    aspect-ratio: tan(var(--a));
+    /* 1px extra to avoid hairline gaps */
+    padding-left: calc(var(--g) + 1px);
+    clip-path: polygon(
+      /* top edge points */
+      0 0, calc(var(--g) + 1px) 0,
+      /* bottom edge points */
+      100% 100%, 0 100%
+    );
+  }
 }
 
 /* Container type for container queries */
@@ -333,7 +349,14 @@ html {
   place-self: stretch;
   /* prevent image distortion */
   overflow: hidden;
-  min-height: 400px;
+  min-height: 200px;
+}
+
+/* Tablet and up: restore full height */
+@media (min-width: 768px) {
+  .drip-image-wrapper {
+    min-height: 400px;
+  }
 }
 
 .drip-image-wrapper > * {
@@ -344,24 +367,33 @@ html {
   position: relative;
 }
 
+/* Mobile: no diagonal clipping, just normal images */
 .drip-image-wrapper img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
-  /* horizontal stretch of image from angle using container query height */
-  --xo: calc(100cqh * tan(var(--a)));
-  margin-right: calc(-1 * var(--xo));
-  /* xi = stretch relative to expanded img width */
-  /* For fixa method, --xi = --xo / 1 (no --f variable) */
-  --xi: calc(var(--xo) / 1);
-  /* All images use the same clip-path formula - diagonal creates the separator */
-  clip-path: polygon(
-    /* top edge points */
-    0 0, calc(100% - var(--xi)) 0,
-    /* bottom edge points */
-    100% 100%, calc(var(--xi)) 100%
-  );
+  clip-path: none;
+  margin-right: 0;
+}
+
+/* Tablet and up: apply diagonal clipping */
+@media (min-width: 768px) {
+  .drip-image-wrapper img {
+    /* horizontal stretch of image from angle using container query height */
+    --xo: calc(100cqh * tan(var(--a)));
+    margin-right: calc(-1 * var(--xo));
+    /* xi = stretch relative to expanded img width */
+    /* For fixa method, --xi = --xo / 1 (no --f variable) */
+    --xi: calc(var(--xo) / 1);
+    /* All images use the same clip-path formula - diagonal creates the separator */
+    clip-path: polygon(
+      /* top edge points */
+      0 0, calc(100% - var(--xi)) 0,
+      /* bottom edge points */
+      100% 100%, calc(var(--xi)) 100%
+    );
+  }
 }
 
 .drip-image-wrapper > * {

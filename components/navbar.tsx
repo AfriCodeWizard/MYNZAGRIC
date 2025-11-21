@@ -873,18 +873,88 @@ Thank you!`
 
       {/* Mobile Cart Dropdown/Modal */}
       {isCartOpen && totalItems > 0 && (
-        <div className="lg:hidden fixed inset-0 bg-black/50 z-[10000] flex items-end" onClick={(e) => {
-          if (e.target === e.currentTarget) {
-            setIsCartOpen(false)
-          }
-        }}>
-          <div className="w-full bg-white rounded-t-2xl shadow-2xl max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center justify-between p-4 border-b border-gray-200 flex-shrink-0">
+        <div 
+          className="lg:hidden fixed inset-0 bg-black/50 z-[10000] flex items-end backdrop-overlay"
+          style={{ pointerEvents: 'auto' }}
+          onMouseDown={(e) => {
+            // Only close if clicking the backdrop itself, not children
+            const target = e.target as HTMLElement
+            // Check if the click is on the backdrop itself (not on cart content or any child)
+            if (target === e.currentTarget) {
+              // Double check: make sure we're not clicking on any cart-related element
+              const cartElement = target.closest('.cart-content')
+              const selectElement = target.closest('select')
+              const labelElement = target.closest('label')
+              if (!cartElement && !selectElement && !labelElement) {
+                setIsCartOpen(false)
+              }
+            }
+          }}
+          onTouchStart={(e) => {
+            // Only close if touching the backdrop itself, not children
+            const target = e.target as HTMLElement
+            // Check if the touch is on the backdrop itself (not on cart content or any child)
+            if (target === e.currentTarget) {
+              // Double check: make sure we're not touching any cart-related element
+              const cartElement = target.closest('.cart-content')
+              const selectElement = target.closest('select')
+              const labelElement = target.closest('label')
+              if (!cartElement && !selectElement && !labelElement) {
+                setIsCartOpen(false)
+              }
+            }
+          }}
+        >
+          <div 
+            className="w-full bg-white rounded-t-2xl shadow-2xl max-h-[90vh] flex flex-col cart-content"
+            style={{ pointerEvents: 'auto' }}
+            onMouseDown={(e) => {
+              // Prevent clicks inside cart from closing it
+              e.stopPropagation()
+              e.preventDefault()
+            }}
+            onClick={(e) => {
+              // Prevent clicks inside cart from closing it
+              e.stopPropagation()
+            }}
+            onTouchStart={(e) => {
+              // Prevent touch events from bubbling to backdrop
+              e.stopPropagation()
+            }}
+            onTouchEnd={(e) => {
+              // Prevent touch end events from bubbling
+              e.stopPropagation()
+            }}
+            onTouchMove={(e) => {
+              // Prevent touch move events from bubbling
+              e.stopPropagation()
+            }}
+          >
+            <div 
+              className="flex items-center justify-between p-4 border-b border-gray-200 flex-shrink-0"
+              onMouseDown={(e) => e.stopPropagation()}
+              onClick={(e) => e.stopPropagation()}
+              onTouchStart={(e) => e.stopPropagation()}
+              onTouchEnd={(e) => e.stopPropagation()}
+            >
               <h3 className="text-lg font-bold text-gray-900">Shopping Cart</h3>
               <button
                 onClick={(e) => {
                   e.stopPropagation()
+                  e.preventDefault()
                   setIsCartOpen(false)
+                }}
+                onMouseDown={(e) => {
+                  e.stopPropagation()
+                  e.preventDefault()
+                }}
+                onTouchStart={(e) => {
+                  e.stopPropagation()
+                  e.preventDefault()
+                }}
+                onTouchEnd={(e) => {
+                  e.stopPropagation()
+                  e.preventDefault()
                 }}
                 className="text-gray-500 hover:text-gray-700 transition"
                 aria-label="Close cart"
@@ -895,42 +965,107 @@ Thank you!`
 
             {cart.length > 0 ? (
               <>
-                <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-0">
+                <div 
+                  className="flex-1 overflow-y-auto overscroll-contain p-4 space-y-3 min-h-0" 
+                  style={{ WebkitOverflowScrolling: 'touch', pointerEvents: 'auto' }}
+                  onMouseDown={(e) => e.stopPropagation()}
+                  onClick={(e) => e.stopPropagation()}
+                  onTouchStart={(e) => e.stopPropagation()}
+                  onTouchEnd={(e) => e.stopPropagation()}
+                >
                   {cart.map((item) => (
-                    <div key={item.id} className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
+                    <div 
+                      key={item.id} 
+                      className="flex items-center gap-3 p-3 bg-green-50 rounded-lg"
+                      onMouseDown={(e) => e.stopPropagation()}
+                      onClick={(e) => e.stopPropagation()}
+                      onTouchStart={(e) => e.stopPropagation()}
+                      onTouchEnd={(e) => e.stopPropagation()}
+                    >
                       <div className="flex-1 min-w-0">
                         <p className="font-medium text-gray-900 text-sm truncate">{item.name}</p>
                         <p className="text-sm text-green-600 font-bold">KES {item.price.toLocaleString()}</p>
                       </div>
-                      <div className="flex items-center gap-2 bg-white rounded-lg border border-green-200">
+                      <div 
+                        className="flex items-center gap-2 bg-white rounded-lg border border-green-200"
+                        onMouseDown={(e) => e.stopPropagation()}
+                        onClick={(e) => e.stopPropagation()}
+                        onTouchStart={(e) => e.stopPropagation()}
+                        onTouchEnd={(e) => e.stopPropagation()}
+                      >
                         <button
-                          onClick={(e) => {
+                          onMouseDown={(e) => {
                             e.stopPropagation()
+                            e.preventDefault()
                             updateQuantity(item.id, item.quantity - 1)
                           }}
-                          className="p-1 hover:bg-gray-100 transition"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            e.preventDefault()
+                            updateQuantity(item.id, item.quantity - 1)
+                          }}
+                          onTouchStart={(e) => {
+                            e.stopPropagation()
+                            e.preventDefault()
+                            updateQuantity(item.id, item.quantity - 1)
+                          }}
+                          onTouchEnd={(e) => {
+                            e.stopPropagation()
+                            e.preventDefault()
+                          }}
+                          className="p-1 hover:bg-gray-100 transition active:bg-gray-200"
                           aria-label="Decrease quantity"
                         >
                           <Minus className="w-4 h-4 text-green-600" />
                         </button>
                         <span className="w-8 text-center font-bold text-gray-900">{item.quantity}</span>
                         <button
-                          onClick={(e) => {
+                          onMouseDown={(e) => {
                             e.stopPropagation()
+                            e.preventDefault()
                             updateQuantity(item.id, item.quantity + 1)
                           }}
-                          className="p-1 hover:bg-gray-100 transition"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            e.preventDefault()
+                            updateQuantity(item.id, item.quantity + 1)
+                          }}
+                          onTouchStart={(e) => {
+                            e.stopPropagation()
+                            e.preventDefault()
+                            updateQuantity(item.id, item.quantity + 1)
+                          }}
+                          onTouchEnd={(e) => {
+                            e.stopPropagation()
+                            e.preventDefault()
+                          }}
+                          className="p-1 hover:bg-gray-100 transition active:bg-gray-200"
                           aria-label="Increase quantity"
                         >
                           <Plus className="w-4 h-4 text-green-600" />
                         </button>
                       </div>
                       <button
-                        onClick={(e) => {
+                        onMouseDown={(e) => {
                           e.stopPropagation()
+                          e.preventDefault()
                           removeFromCart(item.id)
                         }}
-                        className="text-red-500 hover:text-red-700 transition p-1"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          e.preventDefault()
+                          removeFromCart(item.id)
+                        }}
+                        onTouchStart={(e) => {
+                          e.stopPropagation()
+                          e.preventDefault()
+                          removeFromCart(item.id)
+                        }}
+                        onTouchEnd={(e) => {
+                          e.stopPropagation()
+                          e.preventDefault()
+                        }}
+                        className="text-red-500 hover:text-red-700 transition p-1 active:text-red-800"
                         aria-label="Remove item"
                       >
                         <X className="w-4 h-4" />
@@ -939,9 +1074,48 @@ Thank you!`
                   ))}
                 </div>
 
-                <div className="border-t border-gray-200 p-4 space-y-4 overflow-visible flex-shrink-0 bg-white">
-                  <div className="relative z-[10001]">
-                    <label htmlFor="delivery-location-mobile" className="block text-sm font-medium text-gray-700 mb-2">
+                <div 
+                  className="border-t border-gray-200 p-4 space-y-4 flex-shrink-0 bg-white"
+                  onMouseDown={(e) => e.stopPropagation()}
+                  onClick={(e) => e.stopPropagation()}
+                  onTouchStart={(e) => e.stopPropagation()}
+                  onTouchEnd={(e) => e.stopPropagation()}
+                >
+                  <div 
+                    className="relative z-[10001]"
+                    onMouseDown={(e) => {
+                      e.stopPropagation()
+                      e.preventDefault()
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                    }}
+                    onTouchStart={(e) => {
+                      e.stopPropagation()
+                      e.preventDefault()
+                    }}
+                    onTouchEnd={(e) => {
+                      e.stopPropagation()
+                    }}
+                    onTouchMove={(e) => {
+                      e.stopPropagation()
+                    }}
+                  >
+                    <label 
+                      htmlFor="delivery-location-mobile" 
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                      onMouseDown={(e) => {
+                        e.stopPropagation()
+                        e.preventDefault()
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                      }}
+                      onTouchStart={(e) => {
+                        e.stopPropagation()
+                        e.preventDefault()
+                      }}
+                    >
                       Delivery Location <span className="text-red-500">*</span>
                     </label>
                     <select
@@ -949,12 +1123,49 @@ Thank you!`
                       value={deliveryLocation}
                       onChange={(e) => {
                         e.stopPropagation()
+                        e.preventDefault()
                         setDeliveryLocation(e.target.value)
                       }}
-                      onClick={(e) => e.stopPropagation()}
+                      onMouseDown={(e) => {
+                        e.stopPropagation()
+                        e.preventDefault()
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        e.preventDefault()
+                      }}
+                      onFocus={(e) => {
+                        e.stopPropagation()
+                        e.preventDefault()
+                      }}
+                      onBlur={(e) => {
+                        e.stopPropagation()
+                      }}
+                      onTouchStart={(e) => {
+                        e.stopPropagation()
+                        e.preventDefault()
+                      }}
+                      onTouchEnd={(e) => {
+                        e.stopPropagation()
+                        e.preventDefault()
+                      }}
+                      onTouchMove={(e) => {
+                        e.stopPropagation()
+                      }}
+                      onMouseUp={(e) => {
+                        e.stopPropagation()
+                        e.preventDefault()
+                      }}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-900 bg-white text-sm relative z-[10001]"
                       required
-                      style={{ position: 'relative', zIndex: 10001 }}
+                      style={{ 
+                        position: 'relative', 
+                        zIndex: 10001, 
+                        pointerEvents: 'auto',
+                        WebkitTouchCallout: 'none',
+                        WebkitUserSelect: 'none',
+                        userSelect: 'none'
+                      }}
                     >
                       <option value="">Select County</option>
                       {kenyanCounties.map((county) => (
@@ -964,7 +1175,13 @@ Thank you!`
                       ))}
                     </select>
                   </div>
-                  <div className="flex justify-between items-center border-t border-gray-200 pt-3">
+                  <div 
+                    className="flex justify-between items-center border-t border-gray-200 pt-3"
+                    onMouseDown={(e) => e.stopPropagation()}
+                    onClick={(e) => e.stopPropagation()}
+                    onTouchStart={(e) => e.stopPropagation()}
+                    onTouchEnd={(e) => e.stopPropagation()}
+                  >
                     <span className="font-bold text-gray-900">Total:</span>
                     <span className="text-xl font-bold text-green-600">KES {totalPrice.toLocaleString()}</span>
                   </div>
@@ -972,6 +1189,14 @@ Thank you!`
                     href={deliveryLocation ? `https://wa.me/254713764658?text=${generateWhatsAppMessage()}` : "#"}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onMouseDown={(e) => {
+                      e.stopPropagation()
+                      if (!deliveryLocation) {
+                        e.preventDefault()
+                        alert("Please select a delivery location")
+                        return
+                      }
+                    }}
                     onClick={(e) => {
                       e.stopPropagation()
                       if (!deliveryLocation) {
@@ -980,6 +1205,20 @@ Thank you!`
                         return
                       }
                       setIsCartOpen(false)
+                    }}
+                    onTouchStart={(e) => {
+                      e.stopPropagation()
+                      if (!deliveryLocation) {
+                        e.preventDefault()
+                        alert("Please select a delivery location")
+                        return
+                      }
+                    }}
+                    onTouchEnd={(e) => {
+                      e.stopPropagation()
+                      if (deliveryLocation) {
+                        setIsCartOpen(false)
+                      }
                     }}
                     className={cn(
                       "w-full font-bold py-3 rounded-lg transition text-center block shadow-md hover:shadow-lg",
@@ -991,12 +1230,27 @@ Thank you!`
                     📱 Order on WhatsApp
                   </a>
                   <button
+                    onMouseDown={(e) => {
+                      e.stopPropagation()
+                      e.preventDefault()
+                    }}
                     onClick={(e) => {
                       e.stopPropagation()
+                      e.preventDefault()
                       clearCart()
                       setIsCartOpen(false)
                     }}
-                    className="w-full text-gray-600 font-medium py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm"
+                    onTouchStart={(e) => {
+                      e.stopPropagation()
+                      e.preventDefault()
+                    }}
+                    onTouchEnd={(e) => {
+                      e.stopPropagation()
+                      e.preventDefault()
+                      clearCart()
+                      setIsCartOpen(false)
+                    }}
+                    className="w-full text-gray-600 font-medium py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm active:bg-gray-100"
                   >
                     Clear Cart
                   </button>

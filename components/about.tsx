@@ -80,19 +80,18 @@ function About() {
           <div 
             ref={featuresRef}
             className="flex flex-col lg:self-start"
-            style={maxHeight ? { height: `${maxHeight}px`, maxHeight: `${maxHeight}px`, overflow: 'hidden' } : {}}
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 h-full">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
               {features.map((feature, index) => {
                 const IconComponent = feature.icon
                 return (
-                  <div key={index} className="flex space-x-4 h-full">
+                  <div key={index} className="flex space-x-4">
                     <div className="flex-shrink-0 w-12 h-12 border border-gray-400 rounded-md flex items-start justify-center text-white bg-transparent pt-2">
                       <IconComponent className="w-5 h-5" />
                     </div>
-                    <div className="flex-1 flex flex-col h-full justify-between">
+                    <div className="flex-1 flex flex-col">
                       <h3 className="font-semibold text-white mb-3 text-sm lg:text-base">{feature.title}</h3>
-                      <p className="text-xs lg:text-sm text-gray-300 leading-relaxed flex-1">{feature.description}</p>
+                      <p className="text-xs lg:text-sm text-gray-300 leading-relaxed">{feature.description}</p>
                     </div>
                   </div>
                 )
