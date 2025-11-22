@@ -4,11 +4,13 @@ import { useState, useEffect, useRef } from "react"
 import { Menu, X, ChevronDown, ShoppingBag, Plus, Minus } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
+import { usePathname } from "next/navigation"
 import { seedlings } from "@/lib/seedlings-data"
 import { cn } from "@/lib/utils"
 import { useCart } from "@/contexts/cart-context"
 
 export default function Navbar() {
+  const pathname = usePathname()
   const [isOpen, setIsOpen] = useState(false)
   const [isCareGuidesOpen, setIsCareGuidesOpen] = useState(false)
   const [isProductsOpen, setIsProductsOpen] = useState(false)
@@ -277,7 +279,7 @@ Thank you!`
 
           {/* Desktop Navigation - Centered */}
           <div className="hidden lg:flex items-center justify-center absolute left-1/2 -translate-x-1/2 space-x-1">
-            <NavLink href="#about" label="About" shouldShowSolidBackground={shouldShowSolidBackground} />
+            <NavLink href="/#about" label="About" shouldShowSolidBackground={shouldShowSolidBackground} pathname={pathname} />
 
             {/* Products Dropdown */}
             <div
@@ -356,7 +358,7 @@ Thank you!`
                   >
                     <div className="p-2">
                       <Link
-                        href="#seedlings"
+                        href="/#seedlings"
                         className="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-green-50 hover:text-green-700 transition-colors"
                         role="menuitem"
                         onClick={() => {
@@ -371,7 +373,7 @@ Thank you!`
                           Frutopia Value Pack
                         </div>
                         <Link
-                          href="#frutopia"
+                          href="/#frutopia"
                           className="block px-6 py-2 text-sm text-gray-700 rounded-md hover:bg-green-50 hover:text-green-700 transition-colors"
                           role="menuitem"
                           onClick={() => {
@@ -382,7 +384,7 @@ Thank you!`
                           All Value Packs
                         </Link>
                         <Link
-                          href="#frutopia"
+                          href="/#frutopia"
                           className="block px-6 py-2 text-sm text-gray-700 rounded-md hover:bg-green-50 hover:text-green-700 transition-colors"
                           role="menuitem"
                           onClick={() => {
@@ -515,7 +517,7 @@ Thank you!`
               )}
             </div>
 
-            <NavLink href="#contact" label="Contact" shouldShowSolidBackground={shouldShowSolidBackground} />
+            <NavLink href="/#contact" label="Contact" shouldShowSolidBackground={shouldShowSolidBackground} pathname={pathname} />
           </div>
 
           {/* Right side - Cart Icon - Only visible when items exist */}
@@ -780,7 +782,7 @@ Thank you!`
             "py-4 space-y-1 backdrop-blur-md rounded-lg mt-2",
             shouldShowSolidBackground ? "bg-white/95" : "bg-black/60"
           )}>
-            <MobileNavLink href="#about" label="About" onClick={() => setIsOpen(false)} shouldShowSolidBackground={shouldShowSolidBackground} />
+            <MobileNavLink href="/#about" label="About" onClick={() => setIsOpen(false)} shouldShowSolidBackground={shouldShowSolidBackground} pathname={pathname} />
 
             {/* Mobile Products Dropdown */}
             <div>
@@ -813,14 +815,14 @@ Thank you!`
                 )}
               >
                 <div className="pl-4 pr-2 pt-2 space-y-1">
-                  <MobileNavLink href="#seedlings" label="Seedlings" onClick={() => { setIsOpen(false); setIsProductsOpen(false); }} shouldShowSolidBackground={shouldShowSolidBackground} />
+                  <MobileNavLink href="/#seedlings" label="Seedlings" onClick={() => { setIsOpen(false); setIsProductsOpen(false); }} shouldShowSolidBackground={shouldShowSolidBackground} pathname={pathname} />
                   <div className="px-3 py-2 text-xs font-semibold uppercase tracking-wide"
                     style={shouldShowSolidBackground ? { color: '#6b7280' } : { color: 'rgba(255, 255, 255, 0.7)' }}
                   >
                     Frutopia Value Pack
                   </div>
-                  <MobileNavLink href="#frutopia" label="All Value Packs" onClick={() => { setIsOpen(false); setIsProductsOpen(false); }} shouldShowSolidBackground={shouldShowSolidBackground} />
-                  <MobileNavLink href="#frutopia" label="Drip Irrigation Kits" onClick={() => { setIsOpen(false); setIsProductsOpen(false); }} shouldShowSolidBackground={shouldShowSolidBackground} />
+                  <MobileNavLink href="/#frutopia" label="All Value Packs" onClick={() => { setIsOpen(false); setIsProductsOpen(false); }} shouldShowSolidBackground={shouldShowSolidBackground} pathname={pathname} />
+                  <MobileNavLink href="/#frutopia" label="Drip Irrigation Kits" onClick={() => { setIsOpen(false); setIsProductsOpen(false); }} shouldShowSolidBackground={shouldShowSolidBackground} pathname={pathname} />
                 </div>
               </div>
             </div>
@@ -889,7 +891,7 @@ Thank you!`
               </div>
             </div>
 
-            <MobileNavLink href="#contact" label="Contact" onClick={() => setIsOpen(false)} shouldShowSolidBackground={shouldShowSolidBackground} />
+            <MobileNavLink href="/#contact" label="Contact" onClick={() => setIsOpen(false)} shouldShowSolidBackground={shouldShowSolidBackground} pathname={pathname} />
           </nav>
         </div>
       </nav>
@@ -1398,10 +1400,28 @@ Thank you!`
 }
 
 // Desktop Nav Link Component with animated underline
-function NavLink({ href, label, shouldShowSolidBackground = false }: { href: string; label: string; shouldShowSolidBackground?: boolean }) {
+function NavLink({ href, label, shouldShowSolidBackground = false, pathname }: { href: string; label: string; shouldShowSolidBackground?: boolean; pathname: string }) {
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    // If we're not on homepage and clicking a hash link, navigate to homepage first
+    if (pathname !== '/' && href.startsWith('/#')) {
+      // Let Next.js handle the navigation, then scroll after navigation
+      const hash = href.split('#')[1]
+      if (hash) {
+        // Small delay to ensure page loads, then scroll
+        setTimeout(() => {
+          const element = document.getElementById(hash)
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          }
+        }, 100)
+      }
+    }
+  }
+
   return (
     <Link
       href={href}
+      onClick={handleClick}
       className={cn(
         "relative px-4 py-2 uppercase text-sm font-medium",
         "transition-colors duration-300",
@@ -1434,16 +1454,36 @@ function MobileNavLink({
   label,
   onClick,
   shouldShowSolidBackground = false,
+  pathname,
 }: {
   href: string
   label: string
   onClick: () => void
   shouldShowSolidBackground?: boolean
+  pathname: string
 }) {
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    onClick()
+    // If we're not on homepage and clicking a hash link, navigate to homepage first
+    if (pathname !== '/' && href.startsWith('/#')) {
+      // Let Next.js handle the navigation, then scroll after navigation
+      const hash = href.split('#')[1]
+      if (hash) {
+        // Small delay to ensure page loads, then scroll
+        setTimeout(() => {
+          const element = document.getElementById(hash)
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          }
+        }, 100)
+      }
+    }
+  }
+
   return (
     <Link
       href={href}
-      onClick={onClick}
+      onClick={handleClick}
       className={cn(
         "block px-4 py-3 uppercase text-sm font-medium rounded-md transition-colors",
         "focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2",
