@@ -413,22 +413,39 @@ html {
 
 /* Mobile Cart Select Dropdown - Prevent Overflow */
 @media (max-width: 1023px) {
-  #delivery-location-mobile {
-    width: 100% !important;
-    max-width: 100% !important;
-    box-sizing: border-box !important;
-  }
-  
+  /* Constrain cart content to viewport */
   .cart-content {
     max-width: 100vw !important;
     width: 100% !important;
     overflow-x: hidden !important;
+    position: relative !important;
   }
   
   /* Ensure select dropdown container doesn't overflow */
   .cart-content > div:last-child {
     max-width: 100% !important;
+    width: 100% !important;
     overflow-x: hidden !important;
+    box-sizing: border-box !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  
+  /* Constrain select element wrapper */
+  #delivery-location-mobile {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+  
+  /* Ensure select parent container is constrained */
+  div:has(> #delivery-location-mobile) {
+    max-width: 100% !important;
+    width: 100% !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
   }
   
   /* Prevent select options from overflowing */
@@ -436,6 +453,15 @@ html {
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  /* Ensure the relative z-index container doesn't cause overflow */
+  .cart-content [class*="relative"][class*="z-"] {
+    max-width: 100% !important;
+    width: 100% !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
   }
 }
 

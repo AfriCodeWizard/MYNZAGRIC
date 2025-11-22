@@ -1053,7 +1053,15 @@ Thank you!`
 
                 <div 
                   className="border-t border-gray-200 p-4 space-y-4 flex-shrink-0 bg-white w-full overflow-hidden"
-                  style={{ maxWidth: '100%', boxSizing: 'border-box' }}
+                  style={{ 
+                    maxWidth: '100%', 
+                    width: '100%',
+                    boxSizing: 'border-box',
+                    paddingLeft: '1rem',
+                    paddingRight: '1rem',
+                    marginLeft: 0,
+                    marginRight: 0
+                  }}
                   onMouseDown={(e) => e.stopPropagation()}
                   onClick={(e) => e.stopPropagation()}
                   onTouchStart={(e) => e.stopPropagation()}
@@ -1061,6 +1069,12 @@ Thank you!`
                 >
                   <div 
                     className="relative z-[10001] w-full"
+                    style={{
+                      maxWidth: '100%',
+                      width: '100%',
+                      boxSizing: 'border-box',
+                      overflow: 'hidden'
+                    }}
                     onMouseDown={(e) => {
                       e.stopPropagation()
                     }}
@@ -1092,37 +1106,55 @@ Thank you!`
                     >
                       Delivery Location <span className="text-red-500">*</span>
                     </label>
-                    <select
-                      ref={selectRef}
-                      id="delivery-location-mobile"
-                      value={deliveryLocation}
-                      onChange={(e) => {
-                        e.stopPropagation()
-                        setDeliveryLocation(e.target.value)
-                      }}
-                      onClick={(e) => {
-                        // Stop propagation - exactly like desktop version
-                        e.stopPropagation()
-                      }}
-                      className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-900 bg-white text-sm relative z-[10001] max-w-full"
-                      required
+                    <div 
+                      className="relative w-full" 
                       style={{ 
-                        position: 'relative', 
-                        zIndex: 10001,
+                        maxWidth: '100%', 
                         width: '100%',
-                        maxWidth: '100%',
+                        overflow: 'hidden',
                         boxSizing: 'border-box',
-                        WebkitAppearance: 'menulist',
-                        appearance: 'menulist'
+                        margin: 0,
+                        padding: 0
                       }}
                     >
-                      <option value="">Select County</option>
-                      {kenyanCounties.map((county) => (
-                        <option key={county} value={county}>
-                          {county}
-                        </option>
-                      ))}
-                    </select>
+                      <select
+                        ref={selectRef}
+                        id="delivery-location-mobile"
+                        value={deliveryLocation}
+                        onChange={(e) => {
+                          e.stopPropagation()
+                          setDeliveryLocation(e.target.value)
+                        }}
+                        onClick={(e) => {
+                          // Stop propagation - exactly like desktop version
+                          e.stopPropagation()
+                        }}
+                        className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-900 bg-white text-sm relative z-[10001]"
+                        required
+                        style={{ 
+                          position: 'relative', 
+                          zIndex: 10001,
+                          width: '100%',
+                          maxWidth: '100%',
+                          minWidth: 0,
+                          boxSizing: 'border-box',
+                          WebkitAppearance: 'menulist',
+                          appearance: 'menulist',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          margin: 0,
+                          paddingLeft: '0.75rem',
+                          paddingRight: '0.75rem'
+                        }}
+                      >
+                        <option value="">Select County</option>
+                        {kenyanCounties.map((county) => (
+                          <option key={county} value={county}>
+                            {county}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
                   <div 
                     className="flex justify-between items-center border-t border-gray-200 pt-3"
