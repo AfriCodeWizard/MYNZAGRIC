@@ -21,6 +21,8 @@ export default function Navbar() {
   const dropdownRef = useRef<HTMLDivElement>(null)
   const productsDropdownRef = useRef<HTMLDivElement>(null)
   const cartRef = useRef<HTMLDivElement>(null)
+  const cartContentRef = useRef<HTMLDivElement>(null)
+  const selectRef = useRef<HTMLSelectElement>(null)
   const { cart, addToCart, updateQuantity, removeFromCart, clearCart, totalItems, totalPrice, showCartNotification } = useCart()
   
 
@@ -48,8 +50,17 @@ export default function Navbar() {
           setActiveDropdown(null)
         }
       }
-      if (cartRef.current && !cartRef.current.contains(event.target as Node)) {
-        setIsCartOpen(false)
+      // Only check cartRef for desktop cart (mobile cart uses backdrop click handler)
+      // Also check if click is inside mobile cart content
+      const isMobileCartContent = cartContentRef.current?.contains(event.target as Node)
+      const isDesktopCart = cartRef.current?.contains(event.target as Node)
+      if (cartRef.current && !isDesktopCart && !isMobileCartContent) {
+        // Only close if it's desktop cart and click is outside
+        // Mobile cart is handled by backdrop onClick handler
+        const isMobile = window.innerWidth < 1024 // lg breakpoint
+        if (!isMobile) {
+          setIsCartOpen(false)
+        }
       }
     }
 
@@ -876,57 +887,23 @@ Thank you!`
         <div 
           className="lg:hidden fixed inset-0 bg-black/50 z-[10000] flex items-end backdrop-overlay"
           style={{ pointerEvents: 'auto' }}
-          onMouseDown={(e) => {
-            // Only close if clicking the backdrop itself, not children
-            const target = e.target as HTMLElement
-            // Check if the click is on the backdrop itself (not on cart content or any child)
-            if (target === e.currentTarget) {
-              // Double check: make sure we're not clicking on any cart-related element
-              const cartElement = target.closest('.cart-content')
-              const selectElement = target.closest('select')
-              const labelElement = target.closest('label')
-              if (!cartElement && !selectElement && !labelElement) {
-                setIsCartOpen(false)
-              }
-            }
-          }}
-          onTouchStart={(e) => {
-            // Only close if touching the backdrop itself, not children
-            const target = e.target as HTMLElement
-            // Check if the touch is on the backdrop itself (not on cart content or any child)
-            if (target === e.currentTarget) {
-              // Double check: make sure we're not touching any cart-related element
-              const cartElement = target.closest('.cart-content')
-              const selectElement = target.closest('select')
-              const labelElement = target.closest('label')
-              if (!cartElement && !selectElement && !labelElement) {
-                setIsCartOpen(false)
-              }
+          onClick={(e) => {
+            // Only close if clicking directly on the backdrop element itself
+            if (e.target === e.currentTarget) {
+              setIsCartOpen(false)
             }
           }}
         >
           <div 
-            className="w-full bg-white rounded-t-2xl shadow-2xl max-h-[90vh] flex flex-col cart-content"
-            style={{ pointerEvents: 'auto' }}
-            onMouseDown={(e) => {
-              // Prevent clicks inside cart from closing it
-              e.stopPropagation()
-              e.preventDefault()
+            ref={cartContentRef}
+            className="w-full bg-white rounded-t-2xl shadow-2xl max-h-[90vh] flex flex-col cart-content overflow-hidden"
+            style={{ 
+              pointerEvents: 'auto',
+              maxWidth: '100vw',
+              width: '100%'
             }}
             onClick={(e) => {
-              // Prevent clicks inside cart from closing it
-              e.stopPropagation()
-            }}
-            onTouchStart={(e) => {
-              // Prevent touch events from bubbling to backdrop
-              e.stopPropagation()
-            }}
-            onTouchEnd={(e) => {
-              // Prevent touch end events from bubbling
-              e.stopPropagation()
-            }}
-            onTouchMove={(e) => {
-              // Prevent touch move events from bubbling
+              // Stop all clicks inside cart from bubbling to backdrop - exactly like desktop
               e.stopPropagation()
             }}
           >
@@ -1075,14 +1052,15 @@ Thank you!`
                 </div>
 
                 <div 
-                  className="border-t border-gray-200 p-4 space-y-4 flex-shrink-0 bg-white"
+                  className="border-t border-gray-200 p-4 space-y-4 flex-shrink-0 bg-white w-full overflow-hidden"
+                  style={{ maxWidth: '100%', boxSizing: 'border-box' }}
                   onMouseDown={(e) => e.stopPropagation()}
                   onClick={(e) => e.stopPropagation()}
                   onTouchStart={(e) => e.stopPropagation()}
                   onTouchEnd={(e) => e.stopPropagation()}
                 >
                   <div 
-                    className="relative z-[10001]"
+                    className="relative z-[10001] w-full"
                     onMouseDown={(e) => {
                       e.stopPropagation()
                     }}
@@ -1115,48 +1093,25 @@ Thank you!`
                       Delivery Location <span className="text-red-500">*</span>
                     </label>
                     <select
+                      ref={selectRef}
                       id="delivery-location-mobile"
                       value={deliveryLocation}
                       onChange={(e) => {
                         e.stopPropagation()
                         setDeliveryLocation(e.target.value)
                       }}
-                      onMouseDown={(e) => {
-                        e.stopPropagation()
-                        // Don't prevent default - allow native dropdown to work
-                      }}
                       onClick={(e) => {
-                        e.stopPropagation()
-                        // Don't prevent default - allow native dropdown to work
-                      }}
-                      onFocus={(e) => {
-                        e.stopPropagation()
-                        // Don't prevent default - allow native dropdown to work
-                      }}
-                      onBlur={(e) => {
+                        // Stop propagation - exactly like desktop version
                         e.stopPropagation()
                       }}
-                      onTouchStart={(e) => {
-                        e.stopPropagation()
-                        // Don't prevent default - allow native mobile picker to open
-                      }}
-                      onTouchEnd={(e) => {
-                        e.stopPropagation()
-                        // Don't prevent default - allow native mobile picker to work
-                      }}
-                      onTouchMove={(e) => {
-                        e.stopPropagation()
-                      }}
-                      onMouseUp={(e) => {
-                        e.stopPropagation()
-                        // Don't prevent default - allow native dropdown to work
-                      }}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-900 bg-white text-sm relative z-[10001]"
+                      className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-900 bg-white text-sm relative z-[10001] max-w-full"
                       required
                       style={{ 
                         position: 'relative', 
-                        zIndex: 10001, 
-                        pointerEvents: 'auto',
+                        zIndex: 10001,
+                        width: '100%',
+                        maxWidth: '100%',
+                        boxSizing: 'border-box',
                         WebkitAppearance: 'menulist',
                         appearance: 'menulist'
                       }}

@@ -411,3 +411,31 @@ html {
   display: block;
 }
 
+/* Mobile Cart Select Dropdown - Prevent Overflow */
+@media (max-width: 1023px) {
+  #delivery-location-mobile {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  
+  .cart-content {
+    max-width: 100vw !important;
+    width: 100% !important;
+    overflow-x: hidden !important;
+  }
+  
+  /* Ensure select dropdown container doesn't overflow */
+  .cart-content > div:last-child {
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+  
+  /* Prevent select options from overflowing */
+  #delivery-location-mobile option {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
