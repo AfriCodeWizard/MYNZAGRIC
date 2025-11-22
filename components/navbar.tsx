@@ -656,11 +656,11 @@ Thank you!`
                           <div className="space-y-2 border-t border-gray-200 pt-3">
                             <div className="flex justify-between items-center">
                               <span className="font-medium text-gray-700">Delivery Fee:</span>
-                              <span className="text-sm text-gray-600">To be confirmed</span>
+                              <span className="text-sm font-bold text-red-600">Pending order confirmation</span>
                             </div>
                             <div className="flex justify-between items-center">
                               <span className="font-bold text-gray-900">Total:</span>
-                              <span className="text-xl font-bold text-red-600">Pending order confirmation</span>
+                              <span className="text-xl font-bold text-green-600">KES {totalPrice.toLocaleString()}</span>
                             </div>
                           </div>
                           <a
@@ -1225,11 +1225,11 @@ Thank you!`
                   >
                     <div className="flex justify-between items-center">
                       <span className="font-medium text-gray-700">Delivery Fee:</span>
-                      <span className="text-sm text-gray-600">To be confirmed</span>
+                      <span className="text-sm font-bold text-red-600">Pending order confirmation</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="font-bold text-gray-900">Total:</span>
-                      <span className="text-xl font-bold text-red-600">Pending order confirmation</span>
+                      <span className="text-xl font-bold text-green-600">KES {totalPrice.toLocaleString()}</span>
                     </div>
                   </div>
                   <div
