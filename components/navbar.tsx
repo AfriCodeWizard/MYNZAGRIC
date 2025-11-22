@@ -18,11 +18,13 @@ export default function Navbar() {
   const [isOverLightSection, setIsOverLightSection] = useState(false)
   const [cartAnimation, setCartAnimation] = useState(false)
   const [deliveryLocation, setDeliveryLocation] = useState<string>("")
+  const [isWhatsAppInteracting, setIsWhatsAppInteracting] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const productsDropdownRef = useRef<HTMLDivElement>(null)
   const cartRef = useRef<HTMLDivElement>(null)
   const cartContentRef = useRef<HTMLDivElement>(null)
   const selectRef = useRef<HTMLSelectElement>(null)
+  const whatsappButtonRef = useRef<HTMLDivElement>(null)
   const { cart, addToCart, updateQuantity, removeFromCart, clearCart, totalItems, totalPrice, showCartNotification } = useCart()
   
 
@@ -50,20 +52,24 @@ export default function Navbar() {
           setActiveDropdown(null)
         }
       }
-      // Only check cartRef for desktop cart (mobile cart uses backdrop click handler)
-      // Also check if click is inside mobile cart content
-      const isMobileCartContent = cartContentRef.current?.contains(event.target as Node)
+      // Cart closing logic - ONLY handle desktop cart here
+      // Mobile cart closing is handled EXCLUSIVELY by backdrop onClick handler
+      const isMobile = window.innerWidth < 1024 // lg breakpoint
+      
+      // COMPLETELY skip mobile cart handling - mobile uses backdrop handler only
+      if (isMobile) {
+        // Don't handle mobile cart at all - let backdrop handler do it
+        return
+      }
+      
+      // Desktop cart handling only
       const isDesktopCart = cartRef.current?.contains(event.target as Node)
-      if (cartRef.current && !isDesktopCart && !isMobileCartContent) {
-        // Only close if it's desktop cart and click is outside
-        // Mobile cart is handled by backdrop onClick handler
-        const isMobile = window.innerWidth < 1024 // lg breakpoint
-        if (!isMobile) {
-          setIsCartOpen(false)
-        }
+      if (cartRef.current && !isDesktopCart) {
+        setIsCartOpen(false)
       }
     }
 
+    // Attach listener for dropdowns and cart (cart logic handles mobile/desktop internally)
     if (isCareGuidesOpen || isProductsOpen || isCartOpen) {
       document.addEventListener("mousedown", handleClickOutside)
     }
@@ -888,9 +894,47 @@ Thank you!`
           className="lg:hidden fixed inset-0 bg-black/50 z-[10000] flex items-end backdrop-overlay"
           style={{ pointerEvents: 'auto' }}
           onClick={(e) => {
-            // Only close if clicking directly on the backdrop element itself
-            if (e.target === e.currentTarget) {
+            // Don't close if user is interacting with WhatsApp button
+            if (isWhatsAppInteracting) {
+              return
+            }
+            // CRITICAL: Only close if clicking directly on the backdrop element itself
+            // Check multiple ways to ensure click is NOT inside cart:
+            // 1. Check if target is the backdrop itself
+            // 2. Check if click is inside cartContentRef
+            // 3. Check if click is on any element with data-cart-content attribute
+            // 4. Check if click is inside WhatsApp button ref
+            const target = e.target as HTMLElement
+            const clickedInsideCart = cartContentRef.current?.contains(target)
+            const clickedOnCartContent = target?.closest('[data-cart-content="true"]')
+            const clickedOnWhatsApp = whatsappButtonRef.current?.contains(target)
+            const isBackdropClick = e.target === e.currentTarget
+            
+            // Only close if:
+            // - Clicking directly on backdrop (not a child)
+            // - AND not clicking inside cart content
+            // - AND not clicking on cart content element
+            // - AND not clicking on WhatsApp button
+            if (isBackdropClick && !clickedInsideCart && !clickedOnCartContent && !clickedOnWhatsApp) {
               setIsCartOpen(false)
+            }
+          }}
+          onMouseDown={(e) => {
+            // Prevent mousedown from triggering handleClickOutside
+            const clickedInsideCart = cartContentRef.current?.contains(e.target as Node)
+            const clickedOnCartContent = (e.target as HTMLElement)?.closest('[data-cart-content="true"]')
+            if (clickedInsideCart || clickedOnCartContent) {
+              e.stopPropagation()
+              e.stopImmediatePropagation()
+            }
+          }}
+          onTouchStart={(e) => {
+            // Prevent touch events from bubbling
+            const clickedInsideCart = cartContentRef.current?.contains(e.target as Node)
+            const clickedOnCartContent = (e.target as HTMLElement)?.closest('[data-cart-content="true"]')
+            if (clickedInsideCart || clickedOnCartContent) {
+              e.stopPropagation()
+              e.stopImmediatePropagation()
             }
           }}
         >
@@ -905,7 +949,17 @@ Thank you!`
             onClick={(e) => {
               // Stop all clicks inside cart from bubbling to backdrop - exactly like desktop
               e.stopPropagation()
+              e.stopImmediatePropagation()
             }}
+            onMouseDown={(e) => {
+              e.stopPropagation()
+              e.stopImmediatePropagation()
+            }}
+            onTouchStart={(e) => {
+              e.stopPropagation()
+              e.stopImmediatePropagation()
+            }}
+            data-cart-content="true"
           >
             <div 
               className="flex items-center justify-between p-4 border-b border-gray-200 flex-shrink-0"
@@ -1166,50 +1220,128 @@ Thank you!`
                     <span className="font-bold text-gray-900">Total:</span>
                     <span className="text-xl font-bold text-green-600">KES {totalPrice.toLocaleString()}</span>
                   </div>
-                  <a
-                    href={deliveryLocation ? `https://wa.me/254713764658?text=${generateWhatsAppMessage()}` : "#"}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <div
+                    ref={whatsappButtonRef}
+                    className="w-full"
+                    style={{
+                      maxWidth: '100%',
+                      width: '100%',
+                      boxSizing: 'border-box',
+                      overflow: 'hidden'
+                    }}
                     onMouseDown={(e) => {
                       e.stopPropagation()
-                      if (!deliveryLocation) {
-                        e.preventDefault()
-                        alert("Please select a delivery location")
-                        return
-                      }
+                      e.stopImmediatePropagation()
                     }}
                     onClick={(e) => {
                       e.stopPropagation()
-                      if (!deliveryLocation) {
-                        e.preventDefault()
-                        alert("Please select a delivery location")
-                        return
-                      }
-                      setIsCartOpen(false)
+                      e.stopImmediatePropagation()
                     }}
                     onTouchStart={(e) => {
                       e.stopPropagation()
-                      if (!deliveryLocation) {
-                        e.preventDefault()
-                        alert("Please select a delivery location")
-                        return
-                      }
+                      e.stopImmediatePropagation()
                     }}
                     onTouchEnd={(e) => {
                       e.stopPropagation()
-                      if (deliveryLocation) {
-                        setIsCartOpen(false)
-                      }
+                      e.stopImmediatePropagation()
                     }}
-                    className={cn(
-                      "w-full font-bold py-3 rounded-lg transition text-center block shadow-md hover:shadow-lg",
-                      deliveryLocation
-                        ? "bg-green-600 text-white hover:bg-green-700"
-                        : "bg-gray-300 text-gray-500 cursor-not-allowed pointer-events-none"
-                    )}
+                    onTouchMove={(e) => {
+                      e.stopPropagation()
+                      e.stopImmediatePropagation()
+                    }}
+                    data-cart-content="true"
                   >
-                    📱 Order on WhatsApp
-                  </a>
+                    <a
+                      href={deliveryLocation ? `https://wa.me/254713764658?text=${generateWhatsAppMessage()}` : "#"}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onMouseDown={(e) => {
+                        // Set flag to prevent cart closing
+                        setIsWhatsAppInteracting(true)
+                        // CRITICAL: Stop all propagation immediately
+                        e.stopPropagation()
+                        e.stopImmediatePropagation()
+                        if (!deliveryLocation) {
+                          e.preventDefault()
+                          setIsWhatsAppInteracting(false)
+                          alert("Please select a delivery location")
+                          return false
+                        }
+                        return false
+                      }}
+                      onClick={(e) => {
+                        // Keep flag set during click
+                        setIsWhatsAppInteracting(true)
+                        // CRITICAL: Stop all propagation to prevent backdrop from closing cart
+                        e.stopPropagation()
+                        e.stopImmediatePropagation()
+                        if (!deliveryLocation) {
+                          e.preventDefault()
+                          setIsWhatsAppInteracting(false)
+                          alert("Please select a delivery location")
+                          return false
+                        }
+                        // Reset flag after a delay to allow WhatsApp to open
+                        setTimeout(() => {
+                          setIsWhatsAppInteracting(false)
+                        }, 1000)
+                        return false
+                      }}
+                      onTouchStart={(e) => {
+                        // Set flag to prevent cart closing
+                        setIsWhatsAppInteracting(true)
+                        // CRITICAL: Stop all propagation immediately
+                        e.stopPropagation()
+                        e.stopImmediatePropagation()
+                        if (!deliveryLocation) {
+                          e.preventDefault()
+                          setIsWhatsAppInteracting(false)
+                          alert("Please select a delivery location")
+                          return false
+                        }
+                        return false
+                      }}
+                      onTouchEnd={(e) => {
+                        // Keep flag set
+                        setIsWhatsAppInteracting(true)
+                        // CRITICAL: Stop all propagation
+                        e.stopPropagation()
+                        e.stopImmediatePropagation()
+                        if (!deliveryLocation) {
+                          e.preventDefault()
+                          setIsWhatsAppInteracting(false)
+                          alert("Please select a delivery location")
+                          return false
+                        }
+                        // Reset flag after a delay to allow WhatsApp to open
+                        setTimeout(() => {
+                          setIsWhatsAppInteracting(false)
+                        }, 1000)
+                        return false
+                      }}
+                      onBlur={() => {
+                        // Reset flag when focus leaves
+                        setTimeout(() => {
+                          setIsWhatsAppInteracting(false)
+                        }, 200)
+                      }}
+                      data-cart-content="true"
+                      className={cn(
+                        "w-full font-bold py-3 rounded-lg transition text-center block shadow-md hover:shadow-lg",
+                        deliveryLocation
+                          ? "bg-green-600 text-white hover:bg-green-700"
+                          : "bg-gray-300 text-gray-500 cursor-not-allowed pointer-events-none"
+                      )}
+                      style={{
+                        width: '100%',
+                        maxWidth: '100%',
+                        boxSizing: 'border-box',
+                        display: 'block'
+                      }}
+                    >
+                      📱 Order on WhatsApp
+                    </a>
+                  </div>
                   <button
                     onMouseDown={(e) => {
                       e.stopPropagation()
