@@ -38,14 +38,14 @@ export const metadata: Metadata = {
   generator: "v0.app",
   icons: {
     icon: [
-      { url: "/mynzAgric logoOficial (color).webp", type: "image/webp", sizes: "any" },
-      { url: "/icon.svg", type: "image/svg+xml" },
-      { url: "/icon-light-32x32.png", type: "image/png", sizes: "32x32" },
+      { url: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
+      { url: "/favicon-16x16.png", type: "image/png", sizes: "16x16" },
+      { url: "/favicon.ico", sizes: "any" },
     ],
     apple: [
-      { url: "/apple-icon.png", type: "image/png" },
+      { url: "/apple-touch-icon.png", type: "image/png", sizes: "180x180" },
     ],
-    shortcut: "/mynzAgric logoOficial (color).webp",
+    manifest: "/site.webmanifest",
   },
 }
 
