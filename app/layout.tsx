@@ -36,6 +36,17 @@ export const metadata: Metadata = {
   description:
     "High-quality grafted and tissue-culture fruit seedlings for Kenya. Hass avocados, mangoes, citrus, and tropical fruits.",
   generator: "v0.app",
+  icons: {
+    icon: [
+      { url: "/mynzAgric logoOficial (color).webp", type: "image/webp", sizes: "any" },
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/icon-light-32x32.png", type: "image/png", sizes: "32x32" },
+    ],
+    apple: [
+      { url: "/apple-icon.png", type: "image/png" },
+    ],
+    shortcut: "/mynzAgric logoOficial (color).webp",
+  },
 }
 
 export default function RootLayout({
