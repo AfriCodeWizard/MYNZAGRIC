@@ -1085,14 +1085,12 @@ Thank you!`
                     className="relative z-[10001]"
                     onMouseDown={(e) => {
                       e.stopPropagation()
-                      e.preventDefault()
                     }}
                     onClick={(e) => {
                       e.stopPropagation()
                     }}
                     onTouchStart={(e) => {
                       e.stopPropagation()
-                      e.preventDefault()
                     }}
                     onTouchEnd={(e) => {
                       e.stopPropagation()
@@ -1106,14 +1104,12 @@ Thank you!`
                       className="block text-sm font-medium text-gray-700 mb-2"
                       onMouseDown={(e) => {
                         e.stopPropagation()
-                        e.preventDefault()
                       }}
                       onClick={(e) => {
                         e.stopPropagation()
                       }}
                       onTouchStart={(e) => {
                         e.stopPropagation()
-                        e.preventDefault()
                       }}
                     >
                       Delivery Location <span className="text-red-500">*</span>
@@ -1123,38 +1119,37 @@ Thank you!`
                       value={deliveryLocation}
                       onChange={(e) => {
                         e.stopPropagation()
-                        e.preventDefault()
                         setDeliveryLocation(e.target.value)
                       }}
                       onMouseDown={(e) => {
                         e.stopPropagation()
-                        e.preventDefault()
+                        // Don't prevent default - allow native dropdown to work
                       }}
                       onClick={(e) => {
                         e.stopPropagation()
-                        e.preventDefault()
+                        // Don't prevent default - allow native dropdown to work
                       }}
                       onFocus={(e) => {
                         e.stopPropagation()
-                        e.preventDefault()
+                        // Don't prevent default - allow native dropdown to work
                       }}
                       onBlur={(e) => {
                         e.stopPropagation()
                       }}
                       onTouchStart={(e) => {
                         e.stopPropagation()
-                        e.preventDefault()
+                        // Don't prevent default - allow native mobile picker to open
                       }}
                       onTouchEnd={(e) => {
                         e.stopPropagation()
-                        e.preventDefault()
+                        // Don't prevent default - allow native mobile picker to work
                       }}
                       onTouchMove={(e) => {
                         e.stopPropagation()
                       }}
                       onMouseUp={(e) => {
                         e.stopPropagation()
-                        e.preventDefault()
+                        // Don't prevent default - allow native dropdown to work
                       }}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-900 bg-white text-sm relative z-[10001]"
                       required
@@ -1162,9 +1157,8 @@ Thank you!`
                         position: 'relative', 
                         zIndex: 10001, 
                         pointerEvents: 'auto',
-                        WebkitTouchCallout: 'none',
-                        WebkitUserSelect: 'none',
-                        userSelect: 'none'
+                        WebkitAppearance: 'menulist',
+                        appearance: 'menulist'
                       }}
                     >
                       <option value="">Select County</option>
