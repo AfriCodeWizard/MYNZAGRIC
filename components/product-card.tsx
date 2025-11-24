@@ -32,6 +32,7 @@ export default function ProductCard({
   const [isMobile, setIsMobile] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
   const [isFlippedToGreen, setIsFlippedToGreen] = useState(true)
+  const [lastClickTime, setLastClickTime] = useState<number | null>(null)
   const cardRef = useRef<HTMLDivElement>(null)
   const flipInnerRef = useRef<HTMLDivElement>(null)
 
@@ -81,29 +82,62 @@ export default function ProductCard({
     }
   }, [isExpanded])
   
-  // Re-enable animation only after expansion is completely done
+  // Check if 60 seconds have passed since last click
+  const shouldPauseAnimation = () => {
+    if (lastClickTime === null) return false
+    const timeSinceClick = Date.now() - lastClickTime
+    return timeSinceClick < 60000 // 60 seconds in milliseconds
+  }
+
+  // Re-enable animation only after expansion is completely done and 60s passed
   useEffect(() => {
     if (!isExpanded && flipInnerRef.current) {
       // Wait a bit to ensure expansion cleanup is done
       const timer = setTimeout(() => {
         if (flipInnerRef.current && !isExpanded) {
-          // Re-enable animation after expansion if should animate
-          const shouldAnimate = (isMobile && isInViewport) || (!isMobile && isHovered)
+          const isPaused = shouldPauseAnimation()
+          const shouldAnimate = !isPaused && ((isMobile && isInViewport) || (!isMobile && isHovered))
+          
           if (shouldAnimate) {
             flipInnerRef.current.style.animation = ''
             flipInnerRef.current.style.animationPlayState = ''
             flipInnerRef.current.style.transition = ''
           } else {
-            // Ensure it's at green side when not animating
+            // Stop animation and ensure it's at green side
+            flipInnerRef.current.style.animation = 'none'
+            flipInnerRef.current.style.animationPlayState = 'paused'
             flipInnerRef.current.style.transform = 'rotateY(0deg)'
+            flipInnerRef.current.style.transition = 'transform 0s'
           }
         }
       }, 100)
       return () => clearTimeout(timer)
     }
-  }, [isExpanded, isMobile, isInViewport, isHovered])
+  }, [isExpanded, isMobile, isInViewport, isHovered, lastClickTime])
+
+  // Resume animation after 60 seconds if conditions are met
+  useEffect(() => {
+    if (lastClickTime !== null && !isExpanded) {
+      const timer = setTimeout(() => {
+        // 60 seconds have passed, check if we should resume
+        if (flipInnerRef.current && !isExpanded) {
+          const shouldAnimate = (isMobile && isInViewport) || (!isMobile && isHovered)
+          if (shouldAnimate) {
+            flipInnerRef.current.style.animation = ''
+            flipInnerRef.current.style.animationPlayState = ''
+            flipInnerRef.current.style.transition = ''
+          }
+        }
+      }, 60000) // 60 seconds
+      
+      return () => clearTimeout(timer)
+    }
+  }, [lastClickTime, isExpanded, isMobile, isInViewport, isHovered])
 
   const handleAddToCart = () => {
+    // Record click time to pause animation for 60 seconds
+    setLastClickTime(Date.now())
+    
     // Immediately stop flip animation and force green side
     if (flipInnerRef.current) {
       // Stop animation completely
@@ -195,9 +229,11 @@ export default function ProductCard({
             "absolute rounded-full text-white coin-flip-button",
             "active:scale-95",
             isExpanded && "pointer-events-none",
-            // Trigger flip animation: on hover (web) or when in viewport (mobile), but NOT during expansion
-            // Animation is controlled by inline styles during expansion
-            !isExpanded && ((isMobile && isInViewport) || (!isMobile && isHovered)) ? "coin-flip-active" : ""
+            // Trigger flip animation: on hover (web) or when in viewport (mobile), 
+            // but NOT during expansion and NOT within 60s of click
+            !isExpanded && 
+            !shouldPauseAnimation() &&
+            ((isMobile && isInViewport) || (!isMobile && isHovered)) ? "coin-flip-active" : ""
           )}
           data-expanded={isExpanded}
           style={{
