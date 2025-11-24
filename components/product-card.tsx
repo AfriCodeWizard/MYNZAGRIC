@@ -244,7 +244,8 @@ export default function ProductCard({
     setIsExpanded(true)
     setIsCollapsing(false)
     
-    // Keep expansion for full duration (about 3 seconds total)
+    // Checkmark appears at 600ms delay + 300ms transition = 900ms total
+    // Start collapse animation right after checkmark completes
     setTimeout(() => {
       // Start collapse animation - set collapsing first
       setIsCollapsing(true)
@@ -254,9 +255,9 @@ export default function ProductCard({
         // Reset collapsing state after animation completes
         setTimeout(() => {
           setIsCollapsing(false)
-        }, 650) // Match transition duration (600ms) + small buffer
+        }, 300) // Match transition duration (250ms) + small buffer
       })
-    }, 3000) // Full 3 seconds for expansion and checkmark
+    }, 1000) // Start collapse 1 second after expansion (checkmark completes at ~900ms)
   }
 
   const categoryLabel = seedling.category.charAt(0).toUpperCase() + seedling.category.slice(1)
@@ -342,7 +343,7 @@ export default function ProductCard({
             transition: isExpanded 
               ? 'width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), height 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), right 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), top 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)'
               : isCollapsing
-              ? 'width 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), height 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), right 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), top 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+              ? 'width 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), height 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), right 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), top 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
               : 'none',
             ...(isExpanded && {
               width: '750px',
