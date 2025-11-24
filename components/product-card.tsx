@@ -68,51 +68,71 @@ export default function ProductCard({
     }
   }, [])
 
-  // Ensure animation is stopped during expansion
+  // Ensure animation is stopped during expansion and button stays green
   useEffect(() => {
     if (isExpanded && flipInnerRef.current) {
-      // Stop animation and force green side during expansion
+      // Stop animation completely and force green side during entire expansion
       flipInnerRef.current.style.animation = 'none'
+      flipInnerRef.current.style.animationPlayState = 'paused'
       flipInnerRef.current.style.transform = 'rotateY(0deg)'
       flipInnerRef.current.style.transition = 'transform 0s'
-    } else if (!isExpanded && flipInnerRef.current) {
-      // Re-enable animation after expansion if should animate
-      const shouldAnimate = (isMobile && isInViewport) || (!isMobile && isHovered)
-      if (shouldAnimate) {
-        flipInnerRef.current.style.animation = ''
-        flipInnerRef.current.style.transition = ''
-      }
+      // Remove any CSS classes that might trigger animation
+      flipInnerRef.current.classList.remove('coin-flip-active')
+    }
+  }, [isExpanded])
+  
+  // Re-enable animation only after expansion is completely done
+  useEffect(() => {
+    if (!isExpanded && flipInnerRef.current) {
+      // Wait a bit to ensure expansion cleanup is done
+      const timer = setTimeout(() => {
+        if (flipInnerRef.current && !isExpanded) {
+          // Re-enable animation after expansion if should animate
+          const shouldAnimate = (isMobile && isInViewport) || (!isMobile && isHovered)
+          if (shouldAnimate) {
+            flipInnerRef.current.style.animation = ''
+            flipInnerRef.current.style.animationPlayState = ''
+            flipInnerRef.current.style.transition = ''
+          } else {
+            // Ensure it's at green side when not animating
+            flipInnerRef.current.style.transform = 'rotateY(0deg)'
+          }
+        }
+      }, 100)
+      return () => clearTimeout(timer)
     }
   }, [isExpanded, isMobile, isInViewport, isHovered])
 
   const handleAddToCart = () => {
-    // Always stop the flip animation and ensure green side is showing
+    // Immediately stop flip animation and force green side
     if (flipInnerRef.current) {
-      // Stop animation immediately
+      // Stop animation completely
       flipInnerRef.current.style.animation = 'none'
-      flipInnerRef.current.style.transition = 'transform 0.3s ease-in-out'
-      // Force to green side (0deg)
+      flipInnerRef.current.style.animationPlayState = 'paused'
+      // Force to green side immediately
       flipInnerRef.current.style.transform = 'rotateY(0deg)'
+      flipInnerRef.current.style.transition = 'transform 0.3s ease-in-out'
+      // Remove animation class
+      flipInnerRef.current.classList.remove('coin-flip-active')
     }
     
     setIsFlippedToGreen(true)
     
     // Wait for flip to green to complete, then expand
     setTimeout(() => {
+      // Ensure still on green before expanding
+      if (flipInnerRef.current) {
+        flipInnerRef.current.style.transform = 'rotateY(0deg)'
+        flipInnerRef.current.style.transition = 'transform 0s'
+      }
+      
       onAddToCart(seedling)
       setIsExpanded(true)
-      // Reset after expansion
+      
+      // Keep expansion for full duration (about 3 seconds total)
       setTimeout(() => {
         setIsExpanded(false)
-        // Re-enable animation after expansion if still hovered/in viewport
-        if (flipInnerRef.current && !isExpanded) {
-          const shouldAnimate = (isMobile && isInViewport) || (!isMobile && isHovered)
-          if (shouldAnimate) {
-            flipInnerRef.current.style.animation = ''
-            flipInnerRef.current.style.transition = ''
-          }
-        }
-      }, 1600)
+      }, 3000) // Full 3 seconds for expansion and checkmark
     }, 350)
   }
 
@@ -176,8 +196,10 @@ export default function ProductCard({
             "active:scale-95",
             isExpanded && "pointer-events-none",
             // Trigger flip animation: on hover (web) or when in viewport (mobile), but NOT during expansion
+            // Animation is controlled by inline styles during expansion
             !isExpanded && ((isMobile && isInViewport) || (!isMobile && isHovered)) ? "coin-flip-active" : ""
           )}
+          data-expanded={isExpanded}
           style={{
             display: 'block',
             top: '-80px',
