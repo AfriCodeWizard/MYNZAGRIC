@@ -93,6 +93,14 @@ export default function ProductCard({
     // Set paused immediately
     setIsAnimationPaused(true)
     
+    // Immediately stop animation when paused
+    if (flipInnerRef.current) {
+      flipInnerRef.current.style.animation = 'none'
+      flipInnerRef.current.style.animationPlayState = 'paused'
+      flipInnerRef.current.style.transform = 'rotateY(0deg)'
+      flipInnerRef.current.classList.remove('coin-flip-active')
+    }
+    
     // Check periodically if 60 seconds have passed
     const checkInterval = setInterval(() => {
       const timeSinceClick = Date.now() - lastClickTime
@@ -114,13 +122,42 @@ export default function ProductCard({
     }
   }, [lastClickTime])
 
+  // Stop animation immediately when isAnimationPaused becomes true
+  useEffect(() => {
+    if (isAnimationPaused && flipInnerRef.current) {
+      flipInnerRef.current.style.animation = 'none'
+      flipInnerRef.current.style.animationPlayState = 'paused'
+      flipInnerRef.current.style.transform = 'rotateY(0deg)'
+      flipInnerRef.current.style.transition = 'transform 0s'
+      flipInnerRef.current.classList.remove('coin-flip-active')
+    } else if (!isAnimationPaused && !isExpanded && flipInnerRef.current) {
+      // Resume animation if pause ended and conditions are met
+      const shouldAnimate = ((isMobile && isInViewport) || (!isMobile && isHovered))
+      if (shouldAnimate) {
+        flipInnerRef.current.style.animation = ''
+        flipInnerRef.current.style.animationPlayState = ''
+        flipInnerRef.current.style.transition = ''
+      }
+    }
+  }, [isAnimationPaused, isExpanded, isMobile, isInViewport, isHovered])
+
   // Re-enable animation only after expansion is completely done and 60s passed
   useEffect(() => {
     if (!isExpanded && flipInnerRef.current) {
       // Wait a bit to ensure expansion cleanup is done
       const timer = setTimeout(() => {
         if (flipInnerRef.current && !isExpanded) {
-          const shouldAnimate = !isAnimationPaused && ((isMobile && isInViewport) || (!isMobile && isHovered))
+          // If paused, always stop animation
+          if (isAnimationPaused) {
+            flipInnerRef.current.style.animation = 'none'
+            flipInnerRef.current.style.animationPlayState = 'paused'
+            flipInnerRef.current.style.transform = 'rotateY(0deg)'
+            flipInnerRef.current.style.transition = 'transform 0s'
+            flipInnerRef.current.classList.remove('coin-flip-active')
+            return
+          }
+          
+          const shouldAnimate = ((isMobile && isInViewport) || (!isMobile && isHovered))
           
           if (shouldAnimate) {
             flipInnerRef.current.style.animation = ''
@@ -132,6 +169,7 @@ export default function ProductCard({
             flipInnerRef.current.style.animationPlayState = 'paused'
             flipInnerRef.current.style.transform = 'rotateY(0deg)'
             flipInnerRef.current.style.transition = 'transform 0s'
+            flipInnerRef.current.classList.remove('coin-flip-active')
           }
         }
       }, 100)
