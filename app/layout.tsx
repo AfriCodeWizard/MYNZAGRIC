@@ -56,7 +56,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${geist.variable} ${geistMono.variable} ${acme.variable} ${satisfy.variable}`}>
-      <body className={`${geist.className} antialiased`}>
+      <body className={`${geist.className} antialiased`} suppressHydrationWarning>
         <CartProviderWrapper>
           {children}
           <Analytics />

@@ -2,8 +2,10 @@
 
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
-import { Leaf, Droplet, TrendingUp, Users, CheckCircle2, ArrowRight } from "lucide-react"
+import { Leaf, Droplet, TrendingUp, Users, CheckCircle2, ArrowRight, MapPin } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
+import { successStories } from "@/lib/success-stories"
 
 export default function ImpactPage() {
   const impactStats = [
@@ -54,26 +56,6 @@ export default function ImpactPage() {
     }
   ]
 
-  const successStories = [
-    {
-      name: "Jackline Mwangi",
-      type: "Case Study",
-      description: "Upon acquiring our solar irrigation kit for her venture with the savings she had made, we facilitated connections with buyers willing to offer competitive rates for her strawberry produce. This enabled her to generate sufficient income to support her family in Uganda, and the surplus was reinvested, expanding her business to half an acre.",
-      image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80"
-    },
-    {
-      name: "Kavita Ndolo",
-      type: "Case Study",
-      description: "To address the water scarcity issue, Kavita implemented strategic measures. He installed solar-powered pumps, acquired a dam liner for efficient water storage, and invested in our irrigation systems from specifically designed for growing fruits and vegetables.",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80"
-    },
-    {
-      name: "Shanzu Farmer Group",
-      type: "Case Study",
-      description: "The Mombasa County government, in collaboration with the Swedish embassy, approached us to customize a solar-powered pump. This innovative solution was designed to draw water closer to the women's homes, alleviating the need for the strenuous journey to fetch water. Consequently, the women could redirect their energy and time towards tending to their farms, while the children had ample time and energy to focus on their studies.",
-      image: "https://images.unsplash.com/photo-1529156069898-49953e41bcc6?w=400&q=80"
-    }
-  ]
 
   return (
     <div className="min-h-screen bg-[#07090d]">
@@ -157,31 +139,60 @@ export default function ImpactPage() {
             Our Success Stories
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
-            {successStories.map((story, index) => (
-              <div
-                key={index}
-                className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:bg-white/10 transition-all duration-300 group"
+            {successStories.map((story) => (
+              <Link
+                key={story.id}
+                href={`/impact/stories/${story.slug}`}
+                className="group block"
               >
-                <div className="relative h-48 overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-green-600/20 to-green-800/20" />
-                  <div className="absolute top-4 left-4 bg-green-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
-                    {story.type}
+                <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:bg-white/10 hover:border-green-500/50 transition-all duration-300 h-full flex flex-col">
+                  {/* Creative Image Section with Overlay */}
+                  <div className="relative h-64 overflow-hidden">
+                    <Image
+                      src={story.image}
+                      alt={story.name}
+                      fill
+                      className="object-cover group-hover:scale-110 transition-transform duration-500"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    />
+                    {/* Gradient Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+                    {/* Floating Badge */}
+                    <div className="absolute top-4 left-4 bg-green-600 text-white px-4 py-2 rounded-full text-xs font-semibold shadow-lg backdrop-blur-sm">
+                      {story.type}
+                    </div>
+                    {/* Location Badge */}
+                    <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5">
+                      <MapPin className="w-3.5 h-3.5" />
+                      {story.location}
+                    </div>
+                    {/* Name Overlay */}
+                    <div className="absolute bottom-0 left-0 right-0 p-6">
+                      <h3 className="text-2xl font-bold text-white mb-2 flex items-center gap-2">
+                        {story.name}
+                        <CheckCircle2 className="w-5 h-5 text-green-400" />
+                      </h3>
+                    </div>
+                  </div>
+                  
+                  {/* Content Section */}
+                  <div className="p-6 flex-1 flex flex-col">
+                    <p className="text-gray-300 leading-relaxed mb-6 flex-1">
+                      {story.shortDescription}
+                    </p>
+                    
+                    {/* Read More Button with Animation */}
+                    <div className="flex items-center justify-between pt-4 border-t border-white/10">
+                      <span className="text-green-400 hover:text-green-300 font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
+                        Read More
+                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                      </span>
+                      {/* Decorative Element */}
+                      <div className="w-8 h-0.5 bg-green-400 group-hover:w-12 transition-all" />
+                    </div>
                   </div>
                 </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold text-white mb-3 flex items-center gap-2">
-                    {story.name}
-                    <CheckCircle2 className="w-5 h-5 text-green-400" />
-                  </h3>
-                  <p className="text-gray-300 leading-relaxed mb-4">
-                    {story.description}
-                  </p>
-                  <button className="text-green-400 hover:text-green-300 font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
-                    Read More
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
