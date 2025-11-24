@@ -28,6 +28,7 @@ export default function ProductCard({
   onAddToCart,
 }: { seedling: Seedling; onAddToCart: (seedling: Seedling) => void }) {
   const [isExpanded, setIsExpanded] = useState(false)
+  const [isCollapsing, setIsCollapsing] = useState(false)
   const [isInViewport, setIsInViewport] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
@@ -241,10 +242,20 @@ export default function ProductCard({
     // Start expansion immediately without waiting
     onAddToCart(seedling)
     setIsExpanded(true)
+    setIsCollapsing(false)
     
     // Keep expansion for full duration (about 3 seconds total)
     setTimeout(() => {
-      setIsExpanded(false)
+      // Start collapse animation - set collapsing first
+      setIsCollapsing(true)
+      // Then remove expanded state to trigger collapse animation
+      requestAnimationFrame(() => {
+        setIsExpanded(false)
+        // Reset collapsing state after animation completes
+        setTimeout(() => {
+          setIsCollapsing(false)
+        }, 650) // Match transition duration (600ms) + small buffer
+      })
     }, 3000) // Full 3 seconds for expansion and checkmark
   }
 
@@ -327,6 +338,12 @@ export default function ProductCard({
             borderRadius: '50%',
             position: 'absolute',
             overflow: 'hidden',
+            // Smooth transition for expansion and collapse
+            transition: isExpanded 
+              ? 'width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), height 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), right 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), top 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)'
+              : isCollapsing
+              ? 'width 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), height 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), right 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), top 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+              : 'none',
             ...(isExpanded && {
               width: '750px',
               height: '750px',
