@@ -281,13 +281,26 @@ html {
   }
 }
 
+/* Coin flip button container - needs perspective for 3D effect */
+.coin-flip-button {
+  perspective: 1000px;
+  background: transparent !important;
+}
+
 /* Coin flip inner container */
 .coin-flip-inner {
   transform-style: preserve-3d;
+  width: 100%;
+  height: 100%;
 }
 
-/* Apply continuous coin flip animation when active */
+/* Apply continuous coin flip animation when active (mobile viewport) */
 .coin-flip-active .coin-flip-inner {
+  animation: coin-flip 2s infinite linear;
+}
+
+/* Apply animation on group hover (web mode) */
+.group:hover .coin-flip-button .coin-flip-inner {
   animation: coin-flip 2s infinite linear;
 }
 

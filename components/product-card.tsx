@@ -125,12 +125,11 @@ export default function ProductCard({
         <button
           onClick={handleAddToCart}
           className={cn(
-            "absolute rounded-full text-white transition-all duration-300",
+            "absolute rounded-full text-white coin-flip-button",
             "active:scale-95",
             isExpanded && "pointer-events-none",
-            // Trigger flip animation: on hover (web) or when in viewport (mobile)
-            isMobile && isInViewport && "coin-flip-active",
-            !isMobile && "group-hover:coin-flip-active"
+            // Trigger flip animation on mobile when in viewport
+            isMobile && isInViewport && "coin-flip-active"
           )}
           style={{
             display: 'block',
@@ -139,12 +138,11 @@ export default function ProductCard({
             zIndex: 2,
             width: '70px',
             height: '70px',
-            backgroundColor: '#10b981', // green-500 for website theme
             fontSize: '36px',
             color: '#fff',
             borderRadius: '50%',
             position: 'absolute',
-            perspective: '1000px',
+            overflow: 'hidden',
             ...(isExpanded && {
               width: '750px',
               height: '750px',
