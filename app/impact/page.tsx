@@ -62,15 +62,29 @@ export default function ImpactPage() {
       <Navbar />
       
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        <div className="max-w-7xl mx-auto text-center">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-4">
-            Impacting the world day by day with{" "}
-            <span className="text-green-400">climate smart farming</span>
-          </h1>
-          <p className="text-xl sm:text-2xl text-gray-300 mt-6 max-w-3xl mx-auto">
-            Changing lives of every small holder farmer
-          </p>
+      <section className="relative h-[70vh] min-h-[600px] overflow-hidden">
+        <Image
+          src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1920&q=80&auto=format&fit=crop"
+          alt="Climate smart farming impact - Fruit orchard farm"
+          fill
+          className="object-cover"
+          priority
+          sizes="100vw"
+        />
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#07090d] via-[#07090d]/70 to-[#07090d]/40" />
+        
+        {/* Content */}
+        <div className="relative z-10 h-full flex items-center justify-center px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto text-center">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6">
+              Impacting the world day by day with{" "}
+              <span className="text-green-400">climate smart farming</span>
+            </h1>
+            <p className="text-xl sm:text-2xl md:text-3xl text-gray-200 mt-6 max-w-4xl mx-auto font-light">
+              Changing lives of every small holder farmer
+            </p>
+          </div>
         </div>
       </section>
 
