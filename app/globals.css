@@ -292,16 +292,23 @@ html {
   transform-style: preserve-3d;
   width: 100%;
   height: 100%;
+  position: relative;
 }
 
 /* Apply continuous coin flip animation when active (mobile viewport) */
 .coin-flip-active .coin-flip-inner {
-  animation: coin-flip 2s infinite linear;
+  animation: coin-flip 2s infinite linear !important;
 }
 
-/* Apply animation on group hover (web mode) */
-.group:hover .coin-flip-button .coin-flip-inner {
-  animation: coin-flip 2s infinite linear;
+/* Apply animation on group hover (web mode) - multiple selectors for reliability */
+.group:hover .coin-flip-button .coin-flip-inner,
+.group:hover button.coin-flip-button .coin-flip-inner {
+  animation: coin-flip 2s infinite linear !important;
+}
+
+/* Also apply on direct button hover as fallback */
+.coin-flip-button:hover .coin-flip-inner {
+  animation: coin-flip 2s infinite linear !important;
 }
 
 /* Drip Irrigation Card - CodePen Design (Clipping method 2 - fixa) */

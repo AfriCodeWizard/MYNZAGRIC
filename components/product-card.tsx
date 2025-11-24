@@ -30,6 +30,7 @@ export default function ProductCard({
   const [isExpanded, setIsExpanded] = useState(false)
   const [isInViewport, setIsInViewport] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
+  const [isHovered, setIsHovered] = useState(false)
   const cardRef = useRef<HTMLDivElement>(null)
 
   // Detect mobile on mount and resize
@@ -76,6 +77,8 @@ export default function ProductCard({
   return (
     <div 
       ref={cardRef}
+      onMouseEnter={() => !isMobile && setIsHovered(true)}
+      onMouseLeave={() => !isMobile && setIsHovered(false)}
       className={cn(
         "relative bg-white overflow-hidden text-center rounded-lg group",
         isExpanded && "expanded"
@@ -128,8 +131,8 @@ export default function ProductCard({
             "absolute rounded-full text-white coin-flip-button",
             "active:scale-95",
             isExpanded && "pointer-events-none",
-            // Trigger flip animation on mobile when in viewport
-            isMobile && isInViewport && "coin-flip-active"
+            // Trigger flip animation: on hover (web) or when in viewport (mobile)
+            (isMobile && isInViewport) || (!isMobile && isHovered) ? "coin-flip-active" : ""
           )}
           style={{
             display: 'block',
@@ -150,7 +153,6 @@ export default function ProductCard({
               top: '-375px',
             }),
           }}
-          title="Add to Cart"
           disabled={isExpanded}
         >
           <div 
@@ -160,6 +162,7 @@ export default function ProductCard({
               width: '100%',
               height: '100%',
               transformStyle: 'preserve-3d',
+              transform: 'rotateY(0deg)',
             }}
           >
             {/* Front side - Shopping Cart Icon */}
