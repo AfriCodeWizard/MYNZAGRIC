@@ -93,16 +93,13 @@ export default function ProductCard({
     // Set paused immediately
     setIsAnimationPaused(true)
     
-    // Immediately stop animation when paused
-    if (flipInnerRef.current) {
-      flipInnerRef.current.style.animation = 'none'
-      flipInnerRef.current.style.animationPlayState = 'paused'
-      flipInnerRef.current.style.transform = 'rotateY(0deg)'
-      flipInnerRef.current.classList.remove('coin-flip-active')
-    }
-    
     // Check periodically if 60 seconds have passed
     const checkInterval = setInterval(() => {
+      if (lastClickTime === null) {
+        setIsAnimationPaused(false)
+        clearInterval(checkInterval)
+        return
+      }
       const timeSinceClick = Date.now() - lastClickTime
       if (timeSinceClick >= 60000) {
         setIsAnimationPaused(false)
@@ -122,21 +119,31 @@ export default function ProductCard({
     }
   }, [lastClickTime])
 
-  // Stop animation immediately when isAnimationPaused becomes true
+  // Stop/resume animation based on pause state and other conditions
   useEffect(() => {
-    if (isAnimationPaused && flipInnerRef.current) {
+    if (!flipInnerRef.current) return
+    
+    if (isAnimationPaused || isExpanded) {
+      // Stop animation when paused or expanded
       flipInnerRef.current.style.animation = 'none'
       flipInnerRef.current.style.animationPlayState = 'paused'
       flipInnerRef.current.style.transform = 'rotateY(0deg)'
-      flipInnerRef.current.style.transition = 'transform 0s'
+      flipInnerRef.current.style.transition = isExpanded ? 'transform 0s' : 'transform 0s'
       flipInnerRef.current.classList.remove('coin-flip-active')
-    } else if (!isAnimationPaused && !isExpanded && flipInnerRef.current) {
-      // Resume animation if pause ended and conditions are met
+    } else if (!isExpanded) {
+      // Resume animation if not paused and not expanded
       const shouldAnimate = ((isMobile && isInViewport) || (!isMobile && isHovered))
       if (shouldAnimate) {
         flipInnerRef.current.style.animation = ''
         flipInnerRef.current.style.animationPlayState = ''
         flipInnerRef.current.style.transition = ''
+      } else {
+        // Stop if conditions not met
+        flipInnerRef.current.style.animation = 'none'
+        flipInnerRef.current.style.animationPlayState = 'paused'
+        flipInnerRef.current.style.transform = 'rotateY(0deg)'
+        flipInnerRef.current.style.transition = 'transform 0s'
+        flipInnerRef.current.classList.remove('coin-flip-active')
       }
     }
   }, [isAnimationPaused, isExpanded, isMobile, isInViewport, isHovered])
