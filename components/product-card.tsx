@@ -204,7 +204,7 @@ export default function ProductCard({
                 alignItems: 'center',
                 justifyContent: 'center',
                 borderRadius: '50%',
-                backgroundColor: '#10b981',
+                backgroundColor: '#000000',
                 transform: 'rotateY(180deg)',
                 fontSize: '11px',
                 fontWeight: 'bold',

@@ -268,13 +268,19 @@ html {
   }
 }
 
-/* Coin flip animation for cart button */
+/* Coin flip animation for cart button - flip once, pause 3s, repeat */
 @keyframes coin-flip {
   0% {
     transform: rotateY(0deg);
   }
+  5% {
+    transform: rotateY(180deg);
+  }
   50% {
     transform: rotateY(180deg);
+  }
+  55% {
+    transform: rotateY(360deg);
   }
   100% {
     transform: rotateY(360deg);
@@ -295,20 +301,20 @@ html {
   position: relative;
 }
 
-/* Apply continuous coin flip animation when active (mobile viewport) */
+/* Apply coin flip animation when active (mobile viewport) - 6s total: flip, pause 3s, flip back, pause 3s */
 .coin-flip-active .coin-flip-inner {
-  animation: coin-flip 3s infinite linear !important;
+  animation: coin-flip 6s infinite ease-in-out !important;
 }
 
 /* Apply animation on group hover (web mode) - multiple selectors for reliability */
 .group:hover .coin-flip-button .coin-flip-inner,
 .group:hover button.coin-flip-button .coin-flip-inner {
-  animation: coin-flip 3s infinite linear !important;
+  animation: coin-flip 6s infinite ease-in-out !important;
 }
 
 /* Also apply on direct button hover as fallback */
 .coin-flip-button:hover .coin-flip-inner {
-  animation: coin-flip 3s infinite linear !important;
+  animation: coin-flip 6s infinite ease-in-out !important;
 }
 
 /* Drip Irrigation Card - CodePen Design (Clipping method 2 - fixa) */
