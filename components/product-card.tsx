@@ -206,15 +206,15 @@ export default function ProductCard({
                 borderRadius: '50%',
                 backgroundColor: '#10b981',
                 transform: 'rotateY(180deg)',
-                fontSize: '9px',
+                fontSize: '11px',
                 fontWeight: 'bold',
                 textAlign: 'center',
-                padding: '6px',
+                padding: '4px',
                 lineHeight: '1.2',
                 wordSpacing: '0px',
               }}
             >
-              <span style={{ whiteSpace: 'normal' }}>Add to Cart</span>
+              <span style={{ whiteSpace: 'normal', color: 'red', fontSize: '11px', fontWeight: 'bold' }}>Add to Cart</span>
             </div>
           </div>
         </button>
