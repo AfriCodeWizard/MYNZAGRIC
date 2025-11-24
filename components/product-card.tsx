@@ -123,19 +123,42 @@ export default function ProductCard({
   useEffect(() => {
     if (!flipInnerRef.current) return
     
-    if (isAnimationPaused || isExpanded) {
-      // Stop animation when paused or expanded
+    const button = flipInnerRef.current.closest('.coin-flip-button') as HTMLElement | null
+    
+    if (isExpanded) {
+      // During expansion: COMPLETELY stop animation and force green
       flipInnerRef.current.style.animation = 'none'
       flipInnerRef.current.style.animationPlayState = 'paused'
+      flipInnerRef.current.style.animationName = 'none'
       flipInnerRef.current.style.transform = 'rotateY(0deg)'
-      flipInnerRef.current.style.transition = isExpanded ? 'transform 0s' : 'transform 0s'
+      flipInnerRef.current.style.transition = 'none'
       flipInnerRef.current.classList.remove('coin-flip-active')
-    } else if (!isExpanded) {
+      if (button) {
+        button.classList.add('coin-flip-disabled')
+        button.classList.remove('coin-flip-active')
+      }
+    } else if (isAnimationPaused) {
+      // When paused: stop animation and keep green
+      flipInnerRef.current.style.animation = 'none'
+      flipInnerRef.current.style.animationPlayState = 'paused'
+      flipInnerRef.current.style.animationName = 'none'
+      flipInnerRef.current.style.transform = 'rotateY(0deg)'
+      flipInnerRef.current.style.transition = 'none'
+      flipInnerRef.current.classList.remove('coin-flip-active')
+      if (button) {
+        button.classList.add('coin-flip-disabled')
+        button.classList.remove('coin-flip-active')
+      }
+    } else {
       // Resume animation if not paused and not expanded
+      if (button) {
+        button.classList.remove('coin-flip-disabled')
+      }
       const shouldAnimate = ((isMobile && isInViewport) || (!isMobile && isHovered))
       if (shouldAnimate) {
         flipInnerRef.current.style.animation = ''
         flipInnerRef.current.style.animationPlayState = ''
+        flipInnerRef.current.style.animationName = ''
         flipInnerRef.current.style.transition = ''
       } else {
         // Stop if conditions not met
@@ -185,39 +208,44 @@ export default function ProductCard({
   }, [isExpanded, isMobile, isInViewport, isHovered, isAnimationPaused])
 
   const handleAddToCart = () => {
-    // Record click time to pause animation for 60 seconds
-    setLastClickTime(Date.now())
-    
-    // Immediately stop flip animation and force green side
+    // IMMEDIATELY stop flip animation - this must happen first
     if (flipInnerRef.current) {
-      // Stop animation completely
-      flipInnerRef.current.style.animation = 'none'
+      // Completely stop and remove all animation
+      flipInnerRef.current.style.animation = 'none !important'
       flipInnerRef.current.style.animationPlayState = 'paused'
-      // Force to green side immediately
-      flipInnerRef.current.style.transform = 'rotateY(0deg)'
-      flipInnerRef.current.style.transition = 'transform 0.3s ease-in-out'
-      // Remove animation class
+      flipInnerRef.current.style.animationName = 'none'
+      flipInnerRef.current.style.animationDuration = '0s'
+      flipInnerRef.current.style.animationIterationCount = '0'
+      // Force to green side immediately with no transition
+      flipInnerRef.current.style.transform = 'rotateY(0deg) !important'
+      flipInnerRef.current.style.transition = 'none'
+      // Remove animation class immediately
       flipInnerRef.current.classList.remove('coin-flip-active')
+      // Also remove from parent button
+      const button = flipInnerRef.current.closest('.coin-flip-button')
+      if (button) {
+        button.classList.remove('coin-flip-active')
+      }
     }
     
+    // Record click time to pause animation for 60 seconds
+    setLastClickTime(Date.now())
     setIsFlippedToGreen(true)
     
-    // Wait for flip to green to complete, then expand
+    // Immediately ensure green side is showing (no delay)
+    if (flipInnerRef.current) {
+      flipInnerRef.current.style.transform = 'rotateY(0deg) !important'
+      flipInnerRef.current.style.transition = 'none'
+    }
+    
+    // Start expansion immediately without waiting
+    onAddToCart(seedling)
+    setIsExpanded(true)
+    
+    // Keep expansion for full duration (about 3 seconds total)
     setTimeout(() => {
-      // Ensure still on green before expanding
-      if (flipInnerRef.current) {
-        flipInnerRef.current.style.transform = 'rotateY(0deg)'
-        flipInnerRef.current.style.transition = 'transform 0s'
-      }
-      
-      onAddToCart(seedling)
-      setIsExpanded(true)
-      
-      // Keep expansion for full duration (about 3 seconds total)
-      setTimeout(() => {
-        setIsExpanded(false)
-      }, 3000) // Full 3 seconds for expansion and checkmark
-    }, 350)
+      setIsExpanded(false)
+    }, 3000) // Full 3 seconds for expansion and checkmark
   }
 
   const categoryLabel = seedling.category.charAt(0).toUpperCase() + seedling.category.slice(1)
@@ -278,7 +306,8 @@ export default function ProductCard({
           className={cn(
             "absolute rounded-full text-white coin-flip-button",
             "active:scale-95",
-            isExpanded && "pointer-events-none",
+            isExpanded && "pointer-events-none coin-flip-disabled",
+            isAnimationPaused && "coin-flip-disabled",
             // Trigger flip animation: on hover (web) or when in viewport (mobile), 
             // but NOT during expansion and NOT within 60s of click
             !isExpanded && 

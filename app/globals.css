@@ -301,19 +301,28 @@ html {
   position: relative;
 }
 
+/* Disable animation completely when disabled class is present */
+.coin-flip-disabled .coin-flip-inner,
+.coin-flip-disabled.coin-flip-button .coin-flip-inner {
+  animation: none !important;
+  transform: rotateY(0deg) !important;
+}
+
 /* Apply coin flip animation when active (mobile viewport) - 3s total: flip, pause 1.5s, flip back, pause 1.5s */
-.coin-flip-active .coin-flip-inner {
+/* Never animate when disabled */
+.coin-flip-active:not(.coin-flip-disabled) .coin-flip-inner {
   animation: coin-flip 3s infinite ease-in-out !important;
 }
 
 /* Apply animation on group hover (web mode) - multiple selectors for reliability */
-.group:hover .coin-flip-button .coin-flip-inner,
-.group:hover button.coin-flip-button .coin-flip-inner {
+/* Never animate when disabled */
+.group:hover .coin-flip-button:not(.coin-flip-disabled) .coin-flip-inner,
+.group:hover button.coin-flip-button:not(.coin-flip-disabled) .coin-flip-inner {
   animation: coin-flip 3s infinite ease-in-out !important;
 }
 
 /* Also apply on direct button hover as fallback */
-.coin-flip-button:hover .coin-flip-inner {
+.coin-flip-button:hover:not(.coin-flip-disabled) .coin-flip-inner {
   animation: coin-flip 3s infinite ease-in-out !important;
 }
 
