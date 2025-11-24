@@ -68,65 +68,52 @@ export default function ProductCard({
     }
   }, [])
 
-  const handleAddToCart = () => {
-    // Check if currently showing black side by checking animation state
-    // The animation shows black side between 10% and 60% of the cycle
-    if (flipInnerRef.current) {
-      const computedStyle = window.getComputedStyle(flipInnerRef.current)
-      const animationName = computedStyle.animationName
-      const transform = computedStyle.transform
-      
-      // Check if transform indicates back side is visible (rotated between 90-270deg)
-      let isShowingBlackSide = false
-      
-      if (transform && transform !== 'none') {
-        // Check for rotateY in transform
-        const rotateYMatch = transform.match(/rotateY\(([^)]+)\)/)
-        if (rotateYMatch) {
-          const rotation = parseFloat(rotateYMatch[1])
-          // Normalize to 0-360 range
-          const normalizedRotation = ((rotation % 360) + 360) % 360
-          // Black side is visible when rotated between 90-270 degrees
-          isShowingBlackSide = normalizedRotation >= 90 && normalizedRotation <= 270
-        } else {
-          // Fallback: check matrix for rotation
-          const matrixMatch = transform.match(/matrix3d\(([^)]+)\)/) || transform.match(/matrix\(([^)]+)\)/)
-          if (matrixMatch) {
-            const values = matrixMatch[1].split(',').map(Number)
-            // If first value is negative, likely rotated 180deg
-            if (values.length > 0 && values[0] < -0.5) {
-              isShowingBlackSide = true
-            }
-          }
-        }
-      }
-      
-      // If showing black side, flip back to green first
-      if (isShowingBlackSide) {
-        setIsFlippedToGreen(false)
-        // Stop animation and flip to green
-        if (flipInnerRef.current) {
-          flipInnerRef.current.style.animation = 'none'
-          flipInnerRef.current.style.transform = 'rotateY(0deg)'
-          flipInnerRef.current.style.transition = 'transform 0.3s ease-in-out'
-        }
-        
-        // Wait for flip to complete, then expand
-        setTimeout(() => {
-          setIsFlippedToGreen(true)
-          onAddToCart(seedling)
-          setIsExpanded(true)
-          setTimeout(() => setIsExpanded(false), 1600)
-        }, 350)
-        return
+  // Ensure animation is stopped during expansion
+  useEffect(() => {
+    if (isExpanded && flipInnerRef.current) {
+      // Stop animation and force green side during expansion
+      flipInnerRef.current.style.animation = 'none'
+      flipInnerRef.current.style.transform = 'rotateY(0deg)'
+      flipInnerRef.current.style.transition = 'transform 0s'
+    } else if (!isExpanded && flipInnerRef.current) {
+      // Re-enable animation after expansion if should animate
+      const shouldAnimate = (isMobile && isInViewport) || (!isMobile && isHovered)
+      if (shouldAnimate) {
+        flipInnerRef.current.style.animation = ''
+        flipInnerRef.current.style.transition = ''
       }
     }
+  }, [isExpanded, isMobile, isInViewport, isHovered])
+
+  const handleAddToCart = () => {
+    // Always stop the flip animation and ensure green side is showing
+    if (flipInnerRef.current) {
+      // Stop animation immediately
+      flipInnerRef.current.style.animation = 'none'
+      flipInnerRef.current.style.transition = 'transform 0.3s ease-in-out'
+      // Force to green side (0deg)
+      flipInnerRef.current.style.transform = 'rotateY(0deg)'
+    }
     
-    // If already on green side, proceed normally
     setIsFlippedToGreen(true)
-    onAddToCart(seedling)
-    setIsExpanded(true)
-    setTimeout(() => setIsExpanded(false), 1600)
+    
+    // Wait for flip to green to complete, then expand
+    setTimeout(() => {
+      onAddToCart(seedling)
+      setIsExpanded(true)
+      // Reset after expansion
+      setTimeout(() => {
+        setIsExpanded(false)
+        // Re-enable animation after expansion if still hovered/in viewport
+        if (flipInnerRef.current && !isExpanded) {
+          const shouldAnimate = (isMobile && isInViewport) || (!isMobile && isHovered)
+          if (shouldAnimate) {
+            flipInnerRef.current.style.animation = ''
+            flipInnerRef.current.style.transition = ''
+          }
+        }
+      }, 1600)
+    }, 350)
   }
 
   const categoryLabel = seedling.category.charAt(0).toUpperCase() + seedling.category.slice(1)
@@ -188,8 +175,8 @@ export default function ProductCard({
             "absolute rounded-full text-white coin-flip-button",
             "active:scale-95",
             isExpanded && "pointer-events-none",
-            // Trigger flip animation: on hover (web) or when in viewport (mobile)
-            (isMobile && isInViewport) || (!isMobile && isHovered) ? "coin-flip-active" : ""
+            // Trigger flip animation: on hover (web) or when in viewport (mobile), but NOT during expansion
+            !isExpanded && ((isMobile && isInViewport) || (!isMobile && isHovered)) ? "coin-flip-active" : ""
           )}
           style={{
             display: 'block',
@@ -270,7 +257,7 @@ export default function ProductCard({
                 padding: '4px',
                 lineHeight: '1.2',
                 wordSpacing: '0px',
-                border: '0.5px solid white',
+                border: '3px solid white',
                 boxSizing: 'border-box',
               }}
             >
