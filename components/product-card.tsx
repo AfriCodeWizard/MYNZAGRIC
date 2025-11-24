@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Leaf, ShoppingCart, Star } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
@@ -28,6 +28,42 @@ export default function ProductCard({
   onAddToCart,
 }: { seedling: Seedling; onAddToCart: (seedling: Seedling) => void }) {
   const [isExpanded, setIsExpanded] = useState(false)
+  const [isInViewport, setIsInViewport] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
+  const cardRef = useRef<HTMLDivElement>(null)
+
+  // Detect mobile on mount and resize
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640)
+    }
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
+  // Intersection Observer for mobile viewport detection
+  useEffect(() => {
+    const card = cardRef.current
+    if (!card) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          setIsInViewport(entry.isIntersecting)
+        })
+      },
+      {
+        threshold: 0.5, // Trigger when 50% of card is visible
+      }
+    )
+
+    observer.observe(card)
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [])
 
   const handleAddToCart = () => {
     onAddToCart(seedling)
@@ -39,6 +75,7 @@ export default function ProductCard({
 
   return (
     <div 
+      ref={cardRef}
       className={cn(
         "relative bg-white overflow-hidden text-center rounded-lg group",
         isExpanded && "expanded"
@@ -84,16 +121,16 @@ export default function ProductCard({
           }}
         />
 
-        {/* Buy Button - CodePen exact measurements with cart-plus icon */}
+        {/* Buy Button - Coin Flip Design */}
         <button
           onClick={handleAddToCart}
           className={cn(
             "absolute rounded-full text-white transition-all duration-300",
-            "flex items-center justify-center hover:scale-110 active:scale-95",
-            "hover:bg-green-600",
-            "group-hover:animate-pulse group-hover:scale-110 group-hover:shadow-2xl",
-            "group-hover:shadow-green-500/50",
-            isExpanded && "pointer-events-none"
+            "active:scale-95",
+            isExpanded && "pointer-events-none",
+            // Trigger flip animation: on hover (web) or when in viewport (mobile)
+            isMobile && isInViewport && "coin-flip-active",
+            !isMobile && "group-hover:coin-flip-active"
           )}
           style={{
             display: 'block',
@@ -105,9 +142,9 @@ export default function ProductCard({
             backgroundColor: '#10b981', // green-500 for website theme
             fontSize: '36px',
             color: '#fff',
-            transition: 'all 0.3s ease',
             borderRadius: '50%',
             position: 'absolute',
+            perspective: '1000px',
             ...(isExpanded && {
               width: '750px',
               height: '750px',
@@ -118,26 +155,66 @@ export default function ProductCard({
           title="Add to Cart"
           disabled={isExpanded}
         >
-          {/* Animated glow ring on card hover */}
           <div 
-            className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+            className="coin-flip-inner"
             style={{
-              boxShadow: '0 0 0 0 rgba(16, 185, 129, 0.7)',
-              animation: 'pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              position: 'relative',
+              width: '100%',
+              height: '100%',
+              transformStyle: 'preserve-3d',
             }}
-          />
-          <div className="relative flex items-center justify-center" style={{ width: '100%', height: '100%', position: 'relative' }}>
-            <ShoppingCart 
-              className={cn(
-                "transition-all duration-300 group-hover:rotate-12",
-            isExpanded && "opacity-0"
-              )}
+          >
+            {/* Front side - Shopping Cart Icon */}
+            <div 
+              className="coin-flip-face coin-flip-front"
               style={{
-                width: '30px',
-                height: '30px',
-                strokeWidth: 2.5,
+                position: 'absolute',
+                width: '100%',
+                height: '100%',
+                backfaceVisibility: 'hidden',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '50%',
+                backgroundColor: '#10b981',
               }}
-            />
+            >
+              <ShoppingCart 
+                className={cn(
+                  isExpanded && "opacity-0"
+                )}
+                style={{
+                  width: '30px',
+                  height: '30px',
+                  strokeWidth: 2.5,
+                }}
+              />
+            </div>
+            
+            {/* Back side - Add to Cart Text */}
+            <div 
+              className="coin-flip-face coin-flip-back"
+              style={{
+                position: 'absolute',
+                width: '100%',
+                height: '100%',
+                backfaceVisibility: 'hidden',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '50%',
+                backgroundColor: '#10b981',
+                transform: 'rotateY(180deg)',
+                fontSize: '9px',
+                fontWeight: 'bold',
+                textAlign: 'center',
+                padding: '6px',
+                lineHeight: '1.2',
+                wordSpacing: '0px',
+              }}
+            >
+              <span style={{ whiteSpace: 'normal' }}>Add to Cart</span>
+            </div>
           </div>
         </button>
 

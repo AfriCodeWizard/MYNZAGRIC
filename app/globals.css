@@ -268,6 +268,29 @@ html {
   }
 }
 
+/* Coin flip animation for cart button */
+@keyframes coin-flip {
+  0% {
+    transform: rotateY(0deg);
+  }
+  50% {
+    transform: rotateY(180deg);
+  }
+  100% {
+    transform: rotateY(360deg);
+  }
+}
+
+/* Coin flip inner container */
+.coin-flip-inner {
+  transform-style: preserve-3d;
+}
+
+/* Apply continuous coin flip animation when active */
+.coin-flip-active .coin-flip-inner {
+  animation: coin-flip 2s infinite linear;
+}
+
 /* Drip Irrigation Card - CodePen Design (Clipping method 2 - fixa) */
 .drip-irrigation-card {
   --n: 3;
