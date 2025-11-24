@@ -69,31 +69,47 @@ export default function ProductCard({
   }, [])
 
   const handleAddToCart = () => {
-    // Check if currently showing black side (rotated 180deg or more)
+    // Check if currently showing black side by checking animation state
+    // The animation shows black side between 10% and 60% of the cycle
     if (flipInnerRef.current) {
       const computedStyle = window.getComputedStyle(flipInnerRef.current)
+      const animationName = computedStyle.animationName
       const transform = computedStyle.transform
       
-      // Parse rotation value from matrix or rotateY
-      let currentRotation = 0
+      // Check if transform indicates back side is visible (rotated between 90-270deg)
+      let isShowingBlackSide = false
+      
       if (transform && transform !== 'none') {
-        const matrix = transform.match(/matrix3d\(([^)]+)\)/) || transform.match(/matrix\(([^)]+)\)/)
-        if (matrix) {
-          // Extract rotation from matrix (simplified check)
-          // If showing back side, rotation will be around 180deg
-          const values = matrix[1].split(',').map(Number)
-          // Check if it's flipped (rough approximation)
-          if (values.length >= 4 && values[0] < 0) {
-            currentRotation = 180
+        // Check for rotateY in transform
+        const rotateYMatch = transform.match(/rotateY\(([^)]+)\)/)
+        if (rotateYMatch) {
+          const rotation = parseFloat(rotateYMatch[1])
+          // Normalize to 0-360 range
+          const normalizedRotation = ((rotation % 360) + 360) % 360
+          // Black side is visible when rotated between 90-270 degrees
+          isShowingBlackSide = normalizedRotation >= 90 && normalizedRotation <= 270
+        } else {
+          // Fallback: check matrix for rotation
+          const matrixMatch = transform.match(/matrix3d\(([^)]+)\)/) || transform.match(/matrix\(([^)]+)\)/)
+          if (matrixMatch) {
+            const values = matrixMatch[1].split(',').map(Number)
+            // If first value is negative, likely rotated 180deg
+            if (values.length > 0 && values[0] < -0.5) {
+              isShowingBlackSide = true
+            }
           }
         }
       }
       
-      // If showing black side (rotated 180deg), flip back to green first
-      if (currentRotation >= 90 && currentRotation <= 270) {
+      // If showing black side, flip back to green first
+      if (isShowingBlackSide) {
         setIsFlippedToGreen(false)
-        flipInnerRef.current.style.transform = 'rotateY(0deg)'
-        flipInnerRef.current.style.transition = 'transform 0.3s ease-in-out'
+        // Stop animation and flip to green
+        if (flipInnerRef.current) {
+          flipInnerRef.current.style.animation = 'none'
+          flipInnerRef.current.style.transform = 'rotateY(0deg)'
+          flipInnerRef.current.style.transition = 'transform 0.3s ease-in-out'
+        }
         
         // Wait for flip to complete, then expand
         setTimeout(() => {
@@ -101,7 +117,7 @@ export default function ProductCard({
           onAddToCart(seedling)
           setIsExpanded(true)
           setTimeout(() => setIsExpanded(false), 1600)
-        }, 300)
+        }, 350)
         return
       }
     }
@@ -254,6 +270,8 @@ export default function ProductCard({
                 padding: '4px',
                 lineHeight: '1.2',
                 wordSpacing: '0px',
+                border: '0.5px solid white',
+                boxSizing: 'border-box',
               }}
             >
               <span style={{ whiteSpace: 'normal', color: 'red', fontSize: '11px', fontWeight: 'bold' }}>Add to Cart</span>
@@ -261,20 +279,20 @@ export default function ProductCard({
           </div>
         </button>
 
-        {/* Success Checkmark Overlay - CodePen exact measurements */}
+        {/* Success Checkmark Overlay - CodePen exact measurements - Only show on green side */}
         <div 
           className={cn(
             "absolute pointer-events-none transition-opacity duration-300",
-          isExpanded && "opacity-100 delay-[600ms]"
+          isExpanded && isFlippedToGreen && "opacity-100 delay-[600ms]"
           )}
           style={{
             position: 'absolute',
             top: '50%',
             left: '37%',
             transform: 'translate(-50%, -50%)',
-            opacity: isExpanded ? 1 : 0,
+            opacity: (isExpanded && isFlippedToGreen) ? 1 : 0,
             zIndex: 999,
-            ...(isExpanded && {
+            ...(isExpanded && isFlippedToGreen && {
               transition: 'opacity 0.3s 0.6s',
             }),
           }}
