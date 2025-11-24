@@ -31,7 +31,9 @@ export default function ProductCard({
   const [isInViewport, setIsInViewport] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
+  const [isFlippedToGreen, setIsFlippedToGreen] = useState(true)
   const cardRef = useRef<HTMLDivElement>(null)
+  const flipInnerRef = useRef<HTMLDivElement>(null)
 
   // Detect mobile on mount and resize
   useEffect(() => {
@@ -67,6 +69,45 @@ export default function ProductCard({
   }, [])
 
   const handleAddToCart = () => {
+    // Check if currently showing black side (rotated 180deg or more)
+    if (flipInnerRef.current) {
+      const computedStyle = window.getComputedStyle(flipInnerRef.current)
+      const transform = computedStyle.transform
+      
+      // Parse rotation value from matrix or rotateY
+      let currentRotation = 0
+      if (transform && transform !== 'none') {
+        const matrix = transform.match(/matrix3d\(([^)]+)\)/) || transform.match(/matrix\(([^)]+)\)/)
+        if (matrix) {
+          // Extract rotation from matrix (simplified check)
+          // If showing back side, rotation will be around 180deg
+          const values = matrix[1].split(',').map(Number)
+          // Check if it's flipped (rough approximation)
+          if (values.length >= 4 && values[0] < 0) {
+            currentRotation = 180
+          }
+        }
+      }
+      
+      // If showing black side (rotated 180deg), flip back to green first
+      if (currentRotation >= 90 && currentRotation <= 270) {
+        setIsFlippedToGreen(false)
+        flipInnerRef.current.style.transform = 'rotateY(0deg)'
+        flipInnerRef.current.style.transition = 'transform 0.3s ease-in-out'
+        
+        // Wait for flip to complete, then expand
+        setTimeout(() => {
+          setIsFlippedToGreen(true)
+          onAddToCart(seedling)
+          setIsExpanded(true)
+          setTimeout(() => setIsExpanded(false), 1600)
+        }, 300)
+        return
+      }
+    }
+    
+    // If already on green side, proceed normally
+    setIsFlippedToGreen(true)
     onAddToCart(seedling)
     setIsExpanded(true)
     setTimeout(() => setIsExpanded(false), 1600)
@@ -156,6 +197,7 @@ export default function ProductCard({
           disabled={isExpanded}
         >
           <div 
+            ref={flipInnerRef}
             className="coin-flip-inner"
             style={{
               position: 'relative',
