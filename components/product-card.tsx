@@ -33,6 +33,7 @@ export default function ProductCard({
   const [isHovered, setIsHovered] = useState(false)
   const [isFlippedToGreen, setIsFlippedToGreen] = useState(true)
   const [lastClickTime, setLastClickTime] = useState<number | null>(null)
+  const [isAnimationPaused, setIsAnimationPaused] = useState(false)
   const cardRef = useRef<HTMLDivElement>(null)
   const flipInnerRef = useRef<HTMLDivElement>(null)
 
@@ -82,12 +83,36 @@ export default function ProductCard({
     }
   }, [isExpanded])
   
-  // Check if 60 seconds have passed since last click
-  const shouldPauseAnimation = () => {
-    if (lastClickTime === null) return false
-    const timeSinceClick = Date.now() - lastClickTime
-    return timeSinceClick < 60000 // 60 seconds in milliseconds
-  }
+  // Update pause state based on lastClickTime (only in useEffect to avoid hydration issues)
+  useEffect(() => {
+    if (lastClickTime === null) {
+      setIsAnimationPaused(false)
+      return
+    }
+    
+    // Set paused immediately
+    setIsAnimationPaused(true)
+    
+    // Check periodically if 60 seconds have passed
+    const checkInterval = setInterval(() => {
+      const timeSinceClick = Date.now() - lastClickTime
+      if (timeSinceClick >= 60000) {
+        setIsAnimationPaused(false)
+        clearInterval(checkInterval)
+      }
+    }, 1000) // Check every second
+    
+    // Also set a timeout to clear after exactly 60 seconds
+    const timeout = setTimeout(() => {
+      setIsAnimationPaused(false)
+      clearInterval(checkInterval)
+    }, 60000)
+    
+    return () => {
+      clearInterval(checkInterval)
+      clearTimeout(timeout)
+    }
+  }, [lastClickTime])
 
   // Re-enable animation only after expansion is completely done and 60s passed
   useEffect(() => {
@@ -95,8 +120,7 @@ export default function ProductCard({
       // Wait a bit to ensure expansion cleanup is done
       const timer = setTimeout(() => {
         if (flipInnerRef.current && !isExpanded) {
-          const isPaused = shouldPauseAnimation()
-          const shouldAnimate = !isPaused && ((isMobile && isInViewport) || (!isMobile && isHovered))
+          const shouldAnimate = !isAnimationPaused && ((isMobile && isInViewport) || (!isMobile && isHovered))
           
           if (shouldAnimate) {
             flipInnerRef.current.style.animation = ''
@@ -113,26 +137,7 @@ export default function ProductCard({
       }, 100)
       return () => clearTimeout(timer)
     }
-  }, [isExpanded, isMobile, isInViewport, isHovered, lastClickTime])
-
-  // Resume animation after 60 seconds if conditions are met
-  useEffect(() => {
-    if (lastClickTime !== null && !isExpanded) {
-      const timer = setTimeout(() => {
-        // 60 seconds have passed, check if we should resume
-        if (flipInnerRef.current && !isExpanded) {
-          const shouldAnimate = (isMobile && isInViewport) || (!isMobile && isHovered)
-          if (shouldAnimate) {
-            flipInnerRef.current.style.animation = ''
-            flipInnerRef.current.style.animationPlayState = ''
-            flipInnerRef.current.style.transition = ''
-          }
-        }
-      }, 60000) // 60 seconds
-      
-      return () => clearTimeout(timer)
-    }
-  }, [lastClickTime, isExpanded, isMobile, isInViewport, isHovered])
+  }, [isExpanded, isMobile, isInViewport, isHovered, isAnimationPaused])
 
   const handleAddToCart = () => {
     // Record click time to pause animation for 60 seconds
@@ -232,7 +237,7 @@ export default function ProductCard({
             // Trigger flip animation: on hover (web) or when in viewport (mobile), 
             // but NOT during expansion and NOT within 60s of click
             !isExpanded && 
-            !shouldPauseAnimation() &&
+            !isAnimationPaused &&
             ((isMobile && isInViewport) || (!isMobile && isHovered)) ? "coin-flip-active" : ""
           )}
           data-expanded={isExpanded}
