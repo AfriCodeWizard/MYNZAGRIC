@@ -10,7 +10,15 @@ import Footer from "@/components/footer"
 import HashNavigation from "@/components/hash-navigation"
 
 export default async function Home() {
-  const enabled = await createFeatureFlag("my_feature_flag")() // Disabled by default, edit in the Statsig console
+  // Safely get feature flag, default to false if error
+  let enabled = false
+  try {
+    enabled = await createFeatureFlag("my_feature_flag")()
+  } catch (error) {
+    // Feature flag not configured or Statsig key missing - default to false
+    console.warn("Feature flag evaluation failed, defaulting to false:", error)
+    enabled = false
+  }
 
   return (
     <main className="w-full mx-auto" style={{ maxWidth: '100%', marginLeft: 'auto', marginRight: 'auto' }}>

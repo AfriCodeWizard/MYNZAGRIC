@@ -18,15 +18,27 @@ export const identify = dedupe((async () => ({
 
 
 
-export const createFeatureFlag = (key: string) => flag<boolean, StatsigUser>({
+export const createFeatureFlag = (key: string) => {
+  // Check if Statsig is properly configured
+  const statsigKey = process.env.STATSIG_SERVER_SECRET_KEY
+  
+  // If Statsig is not configured, return a flag that always returns false
+  if (!statsigKey) {
+    return () => Promise.resolve(false)
+  }
 
-  key,
-
-  adapter: statsigAdapter.featureGate((gate) => gate.value, {exposureLogging: true}),
-
-  identify,
-
-});
+  try {
+    return flag<boolean, StatsigUser>({
+      key,
+      adapter: statsigAdapter.featureGate((gate) => gate.value, {exposureLogging: true}),
+      identify,
+    })
+  } catch (error) {
+    // If initialization fails, return a flag that always returns false
+    console.warn(`Feature flag "${key}" initialization failed:`, error)
+    return () => Promise.resolve(false)
+  }
+}
 
 
 
