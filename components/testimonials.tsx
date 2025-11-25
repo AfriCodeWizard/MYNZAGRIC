@@ -63,8 +63,8 @@ export default function Testimonials() {
           CUSTOMER <span className="font-light text-green-400">SUCCESS</span>
           <br />& STORIES
         </h2>
-        <p className="text-base sm:text-lg text-gray-300 max-w-2xl mt-3 sm:mt-4" style={{ zIndex: 1, position: 'relative' }}>
-          Join hundreds of Kenyan farmers achieving remarkable harvests with Mynzagric
+          <p className="text-base sm:text-lg text-gray-300 max-w-2xl mt-3 sm:mt-4" style={{ zIndex: 1, position: 'relative' }}>
+          Join hundreds of farmers worldwide achieving remarkable harvests with Mynzagric
         </p>
       </div>
 

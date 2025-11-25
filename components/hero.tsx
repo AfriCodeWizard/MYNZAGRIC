@@ -54,8 +54,7 @@ export default function Hero() {
               <span className="font-bold text-white">MYNZAGRIC</span>
             </h1>
             <p className="mt-3 sm:mt-4 md:mt-5 text-base sm:text-lg text-gray-200 max-w-xl leading-relaxed">
-              Certified grafted fruit seedlings ready for transplanting. Premium quality seedlings from Kenya's trusted
-              nursery.
+              Premium fruit and flower seedlings with precision drip irrigation kits. Transform your farm with certified grafted varieties and efficient water management solutions from a trusted global agricultural partner.
             </p>
           </div>
         </main>
