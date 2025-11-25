@@ -28,9 +28,11 @@ const CartContext = createContext<CartContextType | undefined>(undefined)
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([])
   const [showCartNotification, setShowCartNotification] = useState(false)
+  const [hasBackupCart, setHasBackupCart] = useState(false)
 
   // Load cart from localStorage on mount
   useEffect(() => {
+    if (typeof window === "undefined") return
     const savedCart = localStorage.getItem("mynzagric-cart")
     if (savedCart) {
       try {
@@ -39,11 +41,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
         console.error("Error loading cart from localStorage:", error)
       }
     }
+    // Check for backup cart on mount
+    const backup = localStorage.getItem("mynzagric-cart-backup")
+    setHasBackupCart(backup !== null && backup !== "[]")
   }, [])
 
   // Save cart to localStorage whenever it changes
   // Skip saving if cart is being cleared (empty array) and backup exists
   useEffect(() => {
+    if (typeof window === "undefined") return
     // Only save if cart has items, or if it's empty and there's no backup (meaning it was intentionally cleared)
     const hasBackup = localStorage.getItem("mynzagric-cart-backup")
     if (cart.length > 0 || !hasBackup) {
@@ -52,13 +58,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
       // Cart was cleared, ensure localStorage is also cleared
       localStorage.setItem("mynzagric-cart", JSON.stringify([]))
     }
+    // Update hasBackupCart state
+    setHasBackupCart(hasBackup !== null && hasBackup !== "[]")
   }, [cart])
-
-  // Check if there's a backup cart
-  const hasBackupCart = () => {
-    const backup = localStorage.getItem("mynzagric-cart-backup")
-    return backup !== null && backup !== "[]"
-  }
 
   const addToCart = (item: Omit<CartItem, "quantity">) => {
     setCart((prevCart) => {
@@ -95,6 +97,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }
 
   const clearCart = () => {
+    if (typeof window === "undefined") return
     // Get current cart state directly from state to avoid stale closure
     setCart((currentCart) => {
       // Save current cart as backup before clearing
@@ -102,12 +105,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
         localStorage.setItem("mynzagric-cart-backup", JSON.stringify(currentCart))
         // Also clear the main cart storage immediately
         localStorage.setItem("mynzagric-cart", JSON.stringify([]))
+        setHasBackupCart(true)
       }
       return []
     })
   }
 
   const restoreCart = () => {
+    if (typeof window === "undefined") return
     const backup = localStorage.getItem("mynzagric-cart-backup")
     if (backup) {
       try {
@@ -115,6 +120,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         setCart(backupCart)
         // Remove backup after restoring
         localStorage.removeItem("mynzagric-cart-backup")
+        setHasBackupCart(false)
       } catch (error) {
         console.error("Error restoring cart from backup:", error)
       }
@@ -133,7 +139,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         removeFromCart,
         clearCart,
         restoreCart,
-        hasBackupCart: hasBackupCart(),
+        hasBackupCart,
         totalItems,
         totalPrice,
         showCartNotification,
