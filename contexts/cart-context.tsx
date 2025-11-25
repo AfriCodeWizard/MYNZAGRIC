@@ -42,8 +42,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [])
 
   // Save cart to localStorage whenever it changes
+  // Skip saving if cart is being cleared (empty array) and backup exists
   useEffect(() => {
-    localStorage.setItem("mynzagric-cart", JSON.stringify(cart))
+    // Only save if cart has items, or if it's empty and there's no backup (meaning it was intentionally cleared)
+    const hasBackup = localStorage.getItem("mynzagric-cart-backup")
+    if (cart.length > 0 || !hasBackup) {
+      localStorage.setItem("mynzagric-cart", JSON.stringify(cart))
+    } else if (cart.length === 0 && hasBackup) {
+      // Cart was cleared, ensure localStorage is also cleared
+      localStorage.setItem("mynzagric-cart", JSON.stringify([]))
+    }
   }, [cart])
 
   // Check if there's a backup cart

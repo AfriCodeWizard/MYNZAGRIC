@@ -677,27 +677,22 @@ Thank you!`
                                 alert("Please select a delivery location")
                                 return
                               }
-                              // Clear cart immediately when clicking WhatsApp order
+                              // Prevent default navigation temporarily
+                              e.preventDefault()
+                              
+                              // Clear cart immediately and synchronously
                               clearCart()
                               setIsCartOpen(false)
                               setShowRestoreNotification(true)
+                              
                               // Hide notification after 10 seconds
                               setTimeout(() => {
                                 setShowRestoreNotification(false)
                               }, 10000)
-                              // Allow navigation to proceed
-                            }}
-                            onMouseDown={(e) => {
-                              e.stopPropagation()
-                              if (deliveryLocation) {
-                                // Clear cart on mousedown before navigation
-                                clearCart()
-                                setIsCartOpen(false)
-                                setShowRestoreNotification(true)
-                                setTimeout(() => {
-                                  setShowRestoreNotification(false)
-                                }, 10000)
-                              }
+                              
+                              // Navigate to WhatsApp after cart is cleared
+                              const whatsappUrl = `https://wa.me/254713764658?text=${generateWhatsAppMessage()}`
+                              window.open(whatsappUrl, '_blank', 'noopener,noreferrer')
                             }}
                             className={cn(
                               "w-full font-bold py-3 rounded-lg transition text-center block shadow-md hover:shadow-lg",
@@ -1304,13 +1299,6 @@ Thank you!`
                           alert("Please select a delivery location")
                           return false
                         }
-                        // Clear cart on mousedown before navigation
-                        clearCart()
-                        setIsCartOpen(false)
-                        setShowRestoreNotification(true)
-                        setTimeout(() => {
-                          setShowRestoreNotification(false)
-                        }, 10000)
                         return false
                       }}
                       onClick={(e) => {
@@ -1325,13 +1313,24 @@ Thank you!`
                           alert("Please select a delivery location")
                           return false
                         }
-                        // Cart already cleared in onMouseDown, but ensure it's cleared here too
+                        
+                        // Prevent default navigation temporarily
+                        e.preventDefault()
+                        
+                        // Clear cart immediately and synchronously
                         clearCart()
                         setIsCartOpen(false)
                         setShowRestoreNotification(true)
+                        
+                        // Hide notification after 10 seconds
                         setTimeout(() => {
                           setShowRestoreNotification(false)
                         }, 10000)
+                        
+                        // Navigate to WhatsApp after cart is cleared
+                        const whatsappUrl = `https://wa.me/254713764658?text=${generateWhatsAppMessage()}`
+                        window.open(whatsappUrl, '_blank', 'noopener,noreferrer')
+                        
                         // Reset flag after a delay to allow WhatsApp to open
                         setTimeout(() => {
                           setIsWhatsAppInteracting(false)
@@ -1364,6 +1363,24 @@ Thank you!`
                           alert("Please select a delivery location")
                           return false
                         }
+                        
+                        // Prevent default navigation
+                        e.preventDefault()
+                        
+                        // Clear cart immediately and synchronously
+                        clearCart()
+                        setIsCartOpen(false)
+                        setShowRestoreNotification(true)
+                        
+                        // Hide notification after 10 seconds
+                        setTimeout(() => {
+                          setShowRestoreNotification(false)
+                        }, 10000)
+                        
+                        // Navigate to WhatsApp after cart is cleared
+                        const whatsappUrl = `https://wa.me/254713764658?text=${generateWhatsAppMessage()}`
+                        window.open(whatsappUrl, '_blank', 'noopener,noreferrer')
+                        
                         // Reset flag after a delay to allow WhatsApp to open
                         setTimeout(() => {
                           setIsWhatsAppInteracting(false)
