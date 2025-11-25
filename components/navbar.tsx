@@ -21,6 +21,7 @@ export default function Navbar() {
   const [cartAnimation, setCartAnimation] = useState(false)
   const [deliveryLocation, setDeliveryLocation] = useState<string>("")
   const [isWhatsAppInteracting, setIsWhatsAppInteracting] = useState(false)
+  const [showRestoreNotification, setShowRestoreNotification] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const productsDropdownRef = useRef<HTMLDivElement>(null)
   const cartRef = useRef<HTMLDivElement>(null)
