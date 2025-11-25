@@ -7,7 +7,7 @@ export default function Hero() {
   const [count, setCount] = useState(0)
 
   useEffect(() => {
-    const target = 500
+    const target = 3000000
     const duration = 2000 // 2 seconds
     const steps = 60 // 60 steps for smooth animation
     const increment = target / steps
@@ -95,7 +95,7 @@ export default function Hero() {
               }}
             />
             <div className="text-left h-full flex flex-col justify-center">
-              <p className="text-lg sm:text-2xl font-bold">{count}+</p>
+              <p className="text-lg sm:text-2xl font-bold">{count.toLocaleString()}+</p>
               <p className="text-[10px] sm:text-sm leading-tight mt-0.5 sm:mt-1">Satisfied Clients</p>
               <div className="flex -space-x-1.5 sm:-space-x-2 mt-1.5 sm:mt-4 justify-start">
                 <div className="w-4 h-4 sm:w-8 sm:h-8 rounded-full border-2 border-white/50 bg-transparent" />
