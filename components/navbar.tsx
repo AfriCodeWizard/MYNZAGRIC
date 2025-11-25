@@ -27,7 +27,7 @@ export default function Navbar() {
   const cartContentRef = useRef<HTMLDivElement>(null)
   const selectRef = useRef<HTMLSelectElement>(null)
   const whatsappButtonRef = useRef<HTMLDivElement>(null)
-  const { cart, addToCart, updateQuantity, removeFromCart, clearCart, totalItems, totalPrice, showCartNotification } = useCart()
+  const { cart, addToCart, updateQuantity, removeFromCart, clearCart, restoreCart, hasBackupCart, totalItems, totalPrice, showCartNotification } = useCart()
   
 
   // Cart animation effect - enhanced with longer duration
@@ -677,6 +677,16 @@ Thank you!`
                                 alert("Please select a delivery location")
                                 return
                               }
+                              // Clear cart after opening WhatsApp
+                              setTimeout(() => {
+                                clearCart()
+                                setIsCartOpen(false)
+                                setShowRestoreNotification(true)
+                                // Hide notification after 10 seconds
+                                setTimeout(() => {
+                                  setShowRestoreNotification(false)
+                                }, 10000)
+                              }, 500)
                             }}
                             className={cn(
                               "w-full font-bold py-3 rounded-lg transition text-center block shadow-md hover:shadow-lg",
@@ -1297,6 +1307,16 @@ Thank you!`
                           alert("Please select a delivery location")
                           return false
                         }
+                        // Clear cart after opening WhatsApp
+                        setTimeout(() => {
+                          clearCart()
+                          setIsCartOpen(false)
+                          setShowRestoreNotification(true)
+                          // Hide notification after 10 seconds
+                          setTimeout(() => {
+                            setShowRestoreNotification(false)
+                          }, 10000)
+                        }, 500)
                         // Reset flag after a delay to allow WhatsApp to open
                         setTimeout(() => {
                           setIsWhatsAppInteracting(false)
@@ -1397,6 +1417,37 @@ Thank you!`
         </div>
       )}
       </div>
+
+      {/* Restore Cart Notification */}
+      {showRestoreNotification && hasBackupCart && (
+        <div className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:w-auto z-[60] animate-in slide-in-from-bottom-5">
+          <div className="bg-white border border-gray-200 rounded-lg shadow-lg p-4 flex items-center gap-4 max-w-md mx-auto sm:mx-0">
+            <div className="flex-1">
+              <p className="text-sm font-medium text-gray-900">Cart cleared after order</p>
+              <p className="text-xs text-gray-500 mt-1">Need to make changes? Restore your previous cart.</p>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => {
+                  restoreCart()
+                  setShowRestoreNotification(false)
+                }}
+                className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
+              >
+                Restore
+              </button>
+              <button
+                onClick={() => {
+                  setShowRestoreNotification(false)
+                }}
+                className="px-3 py-2 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-100 transition-colors"
+              >
+                Dismiss
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   )
 }

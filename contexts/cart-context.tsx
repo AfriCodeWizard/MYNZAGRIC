@@ -15,6 +15,8 @@ interface CartContextType {
   updateQuantity: (id: string, quantity: number) => void
   removeFromCart: (id: string) => void
   clearCart: () => void
+  restoreCart: () => void
+  hasBackupCart: boolean
   totalItems: number
   totalPrice: number
   showCartNotification: boolean
@@ -43,6 +45,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     localStorage.setItem("mynzagric-cart", JSON.stringify(cart))
   }, [cart])
+
+  // Check if there's a backup cart
+  const hasBackupCart = () => {
+    const backup = localStorage.getItem("mynzagric-cart-backup")
+    return backup !== null && backup !== "[]"
+  }
 
   const addToCart = (item: Omit<CartItem, "quantity">) => {
     setCart((prevCart) => {
@@ -79,7 +87,25 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }
 
   const clearCart = () => {
+    // Save current cart as backup before clearing
+    if (cart.length > 0) {
+      localStorage.setItem("mynzagric-cart-backup", JSON.stringify(cart))
+    }
     setCart([])
+  }
+
+  const restoreCart = () => {
+    const backup = localStorage.getItem("mynzagric-cart-backup")
+    if (backup) {
+      try {
+        const backupCart = JSON.parse(backup)
+        setCart(backupCart)
+        // Remove backup after restoring
+        localStorage.removeItem("mynzagric-cart-backup")
+      } catch (error) {
+        console.error("Error restoring cart from backup:", error)
+      }
+    }
   }
 
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0)
@@ -93,6 +119,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
         updateQuantity,
         removeFromCart,
         clearCart,
+        restoreCart,
+        hasBackupCart: hasBackupCart(),
         totalItems,
         totalPrice,
         showCartNotification,
