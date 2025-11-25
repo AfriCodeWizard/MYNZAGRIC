@@ -685,6 +685,19 @@ Thank you!`
                               setTimeout(() => {
                                 setShowRestoreNotification(false)
                               }, 10000)
+                              // Allow navigation to proceed
+                            }}
+                            onMouseDown={(e) => {
+                              e.stopPropagation()
+                              if (deliveryLocation) {
+                                // Clear cart on mousedown before navigation
+                                clearCart()
+                                setIsCartOpen(false)
+                                setShowRestoreNotification(true)
+                                setTimeout(() => {
+                                  setShowRestoreNotification(false)
+                                }, 10000)
+                              }
                             }}
                             className={cn(
                               "w-full font-bold py-3 rounded-lg transition text-center block shadow-md hover:shadow-lg",
@@ -1291,6 +1304,13 @@ Thank you!`
                           alert("Please select a delivery location")
                           return false
                         }
+                        // Clear cart on mousedown before navigation
+                        clearCart()
+                        setIsCartOpen(false)
+                        setShowRestoreNotification(true)
+                        setTimeout(() => {
+                          setShowRestoreNotification(false)
+                        }, 10000)
                         return false
                       }}
                       onClick={(e) => {
@@ -1305,11 +1325,10 @@ Thank you!`
                           alert("Please select a delivery location")
                           return false
                         }
-                        // Clear cart immediately when clicking WhatsApp order
+                        // Cart already cleared in onMouseDown, but ensure it's cleared here too
                         clearCart()
                         setIsCartOpen(false)
                         setShowRestoreNotification(true)
-                        // Hide notification after 10 seconds
                         setTimeout(() => {
                           setShowRestoreNotification(false)
                         }, 10000)

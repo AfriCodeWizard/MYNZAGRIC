@@ -87,11 +87,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }
 
   const clearCart = () => {
-    // Save current cart as backup before clearing
-    if (cart.length > 0) {
-      localStorage.setItem("mynzagric-cart-backup", JSON.stringify(cart))
-    }
-    setCart([])
+    // Get current cart state directly from state to avoid stale closure
+    setCart((currentCart) => {
+      // Save current cart as backup before clearing
+      if (currentCart.length > 0) {
+        localStorage.setItem("mynzagric-cart-backup", JSON.stringify(currentCart))
+        // Also clear the main cart storage immediately
+        localStorage.setItem("mynzagric-cart", JSON.stringify([]))
+      }
+      return []
+    })
   }
 
   const restoreCart = () => {
