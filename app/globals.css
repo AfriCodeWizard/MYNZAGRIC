@@ -517,9 +517,10 @@ html {
 }
 
 
-/* Ensure blockquote uses default font, not Satisfy */
+
+/* Apply Satisfy font to blockquote in About section */
 .sticky-container blockquote {
-  font-family: inherit !important;
+  font-family: var(--font-satisfy), serif;
 }
 
 /* Ensure images in sticky section are positioned correctly */

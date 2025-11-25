@@ -187,7 +187,6 @@ function About() {
           <blockquote
             ref={blockquoteRef}
             className="absolute text-3xl md:text-4xl lg:text-5xl font-bold text-white w-full md:w-[40%] lg:w-[35%] mt-[15%] md:mt-[17%] z-10 left-4 sm:left-6 lg:left-8"
-            style={{ fontFamily: 'inherit' }}
           >
             WE ARE <span className="font-light text-green-400">DIFFERENT</span>
             <br />& IN EVERY WAY
