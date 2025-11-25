@@ -677,16 +677,14 @@ Thank you!`
                                 alert("Please select a delivery location")
                                 return
                               }
-                              // Clear cart after opening WhatsApp
+                              // Clear cart immediately when clicking WhatsApp order
+                              clearCart()
+                              setIsCartOpen(false)
+                              setShowRestoreNotification(true)
+                              // Hide notification after 10 seconds
                               setTimeout(() => {
-                                clearCart()
-                                setIsCartOpen(false)
-                                setShowRestoreNotification(true)
-                                // Hide notification after 10 seconds
-                                setTimeout(() => {
-                                  setShowRestoreNotification(false)
-                                }, 10000)
-                              }, 500)
+                                setShowRestoreNotification(false)
+                              }, 10000)
                             }}
                             className={cn(
                               "w-full font-bold py-3 rounded-lg transition text-center block shadow-md hover:shadow-lg",
@@ -1307,16 +1305,14 @@ Thank you!`
                           alert("Please select a delivery location")
                           return false
                         }
-                        // Clear cart after opening WhatsApp
+                        // Clear cart immediately when clicking WhatsApp order
+                        clearCart()
+                        setIsCartOpen(false)
+                        setShowRestoreNotification(true)
+                        // Hide notification after 10 seconds
                         setTimeout(() => {
-                          clearCart()
-                          setIsCartOpen(false)
-                          setShowRestoreNotification(true)
-                          // Hide notification after 10 seconds
-                          setTimeout(() => {
-                            setShowRestoreNotification(false)
-                          }, 10000)
-                        }, 500)
+                          setShowRestoreNotification(false)
+                        }, 10000)
                         // Reset flag after a delay to allow WhatsApp to open
                         setTimeout(() => {
                           setIsWhatsAppInteracting(false)
