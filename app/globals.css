@@ -469,6 +469,65 @@ html {
   display: block;
 }
 
+/* About Section Sticky Animation */
+.sticky-section {
+  position: relative;
+}
+
+.sticky-container {
+  position: relative;
+  will-change: transform;
+}
+
+/* Responsive padding variables for About section cards */
+.about-container {
+  --card-padding-right: 1rem;
+  --card1-width: 19%;
+}
+
+@media (min-width: 640px) {
+  .about-container {
+    --card-padding-right: 1.5rem;
+    --card1-width: 19.5%;
+  }
+}
+
+@media (min-width: 1024px) {
+  .about-container {
+    --card-padding-right: 2rem;
+    --card1-width: 19.5%;
+  }
+}
+
+/* Card2 positioning - responsive to match card1 padding */
+.about-container [data-card="2"] {
+  right: calc(1rem + 19% + 0.5%) !important;
+}
+
+@media (min-width: 640px) {
+  .about-container [data-card="2"] {
+    right: calc(1.5rem + 19.5% + 0.5%) !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .about-container [data-card="2"] {
+    right: calc(2rem + 19.5% + 0.5%) !important;
+  }
+}
+
+
+/* Ensure blockquote uses default font, not Satisfy */
+.sticky-container blockquote {
+  font-family: inherit !important;
+}
+
+/* Ensure images in sticky section are positioned correctly */
+.sticky-container img,
+.sticky-container [class*="relative"] {
+  will-change: transform, opacity;
+}
+
 /* Mobile Cart Select Dropdown - Prevent Overflow */
 @media (max-width: 1023px) {
   /* Constrain cart content to viewport */
