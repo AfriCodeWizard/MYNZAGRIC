@@ -85,7 +85,7 @@ export default function Hero() {
         {/* Right Side Cards - Responsive positioning */}
         {/* Satisfied Clients Card - Responsive positioning */}
         <div className="absolute top-28 sm:top-32 right-4 sm:right-8 xl:right-8 z-[5]">
-          <div className="relative bg-black/30 backdrop-blur-md border border-white/30 rounded-xl sm:rounded-2xl p-3.5 sm:p-6 text-white overflow-hidden w-[95px] h-[95px] sm:w-auto sm:h-auto sm:aspect-square shadow-lg sm:shadow-xl">
+          <div className="relative bg-black/30 backdrop-blur-md border border-white/30 rounded-xl sm:rounded-2xl p-3.5 sm:p-6 text-white overflow-hidden min-w-[140px] w-[140px] h-[95px] sm:min-w-[180px] sm:w-auto sm:h-auto sm:aspect-square shadow-lg sm:shadow-xl">
             {/* Animated White Glow on Left */}
             <div 
               className="absolute left-0 top-0 bottom-0 w-1 bg-white/80 blur-sm"
@@ -94,7 +94,7 @@ export default function Hero() {
               }}
             />
             <div className="text-left h-full flex flex-col justify-center">
-              <p className="text-lg sm:text-2xl font-bold">{count.toLocaleString()}+</p>
+              <p className="text-lg sm:text-2xl font-bold whitespace-nowrap">{count.toLocaleString()}+</p>
               <p className="text-[10px] sm:text-sm leading-tight mt-0.5 sm:mt-1">Satisfied Clients</p>
               <div className="flex -space-x-1.5 sm:-space-x-2 mt-1.5 sm:mt-4 justify-start">
                 <div className="w-4 h-4 sm:w-8 sm:h-8 rounded-full border-2 border-white/50 bg-transparent" />
