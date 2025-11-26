@@ -91,7 +91,7 @@ export default function Testimonials() {
         <div className="testimonial-slide flex w-max relative z-10" style={{ animationPlayState: 'running' }}>
         {duplicatedTestimonials.map((testimonial, index) => (
           <div
-            key={index}
+            key={`${testimonial.name}-${index}`}
             className="testimonial-card bg-white/8 text-white backdrop-blur-md rounded-xl p-4 sm:p-5 mx-3 sm:mx-5 w-[240px] sm:w-[260px] md:w-[280px] flex-shrink-0 shadow-[0_0_12px_rgba(34,197,94,0.15)] transition-transform duration-300 hover:-translate-y-1"
           >
             <p className="text-sm sm:text-[15px] leading-[1.4] mb-2 sm:mb-2.5">
