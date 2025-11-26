@@ -64,7 +64,7 @@ export default function Testimonials() {
           <br />& STORIES
         </h2>
           <p className="text-base sm:text-lg text-gray-300 max-w-2xl mt-3 sm:mt-4" style={{ zIndex: 1, position: 'relative' }}>
-          Join hundreds of farmers worldwide achieving remarkable harvests with Mynzagric
+          Join 3,000,000+ satisfied clients worldwide achieving remarkable harvests with Mynzagric
         </p>
       </div>
 

@@ -16,8 +16,8 @@ export default function ImpactPage() {
       color: "text-green-400"
     },
     {
-      number: "18,500+",
-      label: "Farmers empowered across 12 countries",
+      number: "3,000,000+",
+      label: "Satisfied clients served globally",
       icon: Users,
       color: "text-blue-400"
     },
@@ -50,7 +50,7 @@ export default function ImpactPage() {
     },
     {
       title: "Global Reach & Scale",
-      description: "Serving 18,500+ farmers across 12 countries with premium agricultural solutions. Our network of certified growers and distribution partners ensures quality seedlings and irrigation systems reach farmers when and where they need them, creating lasting impact at scale.",
+      description: "Serving 3,000,000+ satisfied clients across 12 countries with premium agricultural solutions. Our network of certified growers and distribution partners ensures quality seedlings and irrigation systems reach farmers when and where they need them, creating lasting impact at scale.",
       icon: Users,
       gradient: "from-blue-500 to-indigo-600"
     }
@@ -221,7 +221,7 @@ export default function ImpactPage() {
               <span className="text-green-400">premium seedlings & irrigation?</span>
             </h2>
             <p className="text-gray-300 mb-8 text-lg">
-              Join 18,500+ successful farmers growing high-value crops with MINZAGRIC's certified varieties and precision irrigation systems
+              Join 3,000,000+ satisfied clients growing high-value crops with MINZAGRIC's certified varieties and precision irrigation systems
             </p>
             <Link
               href="/#contact"
