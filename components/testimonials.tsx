@@ -3,19 +3,19 @@
 export default function Testimonials() {
   const testimonials = [
     {
-      name: "James Wilson",
+      name: "Grace Wanjiru",
       text: "Mynzagric seedlings have transformed my farm. The quality is unmatched and they really care about your success.",
     },
     {
-      name: "Priya Sharma",
+      name: "Fred Onyango",
       text: "The care guides are incredibly detailed. I got a 95% survival rate with the Hass avocados. Highly recommend!",
     },
     {
-      name: "Carlos Martinez",
+      name: "Rabala James",
       text: "Been ordering from Mynzagric for 3 years. Consistent quality, great support. They are the real deal.",
     },
     {
-      name: "Emma Thompson",
+      name: "James Kariuki",
       text: "Excellent seedlings and amazing customer service. My mango orchard is thriving thanks to Mynzagric!",
     },
     {
