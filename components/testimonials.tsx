@@ -3,51 +3,51 @@
 export default function Testimonials() {
   const testimonials = [
     {
-      name: "Samuel Kipchoge",
+      name: "James Wilson",
       text: "Mynzagric seedlings have transformed my farm. The quality is unmatched and they really care about your success.",
     },
     {
-      name: "Grace Mwangi",
+      name: "Priya Sharma",
       text: "The care guides are incredibly detailed. I got a 95% survival rate with the Hass avocados. Highly recommend!",
     },
     {
-      name: "David Ochieng",
+      name: "Carlos Martinez",
       text: "Been ordering from Mynzagric for 3 years. Consistent quality, great support. They are the real deal.",
     },
     {
-      name: "Jane Kamau",
+      name: "Emma Thompson",
       text: "Excellent seedlings and amazing customer service. My mango orchard is thriving thanks to Mynzagric!",
     },
     {
-      name: "Peter Muthoni",
+      name: "Hiroshi Tanaka",
       text: "The citrus varieties I got are producing exceptional fruits. Best investment I've made in my farm!",
     },
     {
-      name: "Mary Wanjiru",
+      name: "Amina Okafor",
       text: "Fast delivery and healthy seedlings. My berry garden is flourishing with their quality plants.",
     },
     {
-      name: "James Otieno",
+      name: "David Chen",
       text: "Professional service from start to finish. The grafted mangoes are showing amazing growth results.",
     },
     {
-      name: "Sarah Njeri",
+      name: "Sofia Rodriguez",
       text: "Outstanding customer support and premium quality seedlings. My avocado farm has never been better!",
     },
     {
-      name: "Michael Kariuki",
+      name: "Kwame Asante",
       text: "Trusted supplier for all my farming needs. Their seedlings consistently outperform expectations.",
     },
     {
-      name: "Anne Mwende",
+      name: "Mei Lin",
       text: "Top-notch quality and excellent care instructions. Highly recommend for serious farmers!",
     },
     {
-      name: "Paul Njoroge",
+      name: "Diego Silva",
       text: "The tissue-cultured seedlings are exceptional. Quick establishment and vigorous growth.",
     },
     {
-      name: "Ruth Akinyi",
+      name: "Fatima Al-Mansouri",
       text: "Reliable delivery and exceptional seedling quality. My fruit farm is now a thriving business!",
     },
   ]
