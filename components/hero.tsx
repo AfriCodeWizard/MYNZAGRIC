@@ -1,6 +1,7 @@
 "use client"
 import { useState, useEffect } from "react"
 import { ArrowUpRight } from "lucide-react"
+import Link from "next/link"
 import Navbar from "@/components/navbar" // Import the Navbar component
 
 export default function Hero() {
@@ -123,9 +124,9 @@ export default function Hero() {
             <div className="relative z-10 flex flex-col h-full">
               {/* Top Right Button */}
               <div className="flex items-start justify-end mb-3 sm:mb-4">
-                <button className="bg-green-900/80 hover:bg-green-900 p-1.5 sm:p-2 rounded-full transition-colors shrink-0">
+                <Link href="#frutopia" className="bg-green-900/80 hover:bg-green-900 p-1.5 sm:p-2 rounded-full transition-colors shrink-0">
                   <ArrowUpRight className="w-3 h-3 sm:w-4 sm:h-4 text-white" strokeWidth={2} />
-                </button>
+                </Link>
               </div>
               
               {/* Title */}
