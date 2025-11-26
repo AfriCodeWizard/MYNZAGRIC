@@ -69,7 +69,7 @@ export default function Hero() {
                   rel="noopener noreferrer"
                   className="bg-white text-gray-900 px-7 sm:px-8 py-2.5 sm:py-3 rounded-lg font-semibold hover:bg-gray-200 transition-colors text-sm sm:text-base whitespace-nowrap shadow-md"
                 >
-                  Get Started
+                  Partner with Us
                 </a>
                 <a
                   href="#seedlings"
