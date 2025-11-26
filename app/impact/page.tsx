@@ -10,26 +10,26 @@ import { successStories } from "@/lib/success-stories"
 export default function ImpactPage() {
   const impactStats = [
     {
-      number: "251,160",
-      label: "CO₂ saved annually",
+      number: "3.2M+",
+      label: "Premium seedlings delivered globally",
       icon: Leaf,
       color: "text-green-400"
     },
     {
-      number: "12,960",
-      label: "Lives impacted indirectly",
+      number: "18,500+",
+      label: "Farmers empowered across 12 countries",
       icon: Users,
       color: "text-blue-400"
     },
     {
-      number: "$666",
-      label: "Additional income per year / farmer (33% increase)",
+      number: "$2,400",
+      label: "Average annual income increase per farmer",
       icon: TrendingUp,
       color: "text-yellow-400"
     },
     {
-      number: "9.6M",
-      label: "Cubic liters of water saved",
+      number: "47,000+",
+      label: "Acres of farmland transformed",
       icon: Droplet,
       color: "text-cyan-400"
     }
@@ -37,20 +37,20 @@ export default function ImpactPage() {
 
   const impactCategories = [
     {
-      title: "Environmental Impact",
-      description: "Preventing floods and droughts through climate smart irrigation solutions. Solar powered pumps saves CO₂ from entering the environment.",
+      title: "Agricultural Transformation",
+      description: "Delivering certified grafted seedlings and precision irrigation systems that enable year-round production. Our premium varieties increase crop yields by 3-5x while reducing water usage by up to 60% through efficient drip irrigation technology.",
       icon: Leaf,
       gradient: "from-green-600 to-emerald-700"
     },
     {
-      title: "Economical Impact",
-      description: "Elevating farmers out of poverty by providing them additional annual income increase (Profit) of 33%.",
+      title: "Economic Empowerment",
+      description: "Farmers using MINZAGRIC seedlings and irrigation kits report average income increases of $2,400 annually. High-value fruit varieties like Hass avocados, grafted mangoes, and premium berries create sustainable revenue streams that transform subsistence farming into profitable agribusiness.",
       icon: TrendingUp,
       gradient: "from-yellow-500 to-orange-600"
     },
     {
-      title: "Social Impact",
-      description: "With enhanced technical knowledge and skills, money directly goes in the hands of women and youth through job creation. These are the two most vulnerable groups that become climate champions and decision makers within the farms.",
+      title: "Global Reach & Scale",
+      description: "Serving 18,500+ farmers across 12 countries with premium agricultural solutions. Our network of certified growers and distribution partners ensures quality seedlings and irrigation systems reach farmers when and where they need them, creating lasting impact at scale.",
       icon: Users,
       gradient: "from-blue-500 to-indigo-600"
     }
@@ -78,11 +78,11 @@ export default function ImpactPage() {
         <div className="relative z-10 h-full flex items-center justify-center px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto text-center">
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6">
-              Impacting the world day by day with{" "}
-              <span className="text-green-400">climate smart farming</span>
+              Transforming agriculture through{" "}
+              <span className="text-green-400">premium seedlings & precision irrigation</span>
             </h1>
             <p className="text-xl sm:text-2xl md:text-3xl text-gray-200 mt-6 max-w-4xl mx-auto font-light">
-              Changing lives of every small holder farmer
+              Empowering farmers worldwide with certified varieties and sustainable farming solutions
             </p>
           </div>
         </div>
@@ -217,11 +217,11 @@ export default function ImpactPage() {
         <div className="max-w-4xl mx-auto text-center">
           <div className="bg-gradient-to-r from-green-600/10 to-green-700/10 border border-green-500/30 rounded-2xl p-12">
             <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-              Get in touch with us to kick start your farming Journey the{" "}
-              <span className="text-green-400">Climate smart way</span>
+              Ready to transform your farm with{" "}
+              <span className="text-green-400">premium seedlings & irrigation?</span>
             </h2>
             <p className="text-gray-300 mb-8 text-lg">
-              Join thousands of farmers transforming their lives through sustainable agriculture
+              Join 18,500+ successful farmers growing high-value crops with MINZAGRIC's certified varieties and precision irrigation systems
             </p>
             <Link
               href="/#contact"
