@@ -225,7 +225,7 @@ function About() {
           {/* Cards 3 & 4 - Replace building image (smaller, background, below heading line) - Side by side with consistent spacing matching right cards */}
           <div
             ref={card3Ref}
-            className="absolute right-[calc(40%+19%+0.5%)] md:right-[calc(40%+19%+0.5%)] top-[calc(15%+13rem+1.25rem)] md:top-[calc(17%+14rem+1.25rem)] w-[18%] md:w-[19%] aspect-square bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-lg p-2 md:p-3 lg:p-4 flex flex-col items-center justify-center text-center z-10"
+            className="absolute right-[calc(42%+19%+0.5%)] md:right-[calc(42%+19%+0.5%)] top-[calc(15%+13rem+1.25rem)] md:top-[calc(17%+14rem+1.25rem)] w-[18%] md:w-[19%] aspect-square bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-lg p-2 md:p-3 lg:p-4 flex flex-col items-center justify-center text-center z-10"
             style={{ willChange: 'transform, opacity' }}
           >
             <div className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 border-2 border-green-400 rounded-md flex items-center justify-center text-green-400 bg-green-400/10 mb-2 md:mb-2 lg:mb-3">
@@ -237,7 +237,7 @@ function About() {
 
           <div
             ref={card4Ref}
-            className="absolute right-[40%] md:right-[40%] top-[calc(15%+13rem+1.25rem)] md:top-[calc(17%+14rem+1.25rem)] w-[18%] md:w-[19%] aspect-square bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-lg p-2 md:p-3 lg:p-4 flex flex-col items-center justify-center text-center z-10"
+            className="absolute right-[42%] md:right-[42%] top-[calc(15%+13rem+1.25rem)] md:top-[calc(17%+14rem+1.25rem)] w-[18%] md:w-[19%] aspect-square bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-lg p-2 md:p-3 lg:p-4 flex flex-col items-center justify-center text-center z-10"
             style={{ willChange: 'transform, opacity' }}
           >
             <div className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 border-2 border-green-400 rounded-md flex items-center justify-center text-green-400 bg-green-400/10 mb-2 md:mb-2 lg:mb-3">
