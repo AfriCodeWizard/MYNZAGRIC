@@ -528,7 +528,7 @@ export default function PlantCarePage({ params }: { params: Promise<{ id: string
                     className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-all duration-300"
                   >
                     <div className="flex items-start gap-4">
-                      <AlertCircle className="w-6 h-6 text-green-400 flex-shrink-0 mt-1" />
+                      <AlertCircle className="w-6 h-6 text-red-400 flex-shrink-0 mt-1" />
                       <div>
                         <h3 className="text-lg font-bold text-white mb-2">{issue.title}</h3>
                         <p className="text-gray-300 text-sm">{issue.solution}</p>
