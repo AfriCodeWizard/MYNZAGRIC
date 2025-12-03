@@ -167,14 +167,6 @@ Thank you!`
           <div className="absolute inset-0 bg-gradient-to-br from-purple-900/80 via-pink-800/70 to-green-900/80" />
           <div className="absolute inset-0 bg-[#0e0e0e]/40" />
         </div>
-        
-        {/* Floating Flower Decorations */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-20 left-10 text-6xl opacity-20 animate-bounce" style={{ animationDuration: '3s' }}>🌸</div>
-          <div className="absolute top-40 right-20 text-5xl opacity-15 animate-bounce" style={{ animationDuration: '4s', animationDelay: '1s' }}>🌺</div>
-          <div className="absolute bottom-40 left-20 text-7xl opacity-25 animate-bounce" style={{ animationDuration: '5s', animationDelay: '2s' }}>🌻</div>
-          <div className="absolute bottom-20 right-10 text-6xl opacity-20 animate-bounce" style={{ animationDuration: '3.5s', animationDelay: '0.5s' }}>🌷</div>
-        </div>
 
         {/* Content */}
         <div className="relative z-10 h-full flex items-center justify-center px-4 sm:px-6 lg:px-8">
