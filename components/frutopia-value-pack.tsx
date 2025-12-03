@@ -128,7 +128,7 @@ export default function FrutopiaValuePack() {
 
   const generateWhatsAppMessage = (pack: ValuePack) => {
     const varietiesText = pack.varieties.join(", ")
-    const message = `*FRUTOPIA VALUE PACK - ${pack.name.toUpperCase()}*
+    const message = `*FRUITOPIA VALUE PACK - ${pack.name.toUpperCase()}*
 
 ─────────────────────────
 
@@ -170,7 +170,7 @@ Thank you!`
         {/* Section Header */}
         <div className="mb-12 sm:mb-16 text-center">
           <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white">
-            FRUTOPIA <span className="font-light text-green-400">VALUE PACK</span>
+            FRUITOPIA <span className="font-light text-green-400">VALUE PACK</span>
           </h2>
           <p className="text-base sm:text-lg text-gray-400 max-w-3xl mx-auto mt-4">
             Complete 1-acre farming solutions with premium grafted seedlings and <strong className="text-green-400">precision drip irrigation systems</strong>. Everything you need to start your fruit farming journey.

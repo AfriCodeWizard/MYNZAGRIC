@@ -389,7 +389,7 @@ Thank you!`
                           setActiveDropdown(null)
                         }}
                       >
-                        Frutopia Value Pack
+                        Fruitopia Value Pack
                       </Link>
                       <div className="mt-1 pl-6">
                         <Link
@@ -856,7 +856,7 @@ Thank you!`
                 <div className="pl-4 pr-2 pt-2 space-y-1">
                   <MobileNavLink href="/#seedlings" label="Fruit Seedlings" onClick={() => { setIsOpen(false); setIsProductsOpen(false); }} shouldShowSolidBackground={shouldShowSolidBackground} pathname={pathname} />
                   <MobileNavLink href="/flowers-landscapes" label="Flowers & Landscaping" onClick={() => { setIsOpen(false); setIsProductsOpen(false); }} shouldShowSolidBackground={shouldShowSolidBackground} pathname={pathname} />
-                  <MobileNavLink href="/#frutopia" label="Frutopia Value Pack" onClick={() => { setIsOpen(false); setIsProductsOpen(false); }} shouldShowSolidBackground={shouldShowSolidBackground} pathname={pathname} />
+                  <MobileNavLink href="/#frutopia" label="Fruitopia Value Pack" onClick={() => { setIsOpen(false); setIsProductsOpen(false); }} shouldShowSolidBackground={shouldShowSolidBackground} pathname={pathname} />
                   <div className="pl-6 space-y-1">
                     <Link
                       href="/#frutopia"

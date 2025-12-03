@@ -130,7 +130,7 @@ export default function Hero() {
               </div>
               
               {/* Title */}
-              <h3 className="font-bold text-base sm:text-lg md:text-xl mb-2 sm:mb-3">Frutopia Value Pack</h3>
+              <h3 className="font-bold text-base sm:text-lg md:text-xl mb-2 sm:mb-3">Fruitopia Value Pack</h3>
               
               {/* Description */}
               <p className="text-xs sm:text-sm md:text-base text-gray-300 leading-relaxed flex-grow">

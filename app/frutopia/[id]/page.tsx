@@ -161,7 +161,7 @@ export default function FrutopiaDetailPage({ params }: { params: Promise<{ id: s
 
   const generateWhatsAppMessage = () => {
     const varietiesText = pack.varieties.join(", ")
-    const message = `*FRUTOPIA VALUE PACK - ${pack.name.toUpperCase()}*
+    const message = `*FRUITOPIA VALUE PACK - ${pack.name.toUpperCase()}*
 
 ─────────────────────────
 
