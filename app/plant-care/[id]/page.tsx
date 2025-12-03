@@ -315,7 +315,16 @@ export default function PlantCarePage({ params }: { params: Promise<{ id: string
                 <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
                   <p className="text-gray-400 text-sm">Time to Fruit</p>
                   <p className="text-xl font-bold text-white">
-                    {care?.timeToFruit ? care.timeToFruit.split(' ').slice(0, 2).join(' ') : '2-3 years'}
+                    {care?.timeToFruit ? (() => {
+                      // Extract the first time period (e.g., "2.5 to 3 years" or "2-3 years" or "12-18 months")
+                      const timeMatch = care.timeToFruit.match(/(\d+(?:\.\d+)?(?:\s*(?:to|-)\s*)?\d*(?:\.\d+)?\s*(?:years?|months?|year))/i) ||
+                                       care.timeToFruit.match(/(\d+(?:\.\d+)?\s*(?:years?|months?|year))/i)
+                      if (timeMatch) {
+                        return timeMatch[0].trim()
+                      }
+                      // If no match, show first 30 characters or full text if shorter
+                      return care.timeToFruit.length > 30 ? care.timeToFruit.substring(0, 30).trim() + '...' : care.timeToFruit.trim()
+                    })() : '2-3 years'}
                   </p>
                 </div>
               </div>
