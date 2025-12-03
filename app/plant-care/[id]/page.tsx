@@ -209,11 +209,130 @@ export default function PlantCarePage({ params }: { params: Promise<{ id: string
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {careItems.map((item) => {
                   const Icon = item.icon
+                  const isPestCard = item.key === "pests"
+                  const isTimeToFruitCard = item.key === "timeToFruit"
+
+                  // Format pest content with bullet points and bold text
+                  const formatPestContent = (content: string | undefined) => {
+                    if (!content) return null
+
+                    // Split by major sections (Pests:, Diseases:, etc.)
+                    const sectionRegex = /(Pests|Diseases|Pest|Disease|Nutritional Deficiencies|Market|Varieties|Key Characteristics|Intercropping|Wind Protection|Harvesting|Pruning|Irrigation|Fertilization|Propagation|Expert consultation|Market Potential|Value-added products|Nutritional Benefits|Support Structures|Site Selection|Planting|Market Opportunity):\s*/gi
+                    const sections: Array<{ heading: string; content: string }> = []
+                    
+                    let lastIndex = 0
+                    let match
+                    const sectionMatches: Array<{ index: number; heading: string }> = []
+                    
+                    // Reset regex lastIndex
+                    sectionRegex.lastIndex = 0
+                    while ((match = sectionRegex.exec(content)) !== null) {
+                      sectionMatches.push({ index: match.index, heading: match[1] })
+                    }
+
+                    if (sectionMatches.length === 0) {
+                      sections.push({ heading: "", content: content.trim() })
+                    } else {
+                      sectionMatches.forEach((sectionMatch, idx) => {
+                        const start = sectionMatch.index + sectionMatch.heading.length + 1
+                        const end = idx < sectionMatches.length - 1 ? sectionMatches[idx + 1].index : content.length
+                        const sectionContent = content.substring(start, end).trim()
+                        if (sectionContent) {
+                          sections.push({
+                            heading: sectionMatch.heading,
+                            content: sectionContent
+                          })
+                        }
+                      })
+                    }
+
+                    return (
+                      <div className="space-y-4">
+                        {sections.map((section, idx) => {
+                          if (!section.content.trim()) return null
+
+                          // Split items - try to split by numbered items first, then by commas
+                          let items: string[] = []
+                          
+                          // Try splitting by numbered items (1., 2., etc.)
+                          const numberedSplit = section.content.split(/(?=\d+[\.\)]\s+[A-Z])/)
+                          if (numberedSplit.length > 1 && numberedSplit.some(item => /^\d+[\.\)]/.test(item.trim()))) {
+                            items = numberedSplit.filter(item => item.trim().length > 2)
+                          } else {
+                            // Split by commas, but be smart about it (don't split inside parentheses)
+                            let currentItem = ""
+                            let parenDepth = 0
+                            for (let i = 0; i < section.content.length; i++) {
+                              const char = section.content[i]
+                              if (char === '(') parenDepth++
+                              else if (char === ')') parenDepth--
+                              else if (char === ',' && parenDepth === 0) {
+                                if (currentItem.trim()) {
+                                  items.push(currentItem.trim())
+                                  currentItem = ""
+                                  continue
+                                }
+                              }
+                              currentItem += char
+                            }
+                            if (currentItem.trim()) items.push(currentItem.trim())
+                          }
+
+                          // Filter out very short items
+                          items = items.filter(item => item.trim().length > 3)
+
+                          return (
+                            <div key={idx} className="space-y-2">
+                              {section.heading && (
+                                <h4 className="font-bold text-white text-base mb-2">{section.heading}:</h4>
+                              )}
+                              <ul className="list-none space-y-1.5 ml-0">
+                                {items.map((item, itemIdx) => {
+                                  const trimmed = item.trim()
+                                  if (!trimmed) return null
+
+                                  // Extract label and description
+                                  // Pattern: "Label (description)" or "Number. Label (description)" or "Label: description"
+                                  const numberedMatch = trimmed.match(/^(\d+[\.\)]\s*)?(.+?)(?:\s*[\(:–—]|$)/)
+                                  const fullLabel = numberedMatch ? numberedMatch[2].trim() : trimmed.split(/[\(:–—]/)[0].trim()
+                                  
+                                  // Remove number prefix if present
+                                  const label = fullLabel.replace(/^\d+[\.\)]\s*/, '').trim()
+                                  
+                                  // Get description (content in parentheses or after colon/dash)
+                                  const parenMatch = trimmed.match(/\(([^)]+)\)/)
+                                  const colonMatch = !parenMatch && trimmed.match(/[–—:]\s*(.+)$/)
+                                  const description = parenMatch ? parenMatch[1] : (colonMatch ? colonMatch[1] : null)
+
+                                  return (
+                                    <li key={itemIdx} className="flex items-start gap-2">
+                                      <span className="text-rose-400 mt-1.5 flex-shrink-0">•</span>
+                                      <span className="text-gray-300 text-sm leading-relaxed">
+                                        <span className="font-semibold text-white">{label}</span>
+                                        {description && (
+                                          <>
+                                            {' '}
+                                            <span className="text-gray-400">({description})</span>
+                                          </>
+                                        )}
+                                      </span>
+                                    </li>
+                                  )
+                                })}
+                              </ul>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    )
+                  }
 
                   return (
                     <div
                       key={item.key}
-                      className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-all duration-300"
+                      className={`bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-all duration-300 ${
+                        isTimeToFruitCard ? "self-start h-fit" : ""
+                      }`}
                     >
                       <div className="flex items-start gap-4">
                         <div className={`p-3 rounded-lg ${item.iconBg} flex-shrink-0`}>
@@ -221,7 +340,13 @@ export default function PlantCarePage({ params }: { params: Promise<{ id: string
                         </div>
                         <div className="flex-1">
                           <h3 className="text-xl font-bold text-white mb-3">{item.label}</h3>
-                          <p className="text-gray-300 leading-relaxed text-sm">{item.content}</p>
+                          {isPestCard ? (
+                            formatPestContent(item.content)
+                          ) : (
+                            <p className="text-gray-300 leading-relaxed text-sm">
+                              {item.content}
+                            </p>
+                          )}
                         </div>
                       </div>
                     </div>
