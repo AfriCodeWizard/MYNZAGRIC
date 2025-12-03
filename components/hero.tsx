@@ -86,7 +86,7 @@ export default function Hero() {
         {/* Right Side Cards - Responsive positioning */}
         {/* Satisfied Clients Card - Responsive positioning */}
         <div className="absolute top-28 sm:top-32 right-4 sm:right-8 xl:right-8 z-[5]">
-          <div className="relative bg-black/30 backdrop-blur-md border border-white/30 rounded-xl sm:rounded-2xl p-3.5 sm:p-6 text-white overflow-hidden min-w-[160px] w-[160px] h-[95px] sm:min-w-[200px] sm:w-[200px] sm:h-auto sm:aspect-square shadow-lg sm:shadow-xl">
+          <div className="relative bg-black/30 backdrop-blur-md border border-white/30 rounded-xl sm:rounded-2xl p-3 sm:p-4 text-white overflow-hidden min-w-[160px] w-[160px] h-[80px] sm:min-w-[200px] sm:w-[200px] sm:h-[160px] shadow-lg sm:shadow-xl">
             {/* Animated White Glow on Left */}
             <div 
               className="absolute left-0 top-0 bottom-0 w-1 bg-white/80 blur-sm"
@@ -109,7 +109,7 @@ export default function Hero() {
         {/* Featured Project Card - Above buttons on mobile, original position on desktop */}
         <div className="absolute bottom-24 sm:bottom-28 md:bottom-32 right-4 sm:right-4 md:right-8 lg:bottom-8 lg:right-8 z-[5]">
           <div 
-            className="relative bg-gradient-to-tr from-white/15 to-white/45 backdrop-blur-md border border-white/30 p-4 sm:p-5 md:p-6 text-white overflow-hidden w-[200px] sm:w-[280px] md:w-[320px] lg:w-[340px] shadow-lg sm:shadow-xl" 
+            className="relative bg-gradient-to-tr from-white/15 to-white/45 backdrop-blur-md border border-white/30 p-3 sm:p-4 md:p-5 text-white overflow-hidden w-[200px] sm:w-[280px] md:w-[320px] lg:w-[340px] shadow-lg sm:shadow-xl" 
             style={{ borderRadius: '12px' }}
           >
             {/* Diagonal Transparency Gradient Overlay - from bottom-left (transparent) to top-right (opaque) */}
@@ -123,14 +123,14 @@ export default function Hero() {
             />
             <div className="relative z-10 flex flex-col h-full">
               {/* Top Right Button */}
-              <div className="flex items-start justify-end mb-3 sm:mb-4">
+              <div className="flex items-start justify-end mb-2 sm:mb-3">
                 <Link href="#frutopia" className="bg-green-900/80 hover:bg-green-900 p-1.5 sm:p-2 rounded-full transition-colors shrink-0">
                   <ArrowUpRight className="w-3 h-3 sm:w-4 sm:h-4 text-white" strokeWidth={2} />
                 </Link>
               </div>
               
               {/* Title */}
-              <h3 className="font-bold text-base sm:text-lg md:text-xl mb-2 sm:mb-3">Fruitopia Value Pack</h3>
+              <h3 className="font-bold text-base sm:text-lg md:text-xl mb-1.5 sm:mb-2">Fruitopia Value Pack</h3>
               
               {/* Description */}
               <p className="text-xs sm:text-sm md:text-base text-gray-300 leading-relaxed flex-grow">
