@@ -497,7 +497,7 @@ Thank you!`
                 Order via WhatsApp
               </a>
               <a
-                href="mailto:Mynzagric@gmail.com"
+                href="mailto:MINZAGRIC@gmail.com"
                 className="bg-white/10 hover:bg-white/20 text-white font-semibold px-8 py-3 rounded-lg transition-colors flex items-center justify-center gap-2 border border-white/20"
               >
                 <Mail className="w-5 h-5" />

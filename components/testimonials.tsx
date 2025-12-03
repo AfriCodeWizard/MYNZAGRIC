@@ -4,7 +4,7 @@ export default function Testimonials() {
   const testimonials = [
     {
       name: "Grace Wanjiru",
-      text: "Mynzagric seedlings have transformed my farm. The quality is unmatched and they really care about your success.",
+      text: "MINZAGRIC seedlings have transformed my farm. The quality is unmatched and they really care about your success.",
     },
     {
       name: "Fred Onyango",
@@ -12,11 +12,11 @@ export default function Testimonials() {
     },
     {
       name: "Rabala James",
-      text: "Been ordering from Mynzagric for 3 years. Consistent quality, great support. They are the real deal.",
+      text: "Been ordering from MINZAGRIC for 3 years. Consistent quality, great support. They are the real deal.",
     },
     {
       name: "James Kariuki",
-      text: "Excellent seedlings and amazing customer service. My mango orchard is thriving thanks to Mynzagric!",
+      text: "Excellent seedlings and amazing customer service. My mango orchard is thriving thanks to MINZAGRIC!",
     },
     {
       name: "Hiroshi Tanaka",
@@ -64,7 +64,7 @@ export default function Testimonials() {
           <br />& STORIES
         </h2>
           <p className="text-base sm:text-lg text-gray-300 max-w-2xl mt-3 sm:mt-4" style={{ zIndex: 1, position: 'relative' }}>
-          Join 3,000,000+ satisfied clients worldwide achieving remarkable harvests with Mynzagric
+          Join 3,000,000+ satisfied clients worldwide achieving remarkable harvests with MINZAGRIC
         </p>
       </div>
 

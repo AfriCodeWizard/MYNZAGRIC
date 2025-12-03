@@ -1,6 +1,6 @@
-# 🌱 Mynzagric - Premium Fruit Seedlings E-Commerce Platform
+# 🌱 MINZAGRIC - Premium Fruit Seedlings E-Commerce Platform
 
-A modern, responsive e-commerce website for Mynzagric, a Kenyan nursery specializing in premium grafted and tissue-culture fruit seedlings. Built with Next.js 16, React 19, and TypeScript.
+A modern, responsive e-commerce website for MINZAGRIC, a Kenyan nursery specializing in premium grafted and tissue-culture fruit seedlings. Built with Next.js 16, React 19, and TypeScript.
 
 ![Next.js](https://img.shields.io/badge/Next.js-16.0.0-black)
 ![React](https://img.shields.io/badge/React-19.2.0-blue)
@@ -294,7 +294,7 @@ This project is private and proprietary. All rights reserved.
 
 ## 📞 Contact
 
-**Mynzagric**
+**MINZAGRIC**
 - **Website**: [Your Website URL]
 - **Email**: info@mynzagric.com
 - **Phone**: +254 700 000 000

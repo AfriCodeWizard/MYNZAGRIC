@@ -238,13 +238,13 @@ Thank you!`
                 "flex items-center transition-opacity duration-300 hover:opacity-80",
                 "focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-transparent rounded relative z-10"
               )}
-              aria-label="Mynzagric Home"
+              aria-label="MINZAGRIC Home"
             >
               <div className="relative h-14 md:h-[70px] w-[180px] md:w-[200px]">
                 {/* White Logo - Visible when navbar is transparent */}
                 <Image
                   src="/mynzAgric logoOficial (white).webp"
-                  alt="Mynzagric Logo"
+                  alt="MINZAGRIC Logo"
                   width={180}
                   height={50}
                   className={cn(
@@ -261,7 +261,7 @@ Thank you!`
                 {/* Color Logo - Visible when navbar is shown */}
                 <Image
                   src="/mynzAgric logoOficial (color).webp"
-                  alt="Mynzagric Logo"
+                  alt="MINZAGRIC Logo"
                   width={180}
                   height={50}
                   className={cn(

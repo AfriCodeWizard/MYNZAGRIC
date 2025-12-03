@@ -49,7 +49,7 @@ export default function Footer() {
             <Link href="/" className="inline-block mb-4 hover:opacity-80 transition-opacity">
               <Image
                 src="/mynzAgric logoOficial (color).webp"
-                alt="Mynzagric Logo"
+                alt="MINZAGRIC Logo"
                 width={200}
                 height={60}
                 className="h-21 w-auto"
@@ -154,7 +154,7 @@ export default function Footer() {
 
         {/* Divider */}
         <div className="border-t border-green-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-green-100 text-sm">© 2025 Mynzagric. All rights reserved.</p>
+          <p className="text-green-100 text-sm">© 2025 MINZAGRIC. All rights reserved.</p>
           <p className="text-green-100 text-sm font-semibold text-center md:text-right">
             Growing Kenya's Future, One Seedling at a Time
           </p>
