@@ -27,7 +27,7 @@ export const seedlings: Seedling[] = [
     careGuide: {
       watering: "Annual rainfall of 850 to 1000mm is sufficient for mango cultivation. It should be noted that rainfall during flowering season reduces fruit setting. After the plant is well established it can tolerate drought especially when its tap root reaches the water table. Water deeply once a week during dry season.",
       sunlight: "Requires full sun (6-8 hours minimum) for optimal fruit production. Pruning opens up the trees for aeration and penetration of sun rays, which is important for pest and disease management.",
-      soil: "Mango plants are adapted to many soil types but prefer deep (at least 3m) soils that are fertile and well drained with optimum pH of 5.5 to 7.5.",
+      soil: "Mango plants are adapted to many soil types but prefer deep (at least 3m) soils that are fertile and well drained with optimum pH of 5.5 to 7.5. Planting: Dig holes with dimensions 2 ft length by 2 ft width by 2 ft depth. Mix a bucket full of farmyard manure with topsoil at planting stage. Water the plant after planting if soil isn't wet enough.",
       temperature: "Mango do best on average annual temperature of between 15 to 30 degrees centigrade.",
       fertilizer: "During flowering, mangoes need high amounts of potassium to trigger flowering, flower retention and good development of fruits. Inadequate potassium leads to heavy flower abortion and unhealthy fruit set and development. Apply balanced fertilizer (10-10-10) quarterly. Use NPK 2:1:2 during fruiting.",
       spacing: "Plant 8-10 meters apart for mature trees.",
@@ -44,7 +44,7 @@ export const seedlings: Seedling[] = [
     careGuide: {
       watering: "Annual rainfall of 850 to 1000mm is sufficient for mango cultivation. It should be noted that rainfall during flowering season reduces fruit setting. After the plant is well established it can tolerate drought especially when its tap root reaches the water table. Water regularly during growing season, reduce in dry season.",
       sunlight: "Full sun exposure (6+ hours daily). Pruning opens up the trees for aeration and penetration of sun rays, which is important for pest and disease management.",
-      soil: "Mango plants are adapted to many soil types but prefer deep (at least 3m) soils that are fertile and well drained with optimum pH of 5.5 to 7.5.",
+      soil: "Mango plants are adapted to many soil types but prefer deep (at least 3m) soils that are fertile and well drained with optimum pH of 5.5 to 7.5. Planting: Dig holes with dimensions 2 ft length by 2 ft width by 2 ft depth. Mix a bucket full of farmyard manure with topsoil at planting stage. Water the plant after planting if soil isn't wet enough.",
       temperature: "Mango do best on average annual temperature of between 15 to 30 degrees centigrade.",
       fertilizer: "During flowering, mangoes need high amounts of potassium to trigger flowering, flower retention and good development of fruits. Inadequate potassium leads to heavy flower abortion and unhealthy fruit set and development. Apply NPK 10-5-20 during fruiting season.",
       spacing: "8-10 meters between trees.",
@@ -61,7 +61,7 @@ export const seedlings: Seedling[] = [
     careGuide: {
       watering: "Annual rainfall of 850 to 1000mm is sufficient for mango cultivation. It should be noted that rainfall during flowering season reduces fruit setting. After the plant is well established it can tolerate drought especially when its tap root reaches the water table. Deep watering weekly in hot season.",
       sunlight: "Needs strong sunlight for better yields. Pruning opens up the trees for aeration and penetration of sun rays, which is important for pest and disease management.",
-      soil: "Mango plants are adapted to many soil types but prefer deep (at least 3m) soils that are fertile and well drained with optimum pH of 5.5 to 7.5.",
+      soil: "Mango plants are adapted to many soil types but prefer deep (at least 3m) soils that are fertile and well drained with optimum pH of 5.5 to 7.5. Planting: Dig holes with dimensions 2 ft length by 2 ft width by 2 ft depth. Mix a bucket full of farmyard manure with topsoil at planting stage. Water the plant after planting if soil isn't wet enough.",
       temperature: "Mango do best on average annual temperature of between 15 to 30 degrees centigrade.",
       fertilizer: "During flowering, mangoes need high amounts of potassium to trigger flowering, flower retention and good development of fruits. Inadequate potassium leads to heavy flower abortion and unhealthy fruit set and development. Apply organic manure and balanced NPK.",
       spacing: "10 meters between trees.",
@@ -78,7 +78,7 @@ export const seedlings: Seedling[] = [
     careGuide: {
       watering: "Annual rainfall of 850 to 1000mm is sufficient for mango cultivation. It should be noted that rainfall during flowering season reduces fruit setting. After the plant is well established it can tolerate drought especially when its tap root reaches the water table. Moderate watering, drought tolerant once established.",
       sunlight: "Full sun required. Pruning opens up the trees for aeration and penetration of sun rays, which is important for pest and disease management.",
-      soil: "Mango plants are adapted to many soil types but prefer deep (at least 3m) soils that are fertile and well drained with optimum pH of 5.5 to 7.5.",
+      soil: "Mango plants are adapted to many soil types but prefer deep (at least 3m) soils that are fertile and well drained with optimum pH of 5.5 to 7.5. Planting: Dig holes with dimensions 2 ft length by 2 ft width by 2 ft depth. Mix a bucket full of farmyard manure with topsoil at planting stage. Water the plant after planting if soil isn't wet enough.",
       temperature: "Mango do best on average annual temperature of between 15 to 30 degrees centigrade.",
       fertilizer: "During flowering, mangoes need high amounts of potassium to trigger flowering, flower retention and good development of fruits. Inadequate potassium leads to heavy flower abortion and unhealthy fruit set and development. Minimal fertilizer needs once established, but ensure adequate potassium during flowering.",
       spacing: "8-10 meters apart.",
@@ -95,7 +95,7 @@ export const seedlings: Seedling[] = [
     careGuide: {
       watering: "Annual rainfall of 850 to 1000mm is sufficient for mango cultivation. It should be noted that rainfall during flowering season reduces fruit setting. After the plant is well established it can tolerate drought especially when its tap root reaches the water table. Regular watering, especially during flowering and fruiting.",
       sunlight: "8+ hours of direct sunlight daily. Pruning opens up the trees for aeration and penetration of sun rays, which is important for pest and disease management.",
-      soil: "Mango plants are adapted to many soil types but prefer deep (at least 3m) soils that are fertile and well drained with optimum pH of 5.5 to 7.5.",
+      soil: "Mango plants are adapted to many soil types but prefer deep (at least 3m) soils that are fertile and well drained with optimum pH of 5.5 to 7.5. Planting: Dig holes with dimensions 2 ft length by 2 ft width by 2 ft depth. Mix a bucket full of farmyard manure with topsoil at planting stage. Water the plant after planting if soil isn't wet enough.",
       temperature: "Mango do best on average annual temperature of between 15 to 30 degrees centigrade.",
       fertilizer: "During flowering, mangoes need high amounts of potassium to trigger flowering, flower retention and good development of fruits. Inadequate potassium leads to heavy flower abortion and unhealthy fruit set and development. Organic and inorganic fertilizers, apply 3x yearly with emphasis on potassium during flowering.",
       spacing: "10 meters between trees.",
