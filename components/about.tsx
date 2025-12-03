@@ -35,11 +35,12 @@ function About() {
       // Create timeline for scroll animations
       const tl = gsap.timeline()
 
-          // Animate blockquote
+          // Animate blockquote - responsive offset for mobile
           if (blockquoteRef.current) {
+            const isMobile = window.innerWidth < 768
             tl.from(blockquoteRef.current, {
               duration: 0.5,
-              x: 200,
+              x: isMobile ? 50 : 200,
               opacity: 0,
               ease: "power2.out"
             })
@@ -181,12 +182,12 @@ function About() {
         className="sticky-container relative h-screen w-full"
       >
         <div 
-          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full relative about-container"
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full relative about-container overflow-hidden"
         >
           {/* WE ARE DIFFERENT Heading */}
           <blockquote
             ref={blockquoteRef}
-            className="absolute text-3xl md:text-4xl lg:text-5xl font-bold text-white w-full md:w-[40%] lg:w-[35%] mt-[15%] md:mt-[17%] z-10 left-4 sm:left-6 lg:left-8"
+            className="absolute text-3xl md:text-4xl lg:text-5xl font-bold text-white w-[calc(100%-2rem)] md:w-[40%] lg:w-[35%] mt-[10%] sm:mt-[12%] md:mt-[17%] z-10 left-4 sm:left-6 lg:left-8 pt-4 sm:pt-0"
           >
             WE ARE <span className="font-light text-green-400">DIFFERENT</span>
             <br />& IN EVERY WAY
@@ -199,7 +200,7 @@ function About() {
           {/* Cards 1 & 2 - Replace office image (larger, foreground, far right) - Side by side */}
           <div
             ref={card1Ref}
-            className="absolute right-4 sm:right-6 lg:right-8 top-[20%] w-[19%] md:w-[19.5%] aspect-square bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-lg p-2 md:p-3 lg:p-4 flex flex-col items-center justify-center text-center z-20"
+            className="absolute right-4 sm:right-6 lg:right-8 top-[20%] sm:top-[20%] w-[35%] sm:w-[28%] md:w-[19.5%] aspect-square bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-lg p-2 md:p-3 lg:p-4 flex flex-col items-center justify-center text-center z-20"
             style={{ willChange: 'transform, opacity' }}
           >
             <div className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 border-2 border-green-400 rounded-md flex items-center justify-center text-green-400 bg-green-400/10 mb-2 md:mb-2 lg:mb-3">
@@ -212,7 +213,7 @@ function About() {
           <div
             ref={card2Ref}
             data-card="2"
-            className="absolute top-[20%] w-[19%] md:w-[19.5%] aspect-square bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-lg p-2 md:p-3 lg:p-4 flex flex-col items-center justify-center text-center z-20"
+            className="absolute top-[20%] sm:top-[20%] right-[calc(35%+0.5rem)] sm:right-[calc(28%+0.5rem)] md:right-auto md:left-auto w-[35%] sm:w-[28%] md:w-[19.5%] aspect-square bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-lg p-2 md:p-3 lg:p-4 flex flex-col items-center justify-center text-center z-20"
             style={{ willChange: 'transform, opacity' }}
           >
             <div className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 border-2 border-green-400 rounded-md flex items-center justify-center text-green-400 bg-green-400/10 mb-2 md:mb-2 lg:mb-3">
@@ -225,7 +226,7 @@ function About() {
           {/* Cards 3 & 4 - Replace building image (smaller, background, below heading line) - Side by side with consistent spacing matching right cards */}
           <div
             ref={card3Ref}
-            className="absolute right-[calc(42%+19%+0.5%)] md:right-[calc(42%+19%+0.5%)] top-[calc(15%+13rem+1.25rem)] md:top-[calc(17%+14rem+1.25rem)] w-[18%] md:w-[19%] aspect-square bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-lg p-2 md:p-3 lg:p-4 flex flex-col items-center justify-center text-center z-10"
+            className="absolute right-[calc(50%+0.5rem)] sm:right-[calc(42%+19%+0.5%)] md:right-[calc(42%+19%+0.5%)] top-[calc(10%+10rem+1rem)] sm:top-[calc(12%+11rem+1rem)] md:top-[calc(17%+14rem+1.25rem)] w-[45%] sm:w-[28%] md:w-[19%] aspect-square bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-lg p-2 md:p-3 lg:p-4 flex flex-col items-center justify-center text-center z-10"
             style={{ willChange: 'transform, opacity' }}
           >
             <div className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 border-2 border-green-400 rounded-md flex items-center justify-center text-green-400 bg-green-400/10 mb-2 md:mb-2 lg:mb-3">
@@ -237,7 +238,7 @@ function About() {
 
           <div
             ref={card4Ref}
-            className="absolute right-[42%] md:right-[42%] top-[calc(15%+13rem+1.25rem)] md:top-[calc(17%+14rem+1.25rem)] w-[18%] md:w-[19%] aspect-square bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-lg p-2 md:p-3 lg:p-4 flex flex-col items-center justify-center text-center z-10"
+            className="absolute right-[4%] sm:right-[42%] md:right-[42%] top-[calc(10%+10rem+1rem)] sm:top-[calc(12%+11rem+1rem)] md:top-[calc(17%+14rem+1.25rem)] w-[45%] sm:w-[28%] md:w-[19%] aspect-square bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-lg p-2 md:p-3 lg:p-4 flex flex-col items-center justify-center text-center z-10"
             style={{ willChange: 'transform, opacity' }}
           >
             <div className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 border-2 border-green-400 rounded-md flex items-center justify-center text-green-400 bg-green-400/10 mb-2 md:mb-2 lg:mb-3">
