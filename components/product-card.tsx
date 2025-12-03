@@ -268,7 +268,7 @@ export default function ProductCard({
       onMouseEnter={() => !isMobile && setIsHovered(true)}
       onMouseLeave={() => !isMobile && setIsHovered(false)}
       className={cn(
-        "relative bg-white overflow-hidden text-center rounded-lg group",
+        "relative bg-white overflow-hidden text-center rounded-lg group border border-green-400",
         isExpanded && "expanded"
       )}
       style={{
