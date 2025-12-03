@@ -367,7 +367,7 @@ Thank you!`
                           setActiveDropdown(null)
                         }}
                       >
-                        Seedlings
+                        Fruit Seedlings
                       </Link>
                       <Link
                         href="/flowers-landscapes"
@@ -844,7 +844,7 @@ Thank you!`
                 )}
               >
                 <div className="pl-4 pr-2 pt-2 space-y-1">
-                  <MobileNavLink href="/#seedlings" label="Seedlings" onClick={() => { setIsOpen(false); setIsProductsOpen(false); }} shouldShowSolidBackground={shouldShowSolidBackground} pathname={pathname} />
+                  <MobileNavLink href="/#seedlings" label="Fruit Seedlings" onClick={() => { setIsOpen(false); setIsProductsOpen(false); }} shouldShowSolidBackground={shouldShowSolidBackground} pathname={pathname} />
                   <MobileNavLink href="/flowers-landscapes" label="Flowers & Landscaping" onClick={() => { setIsOpen(false); setIsProductsOpen(false); }} shouldShowSolidBackground={shouldShowSolidBackground} pathname={pathname} />
                   <div className="px-3 py-2 text-xs font-semibold uppercase tracking-wide"
                     style={shouldShowSolidBackground ? { color: '#6b7280' } : { color: 'rgba(255, 255, 255, 0.7)' }}
