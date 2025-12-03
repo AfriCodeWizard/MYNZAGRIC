@@ -63,6 +63,138 @@ export default function PlantCarePage({ params }: { params: Promise<{ id: string
   const care = seedling.careGuide
   const categoryColor = categoryColors[seedling.category] || categoryColors.mango
 
+  // Generate seedling-specific issues from care guide data
+  const generateIssues = () => {
+    const issues: Array<{ title: string; solution: string }> = []
+    
+    if (!care) return issues
+
+    // Combine all care guide content for analysis
+    const allContent = [
+      care.pests || "",
+      care.watering || "",
+      care.fertilizer || "",
+      care.temperature || "",
+      care.soil || "",
+    ].join(" ").toLowerCase()
+
+    const pestsContent = (care.pests || "").toLowerCase()
+    
+    // Check for common pests (prioritize most common)
+    const pestKeywords = [
+      { keyword: /mango fruit fly|fruit fly/i, title: "Fruit Fly Infestation", solution: "Use pheromone traps and organic baits. Remove and destroy affected fruits immediately. Maintain orchard hygiene to prevent breeding sites. Harvest fruits early if infestation is severe." },
+      { keyword: /aphids/i, title: "Aphid Infestation", solution: "Spray with neem oil or insecticidal soap. Introduce beneficial insects like ladybugs. Remove affected leaves and maintain good air circulation. Control ants that protect aphids." },
+      { keyword: /mealybugs/i, title: "Mealybug Problem", solution: "Apply neem oil spray directly on affected areas. Remove heavily infested parts. Maintain good sanitation and avoid over-fertilization which attracts mealybugs. Use systemic insecticides if severe." },
+      { keyword: /scale|scales/i, title: "Scale Insects", solution: "Use horticultural oil or neem oil during dormant season. Prune heavily infested branches. Maintain plant health to reduce susceptibility. Scrape off scales manually for small infestations." },
+      { keyword: /thrips/i, title: "Thrips Damage", solution: "Use blue sticky traps to monitor. Apply neem oil or insecticidal soap. Ensure proper spacing for good air circulation. Remove weeds that serve as hosts." },
+      { keyword: /spider mites|mites/i, title: "Spider Mite Infestation", solution: "Increase humidity around plants. Spray with water to dislodge mites. Use neem oil or miticides if severe. Avoid dusty conditions that favor mites." },
+      { keyword: /weevil|weevils/i, title: "Weevil Infestation", solution: "Remove and destroy affected plant parts. Use biological controls like beneficial nematodes. Maintain good orchard hygiene. Apply appropriate insecticides during active periods." },
+      { keyword: /borer|borers/i, title: "Borer Problem", solution: "Remove and destroy affected branches immediately. Apply appropriate insecticides to trunk and branches. Maintain tree health to prevent infestation. Use pheromone traps for monitoring." },
+      { keyword: /nematodes/i, title: "Nematode Problem", solution: "Use resistant varieties. Practice crop rotation. Apply organic matter and beneficial nematodes. Solarize soil before planting." },
+    ]
+
+    // Check for common diseases
+    const diseaseKeywords = [
+      { keyword: /powdery mildew/i, title: "Powdery Mildew", solution: "Improve air circulation through pruning. Apply sulfur-based or copper fungicides. Avoid overhead watering and maintain proper spacing. Remove affected leaves promptly." },
+      { keyword: /anthracnose/i, title: "Anthracnose Disease", solution: "Remove and destroy infected plant parts. Apply copper-based fungicides preventively. Ensure good drainage and avoid waterlogging. Prune to improve air circulation." },
+      { keyword: /root rot|root rot/i, title: "Root Rot", solution: "Improve soil drainage immediately. Avoid overwatering. Apply fungicides and ensure proper spacing for air circulation. Remove affected plants to prevent spread." },
+      { keyword: /canker|cankers/i, title: "Canker Disease", solution: "Prune affected branches below canker. Apply copper-based fungicides. Maintain tree health and avoid mechanical damage. Disinfect pruning tools between cuts." },
+      { keyword: /wilt|wilt/i, title: "Wilt Disease", solution: "Remove and destroy affected plants immediately. Improve soil drainage. Use disease-resistant varieties and practice crop rotation. Avoid planting in infected soil." },
+      { keyword: /blight|blight/i, title: "Blight Problem", solution: "Remove infected leaves and fruits promptly. Apply appropriate fungicides preventively. Ensure good air circulation and avoid overhead watering. Practice crop rotation." },
+      { keyword: /die back|dieback/i, title: "Die Back", solution: "Prune affected branches back to healthy tissue. Apply fungicides. Improve tree health through proper fertilization and watering. Remove dead wood regularly." },
+      { keyword: /sooty mold|sooty mould/i, title: "Sooty Mold", solution: "Control the insects (aphids, mealybugs, scales) that produce honeydew. Wash off sooty mold with water and mild soap. Improve air circulation." },
+    ]
+
+    // Check for nutrient deficiencies
+    const deficiencyKeywords = [
+      { keyword: /potassium deficiency/i, title: "Potassium Deficiency", solution: "Apply potassium-rich fertilizer (potash). Use wood ash or potassium sulfate. Ensure proper soil pH for nutrient uptake. Apply during flowering for better fruit set." },
+      { keyword: /nitrogen deficiency/i, title: "Nitrogen Deficiency", solution: "Apply nitrogen-rich fertilizer or organic compost. Use foliar feeding for quick correction. Ensure proper watering for nutrient uptake. Avoid over-application which can cause excessive growth." },
+      { keyword: /zinc deficiency/i, title: "Zinc Deficiency", solution: "Apply zinc sulfate or chelated zinc. Foliar application provides quick results. Maintain proper soil pH (avoid highly alkaline soils). Apply during active growth periods." },
+      { keyword: /boron deficiency/i, title: "Boron Deficiency", solution: "Apply borax or boric acid in small amounts (toxic if over-applied). Foliar application is most effective. Avoid over-liming which can cause boron deficiency. Apply during flowering." },
+    ]
+
+    // Check for watering issues
+    if (allContent.includes("drought") || allContent.includes("water stress") || allContent.includes("dry")) {
+      if (!issues.some(issue => issue.title.includes("Water"))) {
+        issues.push({
+          title: "Water Stress",
+          solution: "Ensure consistent watering, especially during dry periods. Use mulch to retain soil moisture. Install drip irrigation for efficient water delivery. Water deeply but less frequently."
+        })
+      }
+    }
+    if (allContent.includes("overwatering") || allContent.includes("waterlogging") || allContent.includes("poor drainage")) {
+      if (!issues.some(issue => issue.title.includes("Water"))) {
+        issues.push({
+          title: "Overwatering/Waterlogging",
+          solution: "Improve soil drainage immediately. Reduce watering frequency. Ensure proper spacing and avoid compacted soil. Consider raised beds for better drainage."
+        })
+      }
+    }
+
+    // Check for temperature issues
+    if (allContent.includes("frost") || allContent.includes("cold") || allContent.includes("freeze")) {
+      issues.push({
+        title: "Cold/Frost Damage",
+        solution: "Protect plants during cold periods with covers or windbreaks. Choose appropriate planting locations. Consider frost-resistant varieties. Water plants before expected frost to help protect roots."
+      })
+    }
+
+    // Add pest issues found in content (prioritize first matches)
+    for (const { keyword, title, solution } of pestKeywords) {
+      if (keyword.test(pestsContent) && !issues.some(issue => issue.title === title) && issues.length < 4) {
+        issues.push({ title, solution })
+      }
+    }
+
+    // Add disease issues found in content
+    for (const { keyword, title, solution } of diseaseKeywords) {
+      if (keyword.test(pestsContent) && !issues.some(issue => issue.title === title) && issues.length < 4) {
+        issues.push({ title, solution })
+      }
+    }
+
+    // Add deficiency issues found in content
+    for (const { keyword, title, solution } of deficiencyKeywords) {
+      if (keyword.test(pestsContent) && !issues.some(issue => issue.title === title) && issues.length < 4) {
+        issues.push({ title, solution })
+      }
+    }
+
+    // Add common issues if we don't have enough specific issues
+    const commonIssues = [
+      {
+        title: "Slow Growth",
+        solution: `Ensure adequate sunlight (${care.sunlight?.match(/\d+/) || "6+"} hours) as specified. Apply appropriate fertilizer and maintain proper watering schedule. Check for root-bound conditions.`
+      },
+      {
+        title: "Poor Fruit Set",
+        solution: `Ensure plant has reached maturity (${care.timeToFruit || "2-3 years"}). Apply potassium-rich fertilizer during flowering. Maintain proper temperature and pollination conditions. Ensure adequate water during flowering.`
+      },
+      {
+        title: "Yellow Leaves",
+        solution: "Often indicates nutrient deficiency or overwatering. Check soil moisture and apply balanced fertilizer according to care guide. Test soil pH and adjust if needed."
+      },
+      {
+        title: "General Pest Problems",
+        solution: "Use neem oil spray and maintain good sanitation. Remove affected leaves. Follow integrated pest management practices. Monitor regularly for early detection."
+      }
+    ]
+
+    // Fill remaining slots with common issues
+    while (issues.length < 4) {
+      const availableIssue = commonIssues.find(issue => !issues.some(existing => existing.title === issue.title))
+      if (availableIssue) {
+        issues.push(availableIssue)
+      } else {
+        break
+      }
+    }
+
+    return issues.slice(0, 4) // Return maximum 4 issues
+  }
+
+  const commonIssues = generateIssues()
+
   const careItems = [
     {
       key: "watering",
@@ -390,51 +522,20 @@ export default function PlantCarePage({ params }: { params: Promise<{ id: string
                 Common <span className="font-light text-green-400">Issues & Solutions</span>
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-all duration-300">
-                  <div className="flex items-start gap-4">
-                    <AlertCircle className="w-6 h-6 text-green-400 flex-shrink-0 mt-1" />
-                    <div>
-                      <h3 className="text-lg font-bold text-white mb-2">Yellow Leaves</h3>
-                      <p className="text-gray-300 text-sm">
-                        Often indicates nutrient deficiency or overwatering. Check soil moisture and apply balanced
-                        fertilizer.
-                      </p>
+                {commonIssues.map((issue, index) => (
+                  <div
+                    key={index}
+                    className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-all duration-300"
+                  >
+                    <div className="flex items-start gap-4">
+                      <AlertCircle className="w-6 h-6 text-green-400 flex-shrink-0 mt-1" />
+                      <div>
+                        <h3 className="text-lg font-bold text-white mb-2">{issue.title}</h3>
+                        <p className="text-gray-300 text-sm">{issue.solution}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-all duration-300">
-                  <div className="flex items-start gap-4">
-                    <AlertCircle className="w-6 h-6 text-green-400 flex-shrink-0 mt-1" />
-                    <div>
-                      <h3 className="text-lg font-bold text-white mb-2">Pest Infestation</h3>
-                      <p className="text-gray-300 text-sm">
-                        Use neem oil spray and maintain good sanitation. Remove affected leaves and isolate if necessary.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-all duration-300">
-                  <div className="flex items-start gap-4">
-                    <AlertCircle className="w-6 h-6 text-green-400 flex-shrink-0 mt-1" />
-                    <div>
-                      <h3 className="text-lg font-bold text-white mb-2">Slow Growth</h3>
-                      <p className="text-gray-300 text-sm">
-                        Ensure adequate sunlight (6+ hours daily) and apply growth-promoting fertilizer monthly.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-all duration-300">
-                  <div className="flex items-start gap-4">
-                    <AlertCircle className="w-6 h-6 text-green-400 flex-shrink-0 mt-1" />
-                    <div>
-                      <h3 className="text-lg font-bold text-white mb-2">No Fruiting</h3>
-                      <p className="text-gray-300 text-sm">
-                        Wait for plant maturity, adjust temperature if needed, and apply potassium-rich fertilizer.
-                      </p>
-                    </div>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
 
