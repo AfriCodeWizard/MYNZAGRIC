@@ -380,33 +380,41 @@ Thank you!`
                       >
                         Flowers & Landscaping
                       </Link>
-                      <div className="mt-1">
-                        <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide flex items-center gap-2">
-                          <span className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></span>
-                          <span>Frutopia Value Pack</span>
-                          <span className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></span>
-                        </div>
+                      <Link
+                        href="/#frutopia"
+                        className="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-green-50 hover:text-green-700 transition-colors"
+                        role="menuitem"
+                        onClick={() => {
+                          setIsProductsOpen(false)
+                          setActiveDropdown(null)
+                        }}
+                      >
+                        Frutopia Value Pack
+                      </Link>
+                      <div className="mt-1 pl-6">
                         <Link
                           href="/#frutopia"
-                          className="block px-6 py-2 text-sm text-gray-700 rounded-md hover:bg-green-50 hover:text-green-700 transition-colors"
+                          className="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-green-50 hover:text-green-700 transition-colors flex items-center gap-2"
                           role="menuitem"
                           onClick={() => {
                             setIsProductsOpen(false)
                             setActiveDropdown(null)
                           }}
                         >
-                          All Value Packs
+                          <span className="text-green-600 font-black text-xl leading-none" style={{ fontWeight: 900 }}>—</span>
+                          <span>All Value Packs</span>
                         </Link>
                         <Link
                           href="/#frutopia"
-                          className="block px-6 py-2 text-sm text-gray-700 rounded-md hover:bg-green-50 hover:text-green-700 transition-colors"
+                          className="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-green-50 hover:text-green-700 transition-colors flex items-center gap-2"
                           role="menuitem"
                           onClick={() => {
                             setIsProductsOpen(false)
                             setActiveDropdown(null)
                           }}
                         >
-                          Drip Irrigation Kits
+                          <span className="text-green-600 font-black text-xl leading-none" style={{ fontWeight: 900 }}>—</span>
+                          <span>Drip Irrigation Kits</span>
                         </Link>
                       </div>
                     </div>
@@ -848,15 +856,41 @@ Thank you!`
                 <div className="pl-4 pr-2 pt-2 space-y-1">
                   <MobileNavLink href="/#seedlings" label="Fruit Seedlings" onClick={() => { setIsOpen(false); setIsProductsOpen(false); }} shouldShowSolidBackground={shouldShowSolidBackground} pathname={pathname} />
                   <MobileNavLink href="/flowers-landscapes" label="Flowers & Landscaping" onClick={() => { setIsOpen(false); setIsProductsOpen(false); }} shouldShowSolidBackground={shouldShowSolidBackground} pathname={pathname} />
-                  <div className="px-3 py-2 text-xs font-semibold uppercase tracking-wide flex items-center gap-2"
-                    style={shouldShowSolidBackground ? { color: '#6b7280' } : { color: 'rgba(255, 255, 255, 0.7)' }}
-                  >
-                    <span className="flex-1 h-px bg-gradient-to-r from-transparent via-current to-transparent opacity-30"></span>
-                    <span>Frutopia Value Pack</span>
-                    <span className="flex-1 h-px bg-gradient-to-r from-transparent via-current to-transparent opacity-30"></span>
+                  <MobileNavLink href="/#frutopia" label="Frutopia Value Pack" onClick={() => { setIsOpen(false); setIsProductsOpen(false); }} shouldShowSolidBackground={shouldShowSolidBackground} pathname={pathname} />
+                  <div className="pl-6 space-y-1">
+                    <Link
+                      href="/#frutopia"
+                      className={cn(
+                        "block px-3 py-2 text-sm rounded-md transition-colors flex items-center gap-2",
+                        shouldShowSolidBackground
+                          ? "text-gray-700 hover:text-green-700 hover:bg-green-50"
+                          : "text-green-200 hover:text-white hover:bg-white/10"
+                      )}
+                      onClick={() => {
+                        setIsOpen(false)
+                        setIsProductsOpen(false)
+                      }}
+                    >
+                      <span className={cn("font-black text-xl leading-none", shouldShowSolidBackground ? "text-green-600" : "text-green-400")} style={{ fontWeight: 900 }}>—</span>
+                      <span>All Value Packs</span>
+                    </Link>
+                    <Link
+                      href="/#frutopia"
+                      className={cn(
+                        "block px-3 py-2 text-sm rounded-md transition-colors flex items-center gap-2",
+                        shouldShowSolidBackground
+                          ? "text-gray-700 hover:text-green-700 hover:bg-green-50"
+                          : "text-green-200 hover:text-white hover:bg-white/10"
+                      )}
+                      onClick={() => {
+                        setIsOpen(false)
+                        setIsProductsOpen(false)
+                      }}
+                    >
+                      <span className={cn("font-black text-xl leading-none", shouldShowSolidBackground ? "text-green-600" : "text-green-400")} style={{ fontWeight: 900 }}>—</span>
+                      <span>Drip Irrigation Kits</span>
+                    </Link>
                   </div>
-                  <MobileNavLink href="/#frutopia" label="All Value Packs" onClick={() => { setIsOpen(false); setIsProductsOpen(false); }} shouldShowSolidBackground={shouldShowSolidBackground} pathname={pathname} />
-                  <MobileNavLink href="/#frutopia" label="Drip Irrigation Kits" onClick={() => { setIsOpen(false); setIsProductsOpen(false); }} shouldShowSolidBackground={shouldShowSolidBackground} pathname={pathname} />
                 </div>
               </div>
             </div>
