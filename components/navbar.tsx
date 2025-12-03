@@ -381,8 +381,10 @@ Thank you!`
                         Flowers & Landscaping
                       </Link>
                       <div className="mt-1">
-                        <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                          Frutopia Value Pack
+                        <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide flex items-center gap-2">
+                          <span className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></span>
+                          <span>Frutopia Value Pack</span>
+                          <span className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></span>
                         </div>
                         <Link
                           href="/#frutopia"
@@ -846,10 +848,12 @@ Thank you!`
                 <div className="pl-4 pr-2 pt-2 space-y-1">
                   <MobileNavLink href="/#seedlings" label="Fruit Seedlings" onClick={() => { setIsOpen(false); setIsProductsOpen(false); }} shouldShowSolidBackground={shouldShowSolidBackground} pathname={pathname} />
                   <MobileNavLink href="/flowers-landscapes" label="Flowers & Landscaping" onClick={() => { setIsOpen(false); setIsProductsOpen(false); }} shouldShowSolidBackground={shouldShowSolidBackground} pathname={pathname} />
-                  <div className="px-3 py-2 text-xs font-semibold uppercase tracking-wide"
+                  <div className="px-3 py-2 text-xs font-semibold uppercase tracking-wide flex items-center gap-2"
                     style={shouldShowSolidBackground ? { color: '#6b7280' } : { color: 'rgba(255, 255, 255, 0.7)' }}
                   >
-                    Frutopia Value Pack
+                    <span className="flex-1 h-px bg-gradient-to-r from-transparent via-current to-transparent opacity-30"></span>
+                    <span>Frutopia Value Pack</span>
+                    <span className="flex-1 h-px bg-gradient-to-r from-transparent via-current to-transparent opacity-30"></span>
                   </div>
                   <MobileNavLink href="/#frutopia" label="All Value Packs" onClick={() => { setIsOpen(false); setIsProductsOpen(false); }} shouldShowSolidBackground={shouldShowSolidBackground} pathname={pathname} />
                   <MobileNavLink href="/#frutopia" label="Drip Irrigation Kits" onClick={() => { setIsOpen(false); setIsProductsOpen(false); }} shouldShowSolidBackground={shouldShowSolidBackground} pathname={pathname} />
