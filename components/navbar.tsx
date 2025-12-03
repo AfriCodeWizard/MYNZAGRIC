@@ -369,6 +369,18 @@ Thank you!`
                       >
                         Seedlings
                       </Link>
+                      <Link
+                        href="/flowers-landscapes"
+                        className="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-pink-50 hover:text-pink-700 transition-colors flex items-center gap-2"
+                        role="menuitem"
+                        onClick={() => {
+                          setIsProductsOpen(false)
+                          setActiveDropdown(null)
+                        }}
+                      >
+                        <span>🌸</span>
+                        Flowers & Landscaping
+                      </Link>
                       <div className="mt-1">
                         <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">
                           Frutopia Value Pack
@@ -834,6 +846,7 @@ Thank you!`
               >
                 <div className="pl-4 pr-2 pt-2 space-y-1">
                   <MobileNavLink href="/#seedlings" label="Seedlings" onClick={() => { setIsOpen(false); setIsProductsOpen(false); }} shouldShowSolidBackground={shouldShowSolidBackground} pathname={pathname} />
+                  <MobileNavLink href="/flowers-landscapes" label="🌸 Flowers & Landscaping" onClick={() => { setIsOpen(false); setIsProductsOpen(false); }} shouldShowSolidBackground={shouldShowSolidBackground} pathname={pathname} />
                   <div className="px-3 py-2 text-xs font-semibold uppercase tracking-wide"
                     style={shouldShowSolidBackground ? { color: '#6b7280' } : { color: 'rgba(255, 255, 255, 0.7)' }}
                   >
