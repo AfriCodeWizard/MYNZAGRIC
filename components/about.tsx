@@ -200,7 +200,7 @@ function About() {
           {/* Cards 1 & 2 - Replace office image (larger, foreground, far right) - Side by side */}
           <div
             ref={card1Ref}
-            className="absolute right-4 sm:right-6 lg:right-8 top-[20%] sm:top-[20%] w-[35%] sm:w-[28%] md:w-[19.5%] aspect-square bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-lg p-2 md:p-3 lg:p-4 flex flex-col items-center justify-center text-center z-20"
+            className="absolute right-4 sm:right-6 lg:right-8 top-[20%] sm:top-[20%] w-[35%] sm:w-[28%] md:w-[19.5%] aspect-square bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-lg p-2 md:p-3 lg:p-4 flex flex-col items-center justify-center text-center z-20 shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:shadow-[0_0_30px_rgba(34,197,94,0.5)] transition-shadow duration-300"
             style={{ willChange: 'transform, opacity' }}
           >
             <div className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 border-2 border-green-400 rounded-md flex items-center justify-center text-green-400 bg-green-400/10 mb-2 md:mb-2 lg:mb-3">
@@ -213,7 +213,7 @@ function About() {
           <div
             ref={card2Ref}
             data-card="2"
-            className="absolute top-[20%] sm:top-[20%] right-[calc(35%+0.5rem)] sm:right-[calc(28%+0.5rem)] md:right-auto md:left-auto w-[35%] sm:w-[28%] md:w-[19.5%] aspect-square bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-lg p-2 md:p-3 lg:p-4 flex flex-col items-center justify-center text-center z-20"
+            className="absolute top-[20%] sm:top-[20%] right-[calc(35%+0.5rem)] sm:right-[calc(28%+0.5rem)] md:right-auto md:left-auto w-[35%] sm:w-[28%] md:w-[19.5%] aspect-square bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-lg p-2 md:p-3 lg:p-4 flex flex-col items-center justify-center text-center z-20 shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:shadow-[0_0_30px_rgba(34,197,94,0.5)] transition-shadow duration-300"
             style={{ willChange: 'transform, opacity' }}
           >
             <div className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 border-2 border-green-400 rounded-md flex items-center justify-center text-green-400 bg-green-400/10 mb-2 md:mb-2 lg:mb-3">
@@ -226,7 +226,7 @@ function About() {
           {/* Cards 3 & 4 - Replace building image (smaller, background, below heading line) - Side by side with consistent spacing matching right cards */}
           <div
             ref={card3Ref}
-            className="absolute right-[calc(50%+0.5rem)] sm:right-[calc(42%+19%+0.5%)] md:right-[calc(42%+19%+0.5%)] top-[calc(10%+10rem+1rem)] sm:top-[calc(12%+11rem+1rem)] md:top-[calc(17%+14rem+1.25rem)] w-[45%] sm:w-[28%] md:w-[19%] aspect-square bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-lg p-2 md:p-3 lg:p-4 flex flex-col items-center justify-center text-center z-10"
+            className="absolute right-[calc(50%+0.5rem)] sm:right-[calc(42%+19%+0.5%)] md:right-[calc(42%+19%+0.5%)] top-[calc(10%+10rem+1rem)] sm:top-[calc(12%+11rem+1rem)] md:top-[calc(17%+14rem+1.25rem)] w-[45%] sm:w-[28%] md:w-[19%] aspect-square bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-lg p-2 md:p-3 lg:p-4 flex flex-col items-center justify-center text-center z-10 shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:shadow-[0_0_30px_rgba(34,197,94,0.5)] transition-shadow duration-300"
             style={{ willChange: 'transform, opacity' }}
           >
             <div className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 border-2 border-green-400 rounded-md flex items-center justify-center text-green-400 bg-green-400/10 mb-2 md:mb-2 lg:mb-3">
@@ -238,7 +238,7 @@ function About() {
 
           <div
             ref={card4Ref}
-            className="absolute right-[4%] sm:right-[42%] md:right-[42%] top-[calc(10%+10rem+1rem)] sm:top-[calc(12%+11rem+1rem)] md:top-[calc(17%+14rem+1.25rem)] w-[45%] sm:w-[28%] md:w-[19%] aspect-square bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-lg p-2 md:p-3 lg:p-4 flex flex-col items-center justify-center text-center z-10"
+            className="absolute right-[4%] sm:right-[42%] md:right-[42%] top-[calc(10%+10rem+1rem)] sm:top-[calc(12%+11rem+1rem)] md:top-[calc(17%+14rem+1.25rem)] w-[45%] sm:w-[28%] md:w-[19%] aspect-square bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-lg p-2 md:p-3 lg:p-4 flex flex-col items-center justify-center text-center z-10 shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:shadow-[0_0_30px_rgba(34,197,94,0.5)] transition-shadow duration-300"
             style={{ willChange: 'transform, opacity' }}
           >
             <div className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 border-2 border-green-400 rounded-md flex items-center justify-center text-green-400 bg-green-400/10 mb-2 md:mb-2 lg:mb-3">
