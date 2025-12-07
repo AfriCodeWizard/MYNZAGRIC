@@ -32,9 +32,9 @@ const satisfy = Satisfy({
 })
 
 export const metadata: Metadata = {
-  title: "MINZAGRIC - Premium Fruit Seedlings Kenya",
+  title: "MINZAGRIC - Premium Fruit Seedlings Global",
   description:
-    "High-quality grafted and tissue-culture fruit seedlings for Kenya. Hass avocados, mangoes, citrus, and tropical fruits.",
+    "High-quality grafted fruit seedlings worldwide. Hass avocados, mangoes, citrus, and tropical fruits.",
   generator: "v0.app",
   icons: {
     icon: [
