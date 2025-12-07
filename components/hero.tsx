@@ -11,16 +11,15 @@ const videos = [
     id: "19570489"
   },
   {
-    // Video by Joshua Malic - Grapes close-up (6739348)
-    // Trying multiple URL formats for compatibility
-    src: "https://videos.pexels.com/video-files/6739348/6739348-hd_1920_1080_25fps.mp4",
-    id: "6739348",
+    // Grapes close-up - Local WEBM file
+    src: "/grapes.webm",
+    id: "grapes",
     attribution: "Video by Joshua Malic"
   },
   {
-    // Video by ROMAN ODINTSOV - Mangoes on tree (11760139)
-    src: "https://videos.pexels.com/video-files/11760139/11760139-hd_1920_1080_25fps.mp4",
-    id: "11760139",
+    // Mangoes on tree - Local WEBM file
+    src: "/mango.webm",
+    id: "mango",
     attribution: "Video by ROMAN ODINTSOV"
   }
 ]
@@ -138,7 +137,7 @@ export default function Hero() {
               backgroundColor: "#000000"
             }}
           >
-            <source src={video.src} type="video/mp4" />
+            <source src={video.src} type={video.src.endsWith('.webm') ? 'video/webm' : 'video/mp4'} />
           </video>
         ))}
       </div>
