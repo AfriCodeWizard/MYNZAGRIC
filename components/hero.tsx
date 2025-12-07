@@ -11,12 +11,15 @@ const videos = [
     id: "19570489"
   },
   {
-    src: "https://videos.pexels.com/video-files/6739348/6739348-hd_1920_1080_30fps.mp4",
+    // Video by Joshua Malic - Grapes close-up (6739348)
+    // Trying multiple URL formats for compatibility
+    src: "https://videos.pexels.com/video-files/6739348/6739348-hd_1920_1080_25fps.mp4",
     id: "6739348",
     attribution: "Video by Joshua Malic"
   },
   {
-    src: "https://videos.pexels.com/video-files/11760139/11760139-hd_1920_1080_30fps.mp4",
+    // Video by ROMAN ODINTSOV - Mangoes on tree (11760139)
+    src: "https://videos.pexels.com/video-files/11760139/11760139-hd_1920_1080_25fps.mp4",
     id: "11760139",
     attribution: "Video by ROMAN ODINTSOV"
   }
@@ -55,6 +58,10 @@ export default function Hero() {
       const videoElement = videoRefs.current[index]
       if (videoElement) {
         videoElement.load()
+        // Handle video loading errors
+        videoElement.addEventListener('error', (e) => {
+          console.error(`Video ${videos[index].id} failed to load:`, e)
+        })
         // Preload next video for smoother transition
         if (index === (currentVideoIndex + 1) % videos.length) {
           videoElement.currentTime = 0
@@ -65,7 +72,8 @@ export default function Hero() {
     // Play current video
     const currentVideo = videoRefs.current[currentVideoIndex]
     if (currentVideo) {
-      currentVideo.play().catch(() => {
+      currentVideo.play().catch((error) => {
+        console.error('Video play failed:', error)
         // Auto-play might fail, but video will play on user interaction
       })
     }
@@ -110,7 +118,7 @@ export default function Hero() {
   return (
     <section className="relative min-h-screen w-full overflow-hidden">
       {/* Video Background - Multiple videos with smooth transitions */}
-      <div className="absolute inset-0 w-full h-full">
+      <div className="absolute inset-0 w-full h-full" style={{ zIndex: 0 }}>
         {videos.map((video, index) => (
           <video
             key={video.id}
@@ -126,7 +134,8 @@ export default function Hero() {
             style={{
               opacity: index === currentVideoIndex ? 1 : 0,
               transition: "opacity 2s ease-in-out",
-              zIndex: index === currentVideoIndex ? 1 : 0
+              zIndex: index === currentVideoIndex ? 1 : 0,
+              backgroundColor: "#000000"
             }}
           >
             <source src={video.src} type="video/mp4" />
@@ -136,9 +145,10 @@ export default function Hero() {
 
       {/* Dark Overlay - Radial gradient: lighter center, darker edges - matching irri-hub.com */}
       <div 
-        className="absolute inset-0" 
+        className="absolute inset-0 pointer-events-none" 
         style={{
-          background: 'radial-gradient(circle at center, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.85) 100%)'
+          background: 'radial-gradient(circle at center, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.85) 100%)',
+          zIndex: 1
         }}
       />
 
