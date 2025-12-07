@@ -61,8 +61,8 @@ export default function Footer() {
               />
             </Link>
             <p className="text-green-100 text-sm leading-relaxed">
-              Growing Kenya's future, one seedling at a time. Providing premium fruit seedlings to farmers across the
-              nation since 2020.
+              Growing the world's future, one seedling at a time. Providing premium fruit seedlings to farmers across the
+              globe since 2020.
             </p>
           </div>
 
@@ -107,7 +107,7 @@ export default function Footer() {
                   info@mynzagric.com
                 </a>
               </li>
-              <li>Nairobi, Kenya</li>
+              <li>Global Operations</li>
             </ul>
           </div>
 
@@ -156,7 +156,7 @@ export default function Footer() {
         <div className="border-t border-green-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-green-100 text-sm">© 2025 MINZAGRIC. All rights reserved.</p>
           <p className="text-green-100 text-sm font-semibold text-center md:text-right">
-            Growing Kenya's Future, One Seedling at a Time
+            Growing the World's Future, One Seedling at a Time
           </p>
         </div>
       </div>
