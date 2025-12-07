@@ -44,7 +44,7 @@ export default function Testimonials() {
     },
     {
       name: "Diego Silva",
-      text: "The tissue-cultured seedlings are exceptional. Quick establishment and vigorous growth.",
+      text: "The certified grafted seedlings are exceptional. Quick establishment and vigorous growth.",
     },
     {
       name: "Fatima Al-Mansouri",

@@ -8,13 +8,13 @@ export default function CareGuides() {
       icon: Sprout,
       title: "Premium Quality Seedlings",
       description:
-        "Disease-resistant, professionally grafted and tissue-cultured seedlings that ensure healthy growth and maximum productivity.",
+        "Disease-resistant, professionally grafted and certified seedlings that ensure healthy growth and maximum productivity.",
     },
     {
       icon: Truck,
       title: "Reliable Delivery",
       description:
-        "Fast and secure delivery across Kenya with proper packaging to ensure your seedlings arrive in perfect condition.",
+        "Fast and secure delivery worldwide with proper packaging to ensure your seedlings arrive in perfect condition.",
     },
     {
       icon: Award,
@@ -54,7 +54,7 @@ export default function CareGuides() {
             WHY CHOOSE <span className="font-light text-green-400">MYNZAGRIC</span>
           </h2>
           <p className="text-lg text-gray-600">
-            Trusted by farmers across Kenya for premium fruit seedlings and agricultural expertise
+            Trusted by farmers worldwide for premium fruit seedlings and agricultural expertise
           </p>
         </div>
 

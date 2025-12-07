@@ -152,7 +152,7 @@ function About() {
     {
       icon: Heart,
       title: "Passion in every work",
-      description: "Professionally grafted and tissue-cultured disease-resistant seedlings for beautiful, sustainable produce.",
+      description: "Professionally grafted and certified disease-resistant seedlings for beautiful, sustainable produce.",
     },
     {
       icon: PenTool,

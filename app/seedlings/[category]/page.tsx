@@ -47,7 +47,7 @@ const categories: Record<string, {
   tropical: {
     label: "Tropical",
     icon: "🍍",
-    description: "Discover 33 exotic tropical fruit varieties including passion fruit, guavas, papayas, and more! Premium tissue-culture and grafted seedlings. Transform your farm with diverse, profitable tropical fruits loved by local and export markets.",
+    description: "Discover 33 exotic tropical fruit varieties including passion fruit, guavas, papayas, and more! Premium grafted seedlings. Transform your farm with diverse, profitable tropical fruits loved by global markets.",
     bgImage: "https://images.unsplash.com/photo-1528821128474-27f963b062bf?w=800&q=80&auto=format&fit=crop",
     bgColor: "from-orange-800 to-pink-800"
   }

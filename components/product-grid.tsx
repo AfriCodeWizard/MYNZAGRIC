@@ -55,7 +55,7 @@ export default function ProductGrid() {
       value: "avocado", 
       label: "Avocados", 
       icon: "🥑",
-      description: "Premium Hass and Fuerte avocado varieties. High-value crop with excellent market demand. Start harvesting delicious, nutrient-rich avocados in 2-3 years. Perfect for export and local markets.",
+      description: "Premium Hass and Fuerte avocado varieties. High-value crop with excellent market demand. Start harvesting delicious, nutrient-rich avocados in 2-3 years. Perfect for export and global markets.",
       bgImage: "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=800&q=80",
       fgImage: "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=480&q=80&auto=format&fit=crop",
       bgColor: "from-teal-800 to-teal-900"
@@ -73,7 +73,7 @@ export default function ProductGrid() {
       value: "tropical", 
       label: "Tropical", 
       icon: "🍍",
-      description: "Discover 33 exotic tropical fruit varieties including passion fruit, guavas, papayas, and more! Premium tissue-culture and grafted seedlings. Transform your farm with diverse, profitable tropical fruits loved by local and export markets.",
+      description: "Discover 33 exotic tropical fruit varieties including passion fruit, guavas, papayas, and more! Premium grafted seedlings. Transform your farm with diverse, profitable tropical fruits loved by global markets.",
       bgImage: "https://images.unsplash.com/photo-1528821128474-27f963b062bf?w=800&q=80&auto=format&fit=crop",
       fgImage: "https://images.unsplash.com/photo-1528821128474-27f963b062bf?w=480&q=80&auto=format&fit=crop",
       bgColor: "from-orange-800 to-pink-800"
@@ -192,7 +192,7 @@ export default function ProductGrid() {
               FRUIT SEEDLING <span className="font-light text-green-400">VARIETIES</span>
               <br />& PRICES
             </h2>
-            <p className="text-base sm:text-lg text-gray-400 mt-2">Premium grafted and tissue-culture varieties</p>
+            <p className="text-base sm:text-lg text-gray-400 mt-2">Premium grafted varieties</p>
           </div>
 
           {/* Mobile Scroll Controls */}
