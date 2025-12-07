@@ -1,11 +1,31 @@
 "use client"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { ArrowUpRight } from "lucide-react"
 import Link from "next/link"
 import Navbar from "@/components/navbar" // Import the Navbar component
 
+// Video array with all three videos - defined outside component to avoid recreation
+const videos = [
+  {
+    src: "https://videos.pexels.com/video-files/19570489/19570489-hd_1920_1080_30fps.mp4",
+    id: "19570489"
+  },
+  {
+    src: "https://videos.pexels.com/video-files/6739348/6739348-hd_1920_1080_30fps.mp4",
+    id: "6739348",
+    attribution: "Video by Joshua Malic"
+  },
+  {
+    src: "https://videos.pexels.com/video-files/11760139/11760139-hd_1920_1080_30fps.mp4",
+    id: "11760139",
+    attribution: "Video by ROMAN ODINTSOV"
+  }
+]
+
 export default function Hero() {
   const [count, setCount] = useState(0)
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0)
+  const videoRefs = useRef<(HTMLVideoElement | null)[]>([])
 
   useEffect(() => {
     const target = 3000000
@@ -27,12 +47,92 @@ export default function Hero() {
 
     return () => clearInterval(timer)
   }, [])
+
+  // Video rotation effect with smooth transitions
+  useEffect(() => {
+    // Initialize all videos
+    videos.forEach((_, index) => {
+      const videoElement = videoRefs.current[index]
+      if (videoElement) {
+        videoElement.load()
+        // Preload next video for smoother transition
+        if (index === (currentVideoIndex + 1) % videos.length) {
+          videoElement.currentTime = 0
+        }
+      }
+    })
+
+    // Play current video
+    const currentVideo = videoRefs.current[currentVideoIndex]
+    if (currentVideo) {
+      currentVideo.play().catch(() => {
+        // Auto-play might fail, but video will play on user interaction
+      })
+    }
+
+    // Rotate videos every 10 seconds with smooth fade transitions
+    const rotationInterval = setInterval(() => {
+      const currentVideo = videoRefs.current[currentVideoIndex]
+      const nextIndex = (currentVideoIndex + 1) % videos.length
+      const nextVideo = videoRefs.current[nextIndex]
+
+      if (currentVideo && nextVideo) {
+        // Prepare next video
+        nextVideo.currentTime = 0
+        
+        // Start fade out of current video
+        currentVideo.style.transition = "opacity 2s ease-in-out"
+        currentVideo.style.opacity = "0"
+
+        // Start fade in of next video simultaneously
+        nextVideo.style.transition = "opacity 2s ease-in-out"
+        nextVideo.style.opacity = "0"
+        nextVideo.play().catch(() => {})
+
+        // Fade in next video after a brief delay
+        setTimeout(() => {
+          nextVideo.style.opacity = "1"
+        }, 100)
+
+        // Update state after transition starts
+        setTimeout(() => {
+          setCurrentVideoIndex(nextIndex)
+          // Pause previous video after transition
+          currentVideo.pause()
+          currentVideo.style.opacity = "1" // Reset for next cycle
+        }, 2000) // Match transition duration
+      }
+    }, 10000) // Change video every 10 seconds
+
+    return () => clearInterval(rotationInterval)
+  }, [currentVideoIndex])
+
   return (
     <section className="relative min-h-screen w-full overflow-hidden">
-      {/* Video Background */}
-      <video autoPlay muted loop playsInline preload="auto" className="absolute inset-0 w-full h-full object-cover">
-        <source src="https://videos.pexels.com/video-files/19570489/19570489-hd_1920_1080_30fps.mp4" type="video/mp4" />
-      </video>
+      {/* Video Background - Multiple videos with smooth transitions */}
+      <div className="absolute inset-0 w-full h-full">
+        {videos.map((video, index) => (
+          <video
+            key={video.id}
+            ref={(el) => {
+              videoRefs.current[index] = el
+            }}
+            autoPlay={index === 0}
+            muted
+            loop
+            playsInline
+            preload="auto"
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{
+              opacity: index === currentVideoIndex ? 1 : 0,
+              transition: "opacity 2s ease-in-out",
+              zIndex: index === currentVideoIndex ? 1 : 0
+            }}
+          >
+            <source src={video.src} type="video/mp4" />
+          </video>
+        ))}
+      </div>
 
       {/* Dark Overlay - Radial gradient: lighter center, darker edges - matching irri-hub.com */}
       <div 
