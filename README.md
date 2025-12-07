@@ -1,6 +1,6 @@
-# 🌱 MINZAGRIC - Premium Fruit Seedlings E-Commerce Platform
+# 🌱 MYNZAGRIC - Premium Fruit Seedlings E-Commerce Platform
 
-A modern, responsive e-commerce website for MINZAGRIC, a global nursery specializing in premium grafted fruit seedlings. Built with Next.js 16, React 19, and TypeScript.
+A modern, responsive e-commerce website for MYNZAGRIC, a global nursery specializing in premium grafted fruit seedlings. Built with Next.js 16, React 19, and TypeScript.
 
 ![Next.js](https://img.shields.io/badge/Next.js-16.0.0-black)
 ![React](https://img.shields.io/badge/React-19.2.0-blue)
@@ -82,7 +82,7 @@ A modern, responsive e-commerce website for MINZAGRIC, a global nursery speciali
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd MINZAGRIC
+   cd MYNZAGRIC
    ```
 
 2. **Install dependencies**
@@ -118,7 +118,7 @@ npm run start
 ## 📁 Project Structure
 
 ```
-MINZAGRIC/
+MYNZAGRIC/
 ├── app/                      # Next.js App Router
 │   ├── globals.css          # Global styles and Tailwind configuration
 │   ├── layout.tsx           # Root layout with metadata
@@ -294,7 +294,7 @@ This project is private and proprietary. All rights reserved.
 
 ## 📞 Contact
 
-**MINZAGRIC**
+**MYNZAGRIC**
 - **Website**: [Your Website URL]
 - **Email**: info@mynzagric.com
 - **Phone**: +254 700 000 000
