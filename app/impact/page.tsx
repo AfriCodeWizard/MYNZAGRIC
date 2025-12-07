@@ -44,7 +44,7 @@ export default function ImpactPage() {
     },
     {
       title: "Economic Empowerment",
-      description: "Farmers using MINZAGRIC seedlings and irrigation kits report average income increases of $2,400 annually. High-value fruit varieties like Hass avocados, grafted mangoes, and premium berries create sustainable revenue streams that transform subsistence farming into profitable agribusiness.",
+      description: "Farmers using MYNZAGRIC seedlings and irrigation kits report average income increases of $2,400 annually. High-value fruit varieties like Hass avocados, grafted mangoes, and premium berries create sustainable revenue streams that transform subsistence farming into profitable agribusiness.",
       icon: TrendingUp,
       gradient: "from-yellow-500 to-orange-600"
     },
@@ -221,7 +221,7 @@ export default function ImpactPage() {
               <span className="text-green-400">premium seedlings & irrigation?</span>
             </h2>
             <p className="text-gray-300 mb-8 text-lg">
-              Join 3,000,000+ satisfied clients growing high-value crops with MINZAGRIC's certified varieties and precision irrigation systems
+              Join 3,000,000+ satisfied clients growing high-value crops with MYNZAGRIC's certified varieties and precision irrigation systems
             </p>
             <Link
               href="/#contact"
