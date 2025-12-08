@@ -149,12 +149,19 @@ export default function Hero() {
         // Once video has data, prepare it
         const prepareWhenReady = () => {
           if (nextVid.readyState >= 2) {
-            // Video is ready - start playing it (invisible, behind current)
+            // Video is ready - prepare it but don't play yet (will play during transition)
+            // Reset to start position
             nextVid.currentTime = 0
-            nextVid.play().catch(() => {})
             // Keep it invisible until transition
             nextVid.style.opacity = "0"
             nextVid.style.zIndex = "2"
+            // Preload the first frame by seeking to 0 and waiting
+            if (nextVid.readyState >= 3) {
+              // Video has enough data, ensure first frame is ready
+              nextVid.addEventListener('seeked', () => {
+                // First frame is now ready
+              }, { once: true })
+            }
           }
         }
         
@@ -179,47 +186,89 @@ export default function Hero() {
 
       // Ensure next video is ready and playing
       const ensureReadyAndTransition = () => {
-        // Reset next video to start
-        nextVid.currentTime = 0
-        
-        // Start playing next video if not already
+        // Start playing next video first (if paused) to ensure it's ready
         if (nextVid.paused) {
           nextVid.play().catch(() => {})
         }
         
-        // Wait for video to be playable
-        const waitForPlayable = () => {
-          if (nextVid.readyState >= 2 && !nextVid.paused) {
-            // Both videos should be playing now - start smooth crossfade
-            // Ensure both are visible during transition to prevent dark gaps
-            currentVid.style.transition = "opacity 2.5s ease-in-out"
-            nextVid.style.transition = "opacity 2.5s ease-in-out"
-            
-            // Start crossfade - both visible during transition
-            currentVid.style.opacity = "0"
-            nextVid.style.opacity = "1"
-            
-            // Update state after transition
-            setTimeout(() => {
-              setCurrentVideoIndex(nextIdx)
-              currentVid.pause()
-              currentVid.style.opacity = "1"
-              // Reset playback rate for first video
-              if (currentVideoIndex === 0) {
-                currentVid.playbackRate = 1.0
+        // Reset next video to start - this triggers seeking
+        // Do this after play() to ensure video is in playing state
+        const wasAtStart = nextVid.currentTime === 0
+        nextVid.currentTime = 0
+        
+        // CRITICAL: Wait for video to finish seeking and have a visible frame
+        // This prevents the dark blink by ensuring frame is ready before showing
+        const waitForFrameReady = () => {
+          // Check if video has enough data, is not seeking, and is playing
+          if (nextVid.readyState >= 3 && !nextVid.seeking && !nextVid.paused) {
+            // Use requestVideoFrameCallback if available for frame-perfect timing
+            if ('requestVideoFrameCallback' in nextVid) {
+              (nextVid as any).requestVideoFrameCallback(() => {
+                startCrossfade()
+              })
+            } else {
+              // Fallback: Use a small delay to ensure frame is rendered
+              // Also check if video actually has a frame by checking videoWidth
+              if (nextVid.videoWidth > 0) {
+                startCrossfade()
+              } else {
+                setTimeout(() => {
+                  startCrossfade()
+                }, 100)
               }
-              // Prepare the next video for the next transition
-              prepareNextVideo(nextIdx)
-            }, 2500)
+            }
           } else {
-            setTimeout(waitForPlayable, 50)
+            // Still seeking or not ready - wait a bit more
+            setTimeout(waitForFrameReady, 50)
           }
         }
         
-        if (nextVid.readyState >= 2) {
-          waitForPlayable()
+        const startCrossfade = () => {
+          // Both videos should be playing now with frames ready - start smooth crossfade
+          // Ensure both are visible during transition to prevent dark gaps
+          currentVid.style.transition = "opacity 2.5s ease-in-out"
+          nextVid.style.transition = "opacity 2.5s ease-in-out"
+          
+          // Start crossfade - both visible during transition
+          currentVid.style.opacity = "0"
+          nextVid.style.opacity = "1"
+          
+          // Update state after transition
+          setTimeout(() => {
+            setCurrentVideoIndex(nextIdx)
+            currentVid.pause()
+            currentVid.style.opacity = "1"
+            // Reset playback rate for first video
+            if (currentVideoIndex === 0) {
+              currentVid.playbackRate = 1.0
+            }
+            // Prepare the next video for the next transition
+            prepareNextVideo(nextIdx)
+          }, 2500)
+        }
+        
+        // Wait for seeked event to ensure frame is ready after currentTime reset
+        const handleSeeked = () => {
+          // Video finished seeking - now wait for frame to be ready
+          waitForFrameReady()
+        }
+        
+        // If video was already at position 0 and not seeking, it might not fire seeked event
+        if (wasAtStart && !nextVid.seeking) {
+          // Already at start, just wait for frame
+          waitForFrameReady()
         } else {
-          nextVid.addEventListener('canplay', waitForPlayable, { once: true })
+          // Wait for seeked event
+          nextVid.addEventListener('seeked', handleSeeked, { once: true })
+          // Also set a timeout fallback in case seeked doesn't fire
+          setTimeout(() => {
+            if (nextVid.seeking) {
+              // Still seeking, wait for seeked
+            } else {
+              // Not seeking anymore, check if ready
+              waitForFrameReady()
+            }
+          }, 200)
         }
       }
       
