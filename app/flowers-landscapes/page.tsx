@@ -153,23 +153,30 @@ Thank you!`
       <Navbar />
       
       {/* Hero Section with Flower Theme */}
-      <section className="relative h-[85vh] min-h-[700px] overflow-hidden">
-        {/* Background Image with Overlay */}
-        <div className="absolute inset-0">
+      <section className="relative min-h-screen w-full overflow-hidden">
+        {/* Background Image with Full Coverage */}
+        <div className="absolute inset-0 w-full h-full" style={{ zIndex: 0, backgroundColor: "#000000" }}>
           <Image
             src="https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?w=1920&q=80&auto=format&fit=crop"
-            alt="Beautiful flower garden landscape"
+            alt="Beautiful dream landscape garden with flowers"
             fill
             className="object-cover"
             priority
             sizes="100vw"
           />
-          <div className="absolute inset-0 bg-gradient-to-br from-purple-900/80 via-pink-800/70 to-green-900/80" />
-          <div className="absolute inset-0 bg-[#0e0e0e]/40" />
         </div>
 
+        {/* Dark Overlay - Radial gradient: lighter center, darker edges - matching main hero */}
+        <div 
+          className="absolute inset-0 pointer-events-none" 
+          style={{
+            background: 'radial-gradient(circle at center, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.85) 100%)',
+            zIndex: 1
+          }}
+        />
+
         {/* Content */}
-        <div className="relative z-10 h-full flex items-center justify-center px-4 sm:px-6 lg:px-8">
+        <div className="relative z-10 h-full min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 mb-6 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/20">
               <Sparkles className="w-5 h-5 text-yellow-300" />
