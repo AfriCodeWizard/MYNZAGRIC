@@ -16,41 +16,41 @@ export default function ImpactPage() {
       color: "text-green-400"
     },
     {
-      number: "3,000,000+",
-      label: "Satisfied clients served globally",
-      icon: Users,
-      color: "text-blue-400"
-    },
-    {
-      number: "$2,400",
-      label: "Average annual income increase per farmer",
+      number: "30+",
+      label: "Years of production per tree",
       icon: TrendingUp,
       color: "text-yellow-400"
     },
     {
-      number: "47,000+",
-      label: "Acres of farmland transformed",
+      number: "50-70%",
+      label: "Water savings with drip irrigation",
       icon: Droplet,
       color: "text-cyan-400"
+    },
+    {
+      number: "3x",
+      label: "Higher yields with our solutions",
+      icon: Leaf,
+      color: "text-green-400"
     }
   ]
 
   const impactCategories = [
     {
-      title: "Agricultural Transformation",
-      description: "Delivering certified grafted seedlings and precision irrigation systems that enable year-round production. Our premium varieties increase crop yields by 3-5x while reducing water usage by up to 60% through efficient drip irrigation technology.",
+      title: "Environmental Impact",
+      description: "One mature mango or avocado tree removes 20-22 kg of CO2 per year, contributing significantly to carbon sequestration. We supply disease-resistant seedlings which ensures minimal use of chemicals by over 50% reduction, hence reducing chemical runoff to rivers and lakes. Our orchards boost biodiversity by attracting birds, bees, and beneficial insects, creating thriving ecosystems. Through climate-smart irrigation solutions, we achieve adaptation, mitigation, and profitability with 50-70% less water usage than traditional methods, enabling year-round production of high-value fruits and increasing yields 3 times higher.",
       icon: Leaf,
       gradient: "from-green-600 to-emerald-700"
     },
     {
-      title: "Economic Empowerment",
-      description: "Farmers using MYNZAGRIC seedlings and irrigation kits report average income increases of $2,400 annually. High-value fruit varieties like Hass avocados, grafted mangoes, and premium berries create sustainable revenue streams that transform subsistence farming into profitable agribusiness.",
+      title: "Economic Impact",
+      description: "Most of our fruit seedlings produce for over 30+ years, guaranteeing farmers steady, reliable, and long-lasting income for decades. This long-term production capability transforms farming from seasonal income to sustainable wealth generation. High-value fruit varieties like Hass avocados, grafted mangoes, and premium berries create sustainable revenue streams that transform subsistence farming into profitable agribusiness, providing financial security and economic stability for farming families.",
       icon: TrendingUp,
       gradient: "from-yellow-500 to-orange-600"
     },
     {
-      title: "Global Reach & Scale",
-      description: "Serving 3,000,000+ satisfied clients across 12 countries with premium agricultural solutions. Our network of certified growers and distribution partners ensures quality seedlings and irrigation systems reach farmers when and where they need them, creating lasting impact at scale.",
+      title: "Social Impact",
+      description: "We don't just grow fruit trees. We grow stronger families, educated children, and empowered communities. Farmers are now able to pay school fees for their children through fruit supply businesses, ensuring access to quality education. Young people who used to migrate to towns are now switching back to village farms for employment and investments into fruit farming, reversing rural-urban migration. Farmers now eat fruits with lots of nutrients courtesy of our seedlings, improving family nutrition and health. Table banking and saving groups amongst farmers have all emerged from fruit farming businesses, fostering financial inclusion and community development.",
       icon: Users,
       gradient: "from-blue-500 to-indigo-600"
     }
@@ -221,7 +221,7 @@ export default function ImpactPage() {
               <span className="text-green-400">premium seedlings & irrigation?</span>
             </h2>
             <p className="text-gray-300 mb-8 text-lg">
-              Join 3,000,000+ satisfied clients growing high-value crops with MYNZAGRIC's certified varieties and precision irrigation systems
+              Join clients worldwide growing high-value crops with MYNZAGRIC's certified varieties and precision irrigation systems
             </p>
             <Link
               href="/#contact"
