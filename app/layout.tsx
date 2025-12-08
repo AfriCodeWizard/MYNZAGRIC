@@ -32,10 +32,11 @@ const satisfy = Satisfy({
 })
 
 export const metadata: Metadata = {
-  title: "MYNZAGRIC - Premium Fruit Seedlings Global",
+  title: "Mynzagric - Premium Seedlings",
   description:
     "High-quality grafted fruit seedlings worldwide. Hass avocados, mangoes, citrus, and tropical fruits.",
   generator: "v0.app",
+  manifest: "/site.webmanifest",
   icons: {
     icon: [
       { url: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
@@ -45,7 +46,6 @@ export const metadata: Metadata = {
     apple: [
       { url: "/apple-touch-icon.png", type: "image/png", sizes: "180x180" },
     ],
-    manifest: "/site.webmanifest",
   },
 }
 
