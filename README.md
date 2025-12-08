@@ -296,7 +296,7 @@ This project is private and proprietary. All rights reserved.
 
 **MYNZAGRIC**
 - **Website**: [Your Website URL]
-- **Email**: info@mynzagric.com
+- **Email**: mynzagric@gmail.com
 - **Phone**: +254 700 000 000
 - **Location**: Global Operations
 

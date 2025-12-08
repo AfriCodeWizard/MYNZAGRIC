@@ -449,7 +449,7 @@ Thank you!`
               WhatsApp Us
             </a>
             <a
-              href="mailto:info@mynzagric.com"
+              href="mailto:mynzagric@gmail.com"
               className="px-8 py-4 bg-white/10 backdrop-blur-md text-white font-bold rounded-lg border border-white/20 hover:bg-white/20 transition-all duration-300 flex items-center gap-2"
             >
               <Mail className="w-5 h-5" />

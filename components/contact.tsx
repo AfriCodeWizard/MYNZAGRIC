@@ -151,7 +151,7 @@ export default function Contact() {
                   </div>
                   <div className="flex items-center text-white text-sm sm:text-base">
                     <Mail className="w-4 h-4 sm:w-5 sm:h-5 mr-3 sm:mr-4 text-green-400 flex-shrink-0" />
-                    <span>info@mynzagric.com</span>
+                    <span>mynzagric@gmail.com</span>
                   </div>
                   <div className="flex items-center text-white text-sm sm:text-base">
                     <MapPin className="w-4 h-4 sm:w-5 sm:h-5 mr-3 sm:mr-4 text-green-400 flex-shrink-0" />
@@ -172,7 +172,7 @@ export default function Contact() {
                   </div>
                   <div className="flex items-center text-white text-sm">
                     <Mail className="w-5 h-5 mr-3 text-green-400 flex-shrink-0" />
-                    <span>info@mynzagric.com</span>
+                    <span>mynzagric@gmail.com</span>
                   </div>
                   <div className="flex items-center text-white text-sm">
                     <MapPin className="w-5 h-5 mr-3 text-green-400 flex-shrink-0" />

@@ -103,8 +103,8 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="mailto:info@mynzagric.com" className="hover:text-white transition">
-                  info@mynzagric.com
+                <a href="mailto:mynzagric@gmail.com" className="hover:text-white transition">
+                  mynzagric@gmail.com
                 </a>
               </li>
               <li>Global Operations</li>
