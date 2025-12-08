@@ -197,6 +197,18 @@ html {
   }
 }
 
+/* Slide in from top animation for value pack card */
+@keyframes slideInFromTop {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 /* Hide scrollbar for category cards */
 .scrollbar-hide {
   -ms-overflow-style: none;

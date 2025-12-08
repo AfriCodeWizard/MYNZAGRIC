@@ -199,14 +199,18 @@ export default function Hero() {
     }
   }, [currentVideoIndex])
 
-  // Value pack cycling effect - every 5 seconds
+  // Value pack cycling effect - every 5 seconds with slide animation
   useEffect(() => {
     const packInterval = setInterval(() => {
       setIsTransitioning(true)
+      // Wait for slide out animation to complete, then update index and slide in
       setTimeout(() => {
         setCurrentPackIndex((prev) => (prev + 1) % valuePacks.length)
-        setIsTransitioning(false)
-      }, 300) // Half of transition duration for smooth fade
+        // Small delay before starting slide in
+        setTimeout(() => {
+          setIsTransitioning(false)
+        }, 50)
+      }, 600) // Match transition duration
     }, 5000) // Change every 5 seconds
 
     return () => clearInterval(packInterval)
@@ -356,35 +360,77 @@ export default function Hero() {
                 </Link>
               </div>
               
-              {/* Cycling Content with smooth transition */}
-              <div className="relative min-h-[80px] sm:min-h-[100px]">
+              {/* Cycling Content with slide animation - fixed height container */}
+              <div className="relative h-[100px] sm:h-[120px] md:h-[140px] overflow-hidden">
+                {/* Current content - slides down and out */}
                 <div
-                  key={currentPackIndex}
-                  className={`transition-all ease-in-out ${
-                    isTransitioning ? 'opacity-0 translate-y-2' : 'opacity-100 translate-y-0'
+                  key={`current-${currentPackIndex}`}
+                  className={`absolute inset-0 transition-all ease-in-out ${
+                    isTransitioning 
+                      ? 'opacity-0 translate-y-full' 
+                      : 'opacity-100 translate-y-0'
                   }`}
                   style={{
                     transitionDuration: '600ms',
+                    transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
+                  }}
+                >
+                  {/* Title - truncated if too long */}
+                  <h3 className="font-bold text-base sm:text-lg md:text-xl mb-1.5 sm:mb-2 line-clamp-1">
+                    {valuePacks[currentPackIndex].name}
+                  </h3>
+                  
+                  {/* Dynamic Description - fixed height with overflow */}
+                  <div className="space-y-1 sm:space-y-1.5">
+                    <p className="text-xs sm:text-sm text-gray-200 leading-tight line-clamp-1">
+                      <span className="text-green-300 font-semibold">{valuePacks[currentPackIndex].quantity} seedlings</span> • <span className="line-clamp-1 inline-block max-w-[140px] sm:max-w-[200px] truncate">{valuePacks[currentPackIndex].fruit}</span>
+                    </p>
+                    <p className="text-xs sm:text-sm text-gray-300 leading-tight line-clamp-1">
+                      {valuePacks[currentPackIndex].varieties.length <= 2 
+                        ? valuePacks[currentPackIndex].varieties.join(", ")
+                        : `${valuePacks[currentPackIndex].varieties.slice(0, 2).join(", ")} +more`}
+                    </p>
+                    <p className="text-xs sm:text-sm text-green-300 font-semibold mt-1 line-clamp-1">
+                      KES {valuePacks[currentPackIndex].price.toLocaleString()} • {valuePacks[currentPackIndex].maturity}
+                    </p>
+                    <p className="text-[10px] sm:text-xs text-gray-400 mt-1.5 italic line-clamp-1">
+                      + <strong className="text-green-300">drip irrigation kits</strong> included
+                    </p>
+                  </div>
+                </div>
+                {/* Next content - slides in from top */}
+                <div
+                  key={`next-${(currentPackIndex + 1) % valuePacks.length}`}
+                  className={`absolute inset-0 transition-all ease-out ${
+                    isTransitioning 
+                      ? 'opacity-100 translate-y-0' 
+                      : 'opacity-0 -translate-y-full'
+                  }`}
+                  style={{
+                    transitionDuration: '600ms',
+                    transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
+                    transitionDelay: isTransitioning ? '0ms' : '0ms',
                   }}
                 >
                   {/* Title */}
-                  <h3 className="font-bold text-base sm:text-lg md:text-xl mb-1.5 sm:mb-2">
-                    {valuePacks[currentPackIndex].name}
+                  <h3 className="font-bold text-base sm:text-lg md:text-xl mb-1.5 sm:mb-2 line-clamp-1">
+                    {valuePacks[(currentPackIndex + 1) % valuePacks.length].name}
                   </h3>
                   
                   {/* Dynamic Description */}
                   <div className="space-y-1 sm:space-y-1.5">
-                    <p className="text-xs sm:text-sm text-gray-200 leading-relaxed">
-                      <span className="text-green-300 font-semibold">{valuePacks[currentPackIndex].quantity} seedlings</span> • {valuePacks[currentPackIndex].fruit}
+                    <p className="text-xs sm:text-sm text-gray-200 leading-tight line-clamp-1">
+                      <span className="text-green-300 font-semibold">{valuePacks[(currentPackIndex + 1) % valuePacks.length].quantity} seedlings</span> • <span className="line-clamp-1 inline-block max-w-[140px] sm:max-w-[200px] truncate">{valuePacks[(currentPackIndex + 1) % valuePacks.length].fruit}</span>
                     </p>
-                    <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
-                      {valuePacks[currentPackIndex].varieties.slice(0, 2).join(", ")}
-                      {valuePacks[currentPackIndex].varieties.length > 2 && " +more"}
+                    <p className="text-xs sm:text-sm text-gray-300 leading-tight line-clamp-1">
+                      {valuePacks[(currentPackIndex + 1) % valuePacks.length].varieties.length <= 2 
+                        ? valuePacks[(currentPackIndex + 1) % valuePacks.length].varieties.join(", ")
+                        : `${valuePacks[(currentPackIndex + 1) % valuePacks.length].varieties.slice(0, 2).join(", ")} +more`}
                     </p>
-                    <p className="text-xs sm:text-sm text-green-300 font-semibold mt-1">
-                      KES {valuePacks[currentPackIndex].price.toLocaleString()} • {valuePacks[currentPackIndex].maturity}
+                    <p className="text-xs sm:text-sm text-green-300 font-semibold mt-1 line-clamp-1">
+                      KES {valuePacks[(currentPackIndex + 1) % valuePacks.length].price.toLocaleString()} • {valuePacks[(currentPackIndex + 1) % valuePacks.length].maturity}
                     </p>
-                    <p className="text-[10px] sm:text-xs text-gray-400 mt-1.5 italic">
+                    <p className="text-[10px] sm:text-xs text-gray-400 mt-1.5 italic line-clamp-1">
                       + <strong className="text-green-300">drip irrigation kits</strong> included
                     </p>
                   </div>
