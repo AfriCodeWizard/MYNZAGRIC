@@ -4,6 +4,46 @@ import { ArrowUpRight } from "lucide-react"
 import Link from "next/link"
 import Navbar from "@/components/navbar" // Import the Navbar component
 
+// Value pack data for cycling animation
+const valuePacks = [
+  {
+    id: "mango",
+    name: "Mango Value Pack",
+    fruit: "Grafted Mango Seedlings",
+    quantity: 150,
+    price: 115000,
+    varieties: ["Tommy", "Van Dyke", "Apple", "Kent", "Ngowe"],
+    maturity: "3 years"
+  },
+  {
+    id: "avocado",
+    name: "Avocado Value Pack",
+    fruit: "Grafted Avocado Seedlings",
+    quantity: 150,
+    price: 115000,
+    varieties: ["Fuerte", "Hass"],
+    maturity: "3 years"
+  },
+  {
+    id: "pixie-orange",
+    name: "Pixie Orange Value Pack",
+    fruit: "Grafted Pixie Orange Seedlings",
+    quantity: 256,
+    price: 175000,
+    varieties: ["Pixie Orange"],
+    maturity: "3 years"
+  },
+  {
+    id: "citrus",
+    name: "Citrus Value Pack",
+    fruit: "Grafted Citrus Seedlings",
+    quantity: 256,
+    price: 145000,
+    varieties: ["Tangerine", "Washington Oranges", "Valencia Oranges", "Green Lemon", "Eureka Lemon", "Lisbon Lemon"],
+    maturity: "3 years"
+  }
+]
+
 // Video array with all three videos - defined outside component to avoid recreation
 const videos = [
   {
@@ -27,6 +67,8 @@ const videos = [
 export default function Hero() {
   const [count, setCount] = useState(0)
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0)
+  const [currentPackIndex, setCurrentPackIndex] = useState(0)
+  const [isTransitioning, setIsTransitioning] = useState(false)
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([])
 
   useEffect(() => {
@@ -114,6 +156,19 @@ export default function Hero() {
     return () => clearInterval(rotationInterval)
   }, [currentVideoIndex])
 
+  // Value pack cycling effect - every 5 seconds
+  useEffect(() => {
+    const packInterval = setInterval(() => {
+      setIsTransitioning(true)
+      setTimeout(() => {
+        setCurrentPackIndex((prev) => (prev + 1) % valuePacks.length)
+        setIsTransitioning(false)
+      }, 300) // Half of transition duration for smooth fade
+    }, 5000) // Change every 5 seconds
+
+    return () => clearInterval(packInterval)
+  }, [])
+
   return (
     <section className="relative min-h-screen w-full overflow-hidden">
       {/* Video Background - Multiple videos with smooth transitions */}
@@ -157,7 +212,7 @@ export default function Hero() {
         <Navbar /> {/* Using the new Navbar component with animated hover effects */}
         {/* Main Content */}
         <main className="mt-8 sm:mt-6 md:mt-12 flex-grow flex flex-col justify-center">
-          <div className="max-w-3xl relative z-10">
+          <div className="max-w-3xl relative z-10 mb-16 sm:mb-8 md:mb-0">
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-white leading-[1.15] sm:leading-tight mb-3 sm:mb-4 md:mb-5">
               <span className="font-light text-green-400">GROW WITH</span>
               <br />
@@ -205,7 +260,7 @@ export default function Hero() {
             />
             <div className="text-left h-full flex flex-col justify-center">
               <p className="text-lg sm:text-2xl font-bold whitespace-nowrap min-w-[140px] sm:min-w-[170px]">{count.toLocaleString()}+</p>
-              <p className="text-[10px] sm:text-sm leading-tight mt-0.5 sm:mt-1">Satisfied Clients</p>
+              <p className="text-[10px] sm:text-sm leading-tight mt-0.5 sm:mt-1">Customers Served</p>
               <div className="flex -space-x-1.5 sm:-space-x-2 mt-1.5 sm:mt-4 justify-start">
                 <div className="w-4 h-4 sm:w-8 sm:h-8 rounded-full border-2 border-white/50 bg-transparent" />
                 <div className="w-4 h-4 sm:w-8 sm:h-8 rounded-full border-2 border-white/50 bg-transparent" />
@@ -230,6 +285,19 @@ export default function Hero() {
                 mixBlendMode: 'multiply',
               }}
             />
+            {/* Animated shimmer effect */}
+            <div 
+              className="absolute inset-0 pointer-events-none overflow-hidden"
+              style={{ borderRadius: '12px' }}
+            >
+              <div 
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+                style={{
+                  transform: 'translateX(-100%)',
+                  animation: 'shimmer 3s infinite',
+                }}
+              />
+            </div>
             <div className="relative z-10 flex flex-col h-full">
               {/* Top Right Button */}
               <div className="flex items-start justify-end mb-2 sm:mb-3">
@@ -238,13 +306,40 @@ export default function Hero() {
                 </Link>
               </div>
               
-              {/* Title */}
-              <h3 className="font-bold text-base sm:text-lg md:text-xl mb-1.5 sm:mb-2">Fruitopia Value Pack</h3>
-              
-              {/* Description */}
-              <p className="text-xs sm:text-sm md:text-base text-gray-300 leading-relaxed flex-grow">
-                Complete farming solutions with seedlings + <strong className="text-green-300">drip irrigation kits</strong>. Start your 1-acre farm today!
-              </p>
+              {/* Cycling Content with smooth transition */}
+              <div className="relative min-h-[80px] sm:min-h-[100px]">
+                <div
+                  key={currentPackIndex}
+                  className={`transition-all ease-in-out ${
+                    isTransitioning ? 'opacity-0 translate-y-2' : 'opacity-100 translate-y-0'
+                  }`}
+                  style={{
+                    transitionDuration: '600ms',
+                  }}
+                >
+                  {/* Title */}
+                  <h3 className="font-bold text-base sm:text-lg md:text-xl mb-1.5 sm:mb-2">
+                    {valuePacks[currentPackIndex].name}
+                  </h3>
+                  
+                  {/* Dynamic Description */}
+                  <div className="space-y-1 sm:space-y-1.5">
+                    <p className="text-xs sm:text-sm text-gray-200 leading-relaxed">
+                      <span className="text-green-300 font-semibold">{valuePacks[currentPackIndex].quantity} seedlings</span> • {valuePacks[currentPackIndex].fruit}
+                    </p>
+                    <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
+                      {valuePacks[currentPackIndex].varieties.slice(0, 2).join(", ")}
+                      {valuePacks[currentPackIndex].varieties.length > 2 && " +more"}
+                    </p>
+                    <p className="text-xs sm:text-sm text-green-300 font-semibold mt-1">
+                      KES {valuePacks[currentPackIndex].price.toLocaleString()} • {valuePacks[currentPackIndex].maturity}
+                    </p>
+                    <p className="text-[10px] sm:text-xs text-gray-400 mt-1.5 italic">
+                      + <strong className="text-green-300">drip irrigation kits</strong> included
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
