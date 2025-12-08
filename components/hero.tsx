@@ -94,25 +94,38 @@ export default function Hero() {
 
   // Video rotation effect with smooth transitions
   useEffect(() => {
-    // Initialize all videos
-    videos.forEach((_, index) => {
-      const videoElement = videoRefs.current[index]
-      if (videoElement) {
-        videoElement.load()
-        // Handle video loading errors
-        videoElement.addEventListener('error', (e) => {
-          console.error(`Video ${videos[index].id} failed to load:`, e)
-        })
-        // Set playback rates
-        if (index === 0) {
-          // First video (orange/pexels) - normal speed initially
-          videoElement.playbackRate = 1.0
-        } else if (index === 2) {
-          // Mango video - increase speed
-          videoElement.playbackRate = 1.5
+    // Preload and initialize all videos for optimal performance
+    const initializeVideos = () => {
+      videos.forEach((_, index) => {
+        const videoElement = videoRefs.current[index]
+        if (videoElement) {
+          // Optimize loading
+          videoElement.preload = "auto"
+          videoElement.load()
+          
+          // Set playback rates
+          if (index === 0) {
+            videoElement.playbackRate = 1.0
+          } else if (index === 2) {
+            videoElement.playbackRate = 1.5
+          }
+          
+          // Handle video loading errors
+          videoElement.addEventListener('error', (e) => {
+            console.error(`Video ${videos[index].id} failed to load:`, e)
+          })
+          
+          // Ensure video is ready by preloading
+          if (videoElement.readyState < 2) {
+            videoElement.addEventListener('loadeddata', () => {
+              // Video has loaded enough data
+            }, { once: true })
+          }
         }
-      }
-    })
+      })
+    }
+    
+    initializeVideos()
 
     // Play current video
     const currentVideo = videoRefs.current[currentVideoIndex]
@@ -122,80 +135,122 @@ export default function Hero() {
       })
     }
 
-    // Handle first video slowdown at 5 seconds (only when first video is playing)
-    let firstVideoSlowdownTimer: NodeJS.Timeout | null = null
-    if (currentVideoIndex === 0) {
-      const firstVideo = videoRefs.current[0]
-      if (firstVideo) {
-        firstVideoSlowdownTimer = setTimeout(() => {
-          if (firstVideo && currentVideoIndex === 0) {
-            firstVideo.playbackRate = 0.5 // Slow down at 5 seconds
-          }
-        }, 5000)
-      }
-    }
-
-    // Rotate videos every 10 seconds with smooth crossfade transitions
-    const rotationInterval = setInterval(() => {
-      const currentVideo = videoRefs.current[currentVideoIndex]
-      const nextIndex = (currentVideoIndex + 1) % videos.length
-      const nextVideo = videoRefs.current[nextIndex]
-
-      if (currentVideo && nextVideo) {
-        // Reset next video
-        nextVideo.currentTime = 0
+    // Preload and start next video early to prevent dark gaps
+    const prepareNextVideo = (currentIdx: number) => {
+      const nextIdx = (currentIdx + 1) % videos.length
+      const nextVid = videoRefs.current[nextIdx]
+      
+      if (nextVid) {
+        // Ensure video is loaded
+        if (nextVid.readyState < 2) {
+          nextVid.load()
+        }
         
-        // Ensure next video is loaded and ready
-        const startTransition = () => {
-          // Start playing next video in background (invisible)
-          nextVideo.play().catch(() => {})
-          
-          // Wait for video to have enough data to play smoothly
-          const checkReady = () => {
-            if (nextVideo.readyState >= 3) { // HAVE_FUTURE_DATA - enough data to play
-              // Both videos are now playing - start crossfade
-              // Current video fades out, next video fades in simultaneously
-              currentVideo.style.transition = "opacity 2.5s ease-in-out"
-              nextVideo.style.transition = "opacity 2.5s ease-in-out"
-              
-              // Start the crossfade
-              currentVideo.style.opacity = "0"
-              nextVideo.style.opacity = "1"
-              
-              // Update state after transition completes
-              setTimeout(() => {
-                setCurrentVideoIndex(nextIndex)
-                // Clean up previous video
-                currentVideo.pause()
-                currentVideo.style.opacity = "1" // Reset for next cycle
-                // Reset playback rate for first video if it was slowed
-                if (currentVideoIndex === 0) {
-                  currentVideo.playbackRate = 1.0
-                }
-              }, 2500)
-            } else {
-              // Wait a bit more if not ready
-              setTimeout(checkReady, 100)
-            }
-          }
-          
-          // Start checking when video can play
-          if (nextVideo.readyState >= 2) {
-            checkReady()
-          } else {
-            nextVideo.addEventListener('canplay', checkReady, { once: true })
+        // Once video has data, prepare it
+        const prepareWhenReady = () => {
+          if (nextVid.readyState >= 2) {
+            // Video is ready - start playing it (invisible, behind current)
+            nextVid.currentTime = 0
+            nextVid.play().catch(() => {})
+            // Keep it invisible until transition
+            nextVid.style.opacity = "0"
+            nextVid.style.zIndex = "2"
           }
         }
         
-        startTransition()
+        if (nextVid.readyState >= 2) {
+          prepareWhenReady()
+        } else {
+          nextVid.addEventListener('loadeddata', prepareWhenReady, { once: true })
+        }
       }
-    }, 10000) // Change video every 10 seconds
+    }
+    
+    // Prepare next video immediately and keep it ready
+    prepareNextVideo(currentVideoIndex)
+
+    // Transition function - ensures smooth crossfade without dark gaps
+    const transitionToNext = () => {
+      const currentVid = videoRefs.current[currentVideoIndex]
+      const nextIdx = (currentVideoIndex + 1) % videos.length
+      const nextVid = videoRefs.current[nextIdx]
+
+      if (!currentVid || !nextVid) return
+
+      // Ensure next video is ready and playing
+      const ensureReadyAndTransition = () => {
+        // Reset next video to start
+        nextVid.currentTime = 0
+        
+        // Start playing next video if not already
+        if (nextVid.paused) {
+          nextVid.play().catch(() => {})
+        }
+        
+        // Wait for video to be playable
+        const waitForPlayable = () => {
+          if (nextVid.readyState >= 2 && !nextVid.paused) {
+            // Both videos should be playing now - start smooth crossfade
+            // Ensure both are visible during transition to prevent dark gaps
+            currentVid.style.transition = "opacity 2.5s ease-in-out"
+            nextVid.style.transition = "opacity 2.5s ease-in-out"
+            
+            // Start crossfade - both visible during transition
+            currentVid.style.opacity = "0"
+            nextVid.style.opacity = "1"
+            
+            // Update state after transition
+            setTimeout(() => {
+              setCurrentVideoIndex(nextIdx)
+              currentVid.pause()
+              currentVid.style.opacity = "1"
+              // Reset playback rate for first video
+              if (currentVideoIndex === 0) {
+                currentVid.playbackRate = 1.0
+              }
+              // Prepare the next video for the next transition
+              prepareNextVideo(nextIdx)
+            }, 2500)
+          } else {
+            setTimeout(waitForPlayable, 50)
+          }
+        }
+        
+        if (nextVid.readyState >= 2) {
+          waitForPlayable()
+        } else {
+          nextVid.addEventListener('canplay', waitForPlayable, { once: true })
+        }
+      }
+      
+      ensureReadyAndTransition()
+    }
+
+    // First video transitions at 5 seconds, others at 10 seconds
+    let transitionTimer: NodeJS.Timeout | null = null
+    
+    if (currentVideoIndex === 0) {
+      // First video: transition at 5 seconds
+      transitionTimer = setTimeout(() => {
+        transitionToNext()
+      }, 5000)
+    } else {
+      // Other videos: transition at 10 seconds
+      transitionTimer = setTimeout(() => {
+        transitionToNext()
+      }, 10000)
+    }
+
+    // Set up interval for subsequent transitions (all at 10 seconds after first)
+    const rotationInterval = setInterval(() => {
+      transitionToNext()
+    }, 10000)
 
     return () => {
-      clearInterval(rotationInterval)
-      if (firstVideoSlowdownTimer) {
-        clearTimeout(firstVideoSlowdownTimer)
+      if (transitionTimer) {
+        clearTimeout(transitionTimer)
       }
+      clearInterval(rotationInterval)
     }
   }, [currentVideoIndex])
 
@@ -223,8 +278,6 @@ export default function Hero() {
         {videos.map((video, index) => {
           const isCurrent = index === currentVideoIndex
           const isNext = index === (currentVideoIndex + 1) % videos.length
-          // Show current video and next video (for smooth crossfade)
-          const shouldShow = isCurrent || isNext
           
           return (
             <video
@@ -241,8 +294,9 @@ export default function Hero() {
               style={{
                 opacity: isCurrent ? 1 : isNext ? 0 : 0,
                 transition: "opacity 2.5s ease-in-out",
-                zIndex: isCurrent ? 2 : isNext ? 1 : 0,
+                zIndex: isCurrent ? 3 : isNext ? 2 : 1,
                 pointerEvents: 'none',
+                willChange: 'opacity',
               }}
             >
               <source src={video.src} type={video.src.endsWith('.webm') ? 'video/webm' : 'video/mp4'} />
