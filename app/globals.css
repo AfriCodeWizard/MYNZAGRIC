@@ -605,3 +605,26 @@ html {
   }
 }
 
+/* Hero Video Wrapper and Transitions */
+.hero-video-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.hero-video {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 1s ease;
+  background-color: #000000;
+  pointer-events: none;
+}
+
+.hero-video.active {
+  opacity: 1;
+}
+

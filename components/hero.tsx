@@ -174,6 +174,8 @@ export default function Hero() {
           currentVideo.play().catch((error) => {
             console.error('Video play failed:', error)
           })
+          // Add active class to initial video
+          currentVideo.classList.add('active')
         } else {
           currentVideo.addEventListener('loadeddata', playWhenReady, { once: true })
         }
@@ -195,8 +197,8 @@ export default function Hero() {
           if (nextVid.currentTime > 5 || nextVid.ended) {
             nextVid.currentTime = 0
           }
-          // Keep it invisible until transition
-          nextVid.style.opacity = "0"
+          // Keep it invisible until transition - remove active class
+          nextVid.classList.remove('active')
           nextVid.style.zIndex = "2"
           
           // Start playing in background (muted) so it's ready for transition
@@ -315,24 +317,19 @@ export default function Hero() {
           // Both videos should be playing now with frames ready - start smooth crossfade
           // CRITICAL: Ensure both are visible during transition to prevent dark gaps
           // Make next video visible BEFORE starting fade to prevent any blink
-          nextVid.style.opacity = "1"
+          nextVid.classList.add('active')
           nextVid.style.zIndex = "3"
           currentVid.style.zIndex = "2"
           
-          // Apply transitions
-          currentVid.style.transition = "opacity 2.5s ease-in-out"
-          nextVid.style.transition = "opacity 2.5s ease-in-out"
+          // Start crossfade - remove active class from current, CSS handles transition
+          currentVid.classList.remove('active')
           
-          // Start crossfade - both visible during transition
-          currentVid.style.opacity = "0"
-          
-          // Update state after transition completes
+          // Update state after transition completes (1s CSS transition)
           setTimeout(() => {
             setCurrentVideoIndex(nextIdx)
             // CRITICAL: Don't pause old video immediately - keep it as backup
             // Only pause after ensuring new video is fully visible
             // Reset its properties for next time
-            currentVid.style.opacity = "1"
             currentVid.style.zIndex = "1"
             // Pause old video after a small delay to ensure smooth transition
             setTimeout(() => {
@@ -344,7 +341,7 @@ export default function Hero() {
             }
             // Prepare the next video for the next transition
             prepareNextVideo(nextIdx)
-          }, 2500)
+          }, 1000) // Match CSS transition duration (1s)
         }
         
         // Wait for seeked event if we reset currentTime
@@ -420,7 +417,7 @@ export default function Hero() {
   return (
     <section className="relative min-h-screen w-full overflow-hidden">
       {/* Video Background - Multiple videos with smooth transitions */}
-      <div className="absolute inset-0 w-full h-full" style={{ zIndex: 0, backgroundColor: "#000000" }}>
+      <div className="hero-video-wrapper absolute inset-0" style={{ zIndex: 0, backgroundColor: "#000000" }}>
         {videos.map((video, index) => {
           const isCurrent = index === currentVideoIndex
           const isNext = index === (currentVideoIndex + 1) % videos.length
@@ -436,16 +433,11 @@ export default function Hero() {
               loop
               playsInline
               preload="auto"
-              className="absolute inset-0 w-full h-full object-cover"
+              className={`hero-video ${isCurrent ? 'active' : ''}`}
               style={{
-                opacity: isCurrent ? 1 : isNext ? 0 : 0,
-                transition: "opacity 2.5s ease-in-out",
                 zIndex: isCurrent ? 3 : isNext ? 2 : 1,
                 pointerEvents: 'none',
                 willChange: 'opacity',
-                backgroundColor: "#000000", // Black background to prevent gray flashes
-                // Ensure videos don't show black during loading
-                objectFit: 'cover',
               }}
             >
               <source src={video.src} type={video.src.endsWith('.webm') ? 'video/webm' : video.src.endsWith('.mp4') ? 'video/mp4' : 'video/mp4'} />
