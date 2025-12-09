@@ -70,6 +70,7 @@ export default function Hero() {
   const [currentPackIndex, setCurrentPackIndex] = useState(0)
   const [isTransitioning, setIsTransitioning] = useState(false)
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([])
+  const videosReadyRef = useRef(false)
 
   useEffect(() => {
     const target = 3000000
@@ -94,14 +95,12 @@ export default function Hero() {
 
   // Video rotation effect with smooth transitions
   useEffect(() => {
-    // CRITICAL: Preload and start ALL videos playing immediately
-    // Never pause videos - only control visibility with opacity
-    // This eliminates black blinks completely
+    // CRITICAL: Comprehensive video initialization to eliminate ALL dark blinks
     const initializeAllVideos = () => {
       videos.forEach((_, index) => {
         const videoElement = videoRefs.current[index]
         if (videoElement) {
-          // Aggressive preloading
+          // Aggressive preloading - ensure full buffer
           videoElement.preload = "auto"
           videoElement.load()
           
@@ -117,43 +116,77 @@ export default function Hero() {
             console.error(`Video ${videos[index].id} failed to load:`, e)
           })
           
-          // Handle loop - restart immediately to prevent black frame
-          videoElement.addEventListener('ended', () => {
-            // Reset to start and continue playing immediately
-            videoElement.currentTime = 0
-            // Ensure it keeps playing
-            if (videoElement.paused) {
-              videoElement.play().catch(() => {})
-            }
-          })
-          
-          // Also handle timeupdate to detect when video is near end for smooth loop
+          // CRITICAL: Handle loop seamlessly - prevent black frames on restart
+          // Use 'timeupdate' to detect near-end and prepare seamless loop
+          let isLooping = false
           videoElement.addEventListener('timeupdate', () => {
-            // If video is very close to end and looping, prepare for seamless restart
-            if (videoElement.duration > 0 && videoElement.currentTime >= videoElement.duration - 0.1) {
-              // Video is about to end - ensure it will loop smoothly
-              if (videoElement.ended) {
-                videoElement.currentTime = 0
+            if (videoElement.duration > 0) {
+              const timeRemaining = videoElement.duration - videoElement.currentTime
+              // When very close to end (within 0.2s), prepare for seamless loop
+              if (timeRemaining < 0.2 && timeRemaining > 0 && !isLooping) {
+                isLooping = true
+                // Use requestAnimationFrame to reset at the perfect moment
+                requestAnimationFrame(() => {
+                  if (videoElement.readyState >= 2 && !videoElement.seeking) {
+                    videoElement.currentTime = 0
+                    isLooping = false
+                  }
+                })
               }
             }
           })
           
-          // Handle buffering - keep playing
+          // Fallback for ended event - should rarely fire due to timeupdate handling
+          videoElement.addEventListener('ended', () => {
+            if (!videoElement.seeking) {
+              videoElement.currentTime = 0
+              if (videoElement.paused) {
+                videoElement.play().catch(() => {})
+              }
+            }
+          })
+          
+          // CRITICAL: Handle buffering - keep video playing and visible
           videoElement.addEventListener('waiting', () => {
-            // Video is buffering - ensure it keeps playing
+            // During buffering, ensure video stays playing
+            if (videoElement.paused) {
+              videoElement.play().catch(() => {})
+            }
+            // If this is the current video, ensure it stays visible
+            if (index === currentVideoIndex) {
+              videoElement.classList.add('active')
+            }
+          })
+          
+          // Handle seeking - ensure video stays visible during seek
+          videoElement.addEventListener('seeking', () => {
+            // If this is the current or next video, ensure it stays visible
+            const isCurrent = index === currentVideoIndex
+            const isNext = index === (currentVideoIndex + 1) % videos.length
+            if (isCurrent || isNext) {
+              videoElement.classList.add('active')
+            }
+          })
+          
+          // Handle seeked - frame is ready after seeking
+          videoElement.addEventListener('seeked', () => {
+            // Ensure video is playing after seek
             if (videoElement.paused) {
               videoElement.play().catch(() => {})
             }
           })
           
-          // Start playing ALL videos immediately (muted, in background)
-          // This ensures they're all ready when needed
+          // Start playing ALL videos immediately when ready
+          // Wait for canplaythrough to ensure full buffer
           const startPlaying = () => {
-            if (videoElement.readyState >= 2) {
+            // Only start if video has enough data to play through
+            if (videoElement.readyState >= 3) {
               videoElement.play().catch(() => {
                 // Retry if play fails
                 setTimeout(() => {
-                  videoElement.play().catch(() => {})
+                  if (videoElement.readyState >= 2) {
+                    videoElement.play().catch(() => {})
+                  }
                 }, 100)
               })
               
@@ -163,16 +196,33 @@ export default function Hero() {
               } else {
                 videoElement.classList.remove('active')
               }
-            } else {
-              videoElement.addEventListener('loadeddata', startPlaying, { once: true })
+              
+              // Check if all videos are ready
+              const allReady = videos.every((_, idx) => {
+                const vid = videoRefs.current[idx]
+                return vid && vid.readyState >= 3 && !vid.paused
+              })
+              
+              if (allReady) {
+                videosReadyRef.current = true
+              }
             }
           }
           
-          if (videoElement.readyState >= 2) {
+          // Wait for canplaythrough (fully buffered) before starting
+          if (videoElement.readyState >= 3) {
             startPlaying()
           } else {
             videoElement.addEventListener('canplaythrough', startPlaying, { once: true })
-            videoElement.addEventListener('loadeddata', startPlaying, { once: true })
+            // Fallback: start with loadeddata if canplaythrough takes too long
+            const fallbackTimer = setTimeout(() => {
+              if (videoElement.readyState >= 2) {
+                startPlaying()
+              }
+            }, 2000)
+            videoElement.addEventListener('canplaythrough', () => {
+              clearTimeout(fallbackTimer)
+            }, { once: true })
           }
         }
       })
@@ -180,30 +230,39 @@ export default function Hero() {
     
     initializeAllVideos()
 
-    // Ensure next video is ready (all videos should already be playing)
+    // Ensure next video is ready and fully buffered
     const ensureNextVideoReady = (currentIdx: number) => {
       const nextIdx = (currentIdx + 1) % videos.length
       const nextVid = videoRefs.current[nextIdx]
       
       if (nextVid) {
-        // Ensure video is playing (should already be from initialization)
+        // CRITICAL: Ensure video is playing and has enough buffer
         if (nextVid.paused) {
           nextVid.play().catch(() => {
-            // Retry if needed
-            setTimeout(() => nextVid.play().catch(() => {}), 100)
+            setTimeout(() => {
+              if (nextVid.readyState >= 2) {
+                nextVid.play().catch(() => {})
+              }
+            }, 100)
           })
         }
         
-        // Reset to start only if video has ended or is very far from start
-        // Avoid seeking if possible to prevent black frames
+        // CRITICAL: Avoid seeking unless absolutely necessary
+        // Only reset if video has ended (loop completed)
+        // Never seek during active playback to prevent black frames
         if (nextVid.ended) {
-          nextVid.currentTime = 0
-        } else if (nextVid.currentTime > 8) {
-          // Only reset if far from start to avoid frequent seeking
-          nextVid.currentTime = 0
+          // Wait for video to not be seeking before resetting
+          if (!nextVid.seeking) {
+            nextVid.currentTime = 0
+          } else {
+            nextVid.addEventListener('seeked', () => {
+              nextVid.currentTime = 0
+            }, { once: true })
+          }
         }
+        // Don't reset if video is playing smoothly - let it continue
         
-        // Set z-index for proper layering
+        // Set z-index for proper layering (next video should be above others but below current)
         nextVid.style.zIndex = "2"
       }
     }
@@ -218,42 +277,66 @@ export default function Hero() {
       const nextVid = videoRefs.current[nextIdx]
 
       if (!currentVid || !nextVid) return
+      
+      // CRITICAL: Don't transition if videos aren't ready
+      // This prevents dark blinks during initial load
+      if (!videosReadyRef.current && nextVid.readyState < 3) {
+        // Wait a bit and retry
+        setTimeout(() => {
+          transitionToNext()
+        }, 100)
+        return
+      }
 
-      // CRITICAL: Ensure next video is playing and has a visible frame
-      // All videos should already be playing, but double-check
+      // CRITICAL: Ensure next video is playing and fully ready
       if (nextVid.paused) {
         nextVid.play().catch(() => {
-          setTimeout(() => nextVid.play().catch(() => {}), 100)
+          setTimeout(() => {
+            if (nextVid.readyState >= 2) {
+              nextVid.play().catch(() => {})
+            }
+          }, 100)
         })
       }
 
-      // Wait for next video to have a visible frame ready
+      // CRITICAL: Wait for next video to have a fully rendered, visible frame
+      // This is the key to eliminating dark blinks
       const waitForFrameReady = () => {
-        // Check if video is truly ready with a visible frame
+        // Comprehensive readiness check
         const isReady = 
-          nextVid.readyState >= 2 && // Has at least some data
-          !nextVid.seeking && // Not currently seeking (CRITICAL!)
+          nextVid.readyState >= 3 && // Has enough data to play through (fully buffered)
+          !nextVid.seeking && // Not currently seeking (CRITICAL - seeking shows black!)
           !nextVid.paused && // Is playing
           nextVid.videoWidth > 0 && // Has valid video dimensions
-          nextVid.videoHeight > 0
+          nextVid.videoHeight > 0 &&
+          nextVid.currentTime >= 0 // Has a valid time position
         
         if (isReady) {
           // Use requestVideoFrameCallback for frame-perfect timing if available
           if ('requestVideoFrameCallback' in nextVid) {
             (nextVid as any).requestVideoFrameCallback(() => {
-              startCrossfade()
+              // Double-check still ready after frame callback
+              if (nextVid.readyState >= 3 && !nextVid.seeking && nextVid.videoWidth > 0) {
+                startCrossfade()
+              } else {
+                // Wait a bit more if something changed
+                setTimeout(waitForFrameReady, 50)
+              }
             })
           } else {
-            // Fallback: Use double requestAnimationFrame for guaranteed frame render
+            // Fallback: Use triple requestAnimationFrame for guaranteed frame render
+            // This ensures the frame is fully painted before showing
             requestAnimationFrame(() => {
               requestAnimationFrame(() => {
-                // Double-check video is still ready
-                if (nextVid.readyState >= 2 && !nextVid.seeking && nextVid.videoWidth > 0) {
-                  startCrossfade()
-                } else {
-                  // Wait a bit more if still not ready
-                  setTimeout(waitForFrameReady, 50)
-                }
+                requestAnimationFrame(() => {
+                  // Triple-check video is still ready
+                  if (nextVid.readyState >= 3 && !nextVid.seeking && nextVid.videoWidth > 0) {
+                    startCrossfade()
+                  } else {
+                    // Wait a bit more if still not ready
+                    setTimeout(waitForFrameReady, 50)
+                  }
+                })
               })
             })
           }
@@ -264,16 +347,18 @@ export default function Hero() {
       }
       
       const startCrossfade = () => {
-        // CRITICAL: Make next video visible FIRST, then fade out current
-        // This ensures there's always a visible video
+        // CRITICAL: Ensure both videos are visible during transition
+        // Set z-index first for proper layering
         nextVid.style.zIndex = "3"
         currentVid.style.zIndex = "2"
         
-        // Add active class to next video FIRST (makes it visible)
+        // CRITICAL: Make next video visible FIRST before fading current
+        // This ensures there's ALWAYS a visible video (no dark gap)
         nextVid.classList.add('active')
         
-        // Small delay to ensure next video is visible, then fade out current
+        // Use requestAnimationFrame to ensure next video is painted before fading current
         requestAnimationFrame(() => {
+          // Now safe to fade out current video
           currentVid.classList.remove('active')
         })
         
@@ -282,7 +367,7 @@ export default function Hero() {
           setCurrentVideoIndex(nextIdx)
           // Reset z-index for old video
           currentVid.style.zIndex = "1"
-          // NEVER pause videos - keep them all playing
+          // NEVER pause videos - keep them all playing continuously
           // This ensures smooth transitions without black blinks
           
           // Prepare the next video for the next transition
@@ -290,15 +375,22 @@ export default function Hero() {
         }, 2500) // Match CSS transition duration (2.5s)
       }
       
-      // Check if we need to wait for seeking to complete
+      // CRITICAL: Wait for seeking to complete if video is seeking
+      // Never start transition while video is seeking (causes black frames)
       if (nextVid.seeking) {
-        nextVid.addEventListener('seeked', waitForFrameReady, { once: true })
-        // Fallback timeout
+        nextVid.addEventListener('seeked', () => {
+          // After seeking completes, wait for frame to be ready
+          waitForFrameReady()
+        }, { once: true })
+        // Fallback timeout in case seeked doesn't fire
         setTimeout(() => {
           if (!nextVid.seeking) {
             waitForFrameReady()
+          } else {
+            // Still seeking, wait for seeked event
+            nextVid.addEventListener('seeked', waitForFrameReady, { once: true })
           }
-        }, 300)
+        }, 500)
       } else {
         // Not seeking, check if ready
         waitForFrameReady()
@@ -382,12 +474,14 @@ export default function Hero() {
         })}
       </div>
 
-      {/* Dark Overlay - Radial gradient: lighter center, darker edges - EXACT SAME for all videos */}
+      {/* Dark Overlay - Radial gradient: lighter center, darker edges - ALWAYS VISIBLE */}
+      {/* CRITICAL: Overlay must be above videos but below content to prevent dark blinks */}
       <div 
         className="absolute inset-0 pointer-events-none" 
         style={{
           background: 'radial-gradient(circle at center, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.85) 100%)',
-          zIndex: 1
+          zIndex: 4, // Above all videos (z-index 1-3) but below content (z-index 10)
+          backgroundColor: 'transparent', // Ensure overlay is always visible
         }}
       />
 

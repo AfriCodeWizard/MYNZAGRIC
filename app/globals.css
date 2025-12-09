@@ -611,7 +611,7 @@ html {
   width: 100%;
   height: 100vh;
   overflow: hidden;
-  background-color: #000000;
+  background-color: #000000; /* Fallback black background - always visible */
 }
 
 .hero-video {
@@ -621,9 +621,14 @@ html {
   object-fit: cover;
   opacity: 0;
   transition: opacity 2.5s ease-in-out;
-  background-color: #000000;
+  background-color: #000000; /* Black background during loading/seeking */
   pointer-events: none;
   will-change: opacity;
+  /* Ensure video doesn't show black during transitions */
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0); /* Force hardware acceleration */
+  -webkit-transform: translateZ(0);
 }
 
 .hero-video.active {
