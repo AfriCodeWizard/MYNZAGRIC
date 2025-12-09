@@ -51,14 +51,14 @@ const videos = [
     id: "19570489"
   },
   {
-    // Grapes close-up - Local WEBM file
-    src: "/grapes.webm",
+    // Grapes close-up - Local MP4 file (lighter, faster loading)
+    src: "/Grapes.mp4",
     id: "grapes",
     attribution: "Video by Joshua Malic"
   },
   {
-    // Mangoes on tree - Local WEBM file
-    src: "/mango.webm",
+    // Mangoes on tree - Local MP4 file (lighter, faster loading)
+    src: "/Mango.mp4",
     id: "mango",
     attribution: "Video by ROMAN ODINTSOV"
   }
@@ -99,7 +99,7 @@ export default function Hero() {
       videos.forEach((_, index) => {
         const videoElement = videoRefs.current[index]
         if (videoElement) {
-          // Optimize loading
+          // Optimize loading - aggressive preloading
           videoElement.preload = "auto"
           videoElement.load()
           
@@ -115,10 +115,21 @@ export default function Hero() {
             console.error(`Video ${videos[index].id} failed to load:`, e)
           })
           
-          // Ensure video is ready by preloading
-          if (videoElement.readyState < 2) {
+          // Preload aggressively - wait for canplaythrough for smooth playback
+          const ensureReady = () => {
+            if (videoElement.readyState >= 3) {
+              // Video can play through - fully buffered
+              // Seek to start to ensure first frame is ready
+              videoElement.currentTime = 0
+            }
+          }
+          
+          if (videoElement.readyState >= 3) {
+            ensureReady()
+          } else {
+            videoElement.addEventListener('canplaythrough', ensureReady, { once: true })
             videoElement.addEventListener('loadeddata', () => {
-              // Video has loaded enough data
+              // At least some data loaded
             }, { once: true })
           }
         }
@@ -127,48 +138,61 @@ export default function Hero() {
     
     initializeVideos()
 
-    // Play current video
+    // Play current video immediately
     const currentVideo = videoRefs.current[currentVideoIndex]
     if (currentVideo) {
-      currentVideo.play().catch((error) => {
-        console.error('Video play failed:', error)
-      })
+      // Ensure video is ready before playing
+      const playWhenReady = () => {
+        if (currentVideo.readyState >= 2) {
+          currentVideo.play().catch((error) => {
+            console.error('Video play failed:', error)
+          })
+        } else {
+          currentVideo.addEventListener('loadeddata', playWhenReady, { once: true })
+        }
+      }
+      playWhenReady()
     }
 
-    // Preload and start next video early to prevent dark gaps
+    // Preload and prepare next video early to prevent dark gaps
     const prepareNextVideo = (currentIdx: number) => {
       const nextIdx = (currentIdx + 1) % videos.length
       const nextVid = videoRefs.current[nextIdx]
       
       if (nextVid) {
-        // Ensure video is loaded
-        if (nextVid.readyState < 2) {
-          nextVid.load()
-        }
-        
-        // Once video has data, prepare it
+        // Ensure video is loaded and ready
         const prepareWhenReady = () => {
-          if (nextVid.readyState >= 2) {
-            // Video is ready - prepare it but don't play yet (will play during transition)
-            // Reset to start position
-            nextVid.currentTime = 0
-            // Keep it invisible until transition
-            nextVid.style.opacity = "0"
-            nextVid.style.zIndex = "2"
-            // Preload the first frame by seeking to 0 and waiting
-            if (nextVid.readyState >= 3) {
-              // Video has enough data, ensure first frame is ready
-              nextVid.addEventListener('seeked', () => {
-                // First frame is now ready
-              }, { once: true })
-            }
+          // Video has enough data - prepare it
+          // Reset to start position and ensure first frame is ready
+          nextVid.currentTime = 0
+          // Keep it invisible until transition
+          nextVid.style.opacity = "0"
+          nextVid.style.zIndex = "2"
+          
+          // Start playing in background (muted) so it's ready for transition
+          if (nextVid.paused) {
+            nextVid.play().catch(() => {
+              // Ignore play errors - will retry during transition
+            })
           }
         }
         
-        if (nextVid.readyState >= 2) {
+        // Wait for video to be ready to play through
+        if (nextVid.readyState >= 3) {
           prepareWhenReady()
+        } else if (nextVid.readyState >= 2) {
+          // Has some data, but wait for more
+          nextVid.addEventListener('canplaythrough', prepareWhenReady, { once: true })
+          prepareWhenReady() // Also prepare immediately if possible
         } else {
-          nextVid.addEventListener('loadeddata', prepareWhenReady, { once: true })
+          // Not loaded yet, wait for initial data
+          nextVid.addEventListener('loadeddata', () => {
+            if (nextVid.readyState >= 2) {
+              prepareWhenReady()
+            } else {
+              nextVid.addEventListener('canplaythrough', prepareWhenReady, { once: true })
+            }
+          }, { once: true })
         }
       }
     }
@@ -184,60 +208,77 @@ export default function Hero() {
 
       if (!currentVid || !nextVid) return
 
-      // Ensure next video is ready and playing
+      // Ensure next video is ready and playing before transition
       const ensureReadyAndTransition = () => {
-        // Start playing next video first (if paused) to ensure it's ready
+        // Ensure next video is playing (should already be from prepareNextVideo)
         if (nextVid.paused) {
           nextVid.play().catch(() => {})
         }
         
-        // Reset next video to start - this triggers seeking
-        // Do this after play() to ensure video is in playing state
-        const wasAtStart = nextVid.currentTime === 0
-        nextVid.currentTime = 0
+        // Reset next video to start if needed
+        const wasAtStart = nextVid.currentTime === 0 || nextVid.currentTime < 0.1
         
-        // CRITICAL: Wait for video to finish seeking and have a visible frame
-        // This prevents the dark blink by ensuring frame is ready before showing
+        if (!wasAtStart) {
+          nextVid.currentTime = 0
+        }
+        
+        // CRITICAL: Wait for video to have a visible frame ready
+        // This prevents the dark blink by ensuring frame is rendered before showing
         const waitForFrameReady = () => {
-          // Check if video has enough data, is not seeking, and is playing
-          if (nextVid.readyState >= 3 && !nextVid.seeking && !nextVid.paused) {
-            // Use requestVideoFrameCallback if available for frame-perfect timing
+          // Check multiple conditions to ensure video is truly ready
+          const isReady = 
+            nextVid.readyState >= 3 && // Has enough data to play through
+            !nextVid.seeking && // Not currently seeking
+            !nextVid.paused && // Is playing
+            nextVid.videoWidth > 0 && // Has valid video dimensions
+            nextVid.videoHeight > 0
+            
+          if (isReady) {
+            // Use requestVideoFrameCallback for frame-perfect timing if available
             if ('requestVideoFrameCallback' in nextVid) {
               (nextVid as any).requestVideoFrameCallback(() => {
                 startCrossfade()
               })
             } else {
-              // Fallback: Use a small delay to ensure frame is rendered
-              // Also check if video actually has a frame by checking videoWidth
-              if (nextVid.videoWidth > 0) {
-                startCrossfade()
-              } else {
-                setTimeout(() => {
+              // Fallback: Use requestAnimationFrame to ensure frame is rendered
+              requestAnimationFrame(() => {
+                // Double-check video is still ready
+                if (nextVid.readyState >= 3 && !nextVid.seeking && nextVid.videoWidth > 0) {
                   startCrossfade()
-                }, 100)
-              }
+                } else {
+                  // Wait a bit more
+                  setTimeout(waitForFrameReady, 50)
+                }
+              })
             }
           } else {
-            // Still seeking or not ready - wait a bit more
+            // Still not ready - wait a bit more
             setTimeout(waitForFrameReady, 50)
           }
         }
         
         const startCrossfade = () => {
           // Both videos should be playing now with frames ready - start smooth crossfade
-          // Ensure both are visible during transition to prevent dark gaps
+          // CRITICAL: Ensure both are visible during transition to prevent dark gaps
+          // Make next video visible BEFORE starting fade to prevent any blink
+          nextVid.style.opacity = "1"
+          nextVid.style.zIndex = "3"
+          currentVid.style.zIndex = "2"
+          
+          // Apply transitions
           currentVid.style.transition = "opacity 2.5s ease-in-out"
           nextVid.style.transition = "opacity 2.5s ease-in-out"
           
           // Start crossfade - both visible during transition
           currentVid.style.opacity = "0"
-          nextVid.style.opacity = "1"
           
-          // Update state after transition
+          // Update state after transition completes
           setTimeout(() => {
             setCurrentVideoIndex(nextIdx)
+            // Pause old video and reset its opacity for next time
             currentVid.pause()
             currentVid.style.opacity = "1"
+            currentVid.style.zIndex = "1"
             // Reset playback rate for first video
             if (currentVideoIndex === 0) {
               currentVid.playbackRate = 1.0
@@ -247,28 +288,22 @@ export default function Hero() {
           }, 2500)
         }
         
-        // Wait for seeked event to ensure frame is ready after currentTime reset
-        const handleSeeked = () => {
-          // Video finished seeking - now wait for frame to be ready
-          waitForFrameReady()
-        }
-        
-        // If video was already at position 0 and not seeking, it might not fire seeked event
-        if (wasAtStart && !nextVid.seeking) {
-          // Already at start, just wait for frame
-          waitForFrameReady()
-        } else {
-          // Wait for seeked event
+        // Wait for seeked event if we reset currentTime
+        if (!wasAtStart) {
+          const handleSeeked = () => {
+            // Video finished seeking - now wait for frame to be ready
+            waitForFrameReady()
+          }
           nextVid.addEventListener('seeked', handleSeeked, { once: true })
-          // Also set a timeout fallback in case seeked doesn't fire
+          // Fallback timeout
           setTimeout(() => {
-            if (nextVid.seeking) {
-              // Still seeking, wait for seeked
-            } else {
-              // Not seeking anymore, check if ready
+            if (!nextVid.seeking) {
               waitForFrameReady()
             }
-          }, 200)
+          }, 300)
+        } else {
+          // Already at start, just wait for frame
+          waitForFrameReady()
         }
       }
       
@@ -346,15 +381,16 @@ export default function Hero() {
                 zIndex: isCurrent ? 3 : isNext ? 2 : 1,
                 pointerEvents: 'none',
                 willChange: 'opacity',
+                backgroundColor: "#000000", // Black background to prevent gray flashes
               }}
             >
-              <source src={video.src} type={video.src.endsWith('.webm') ? 'video/webm' : 'video/mp4'} />
+              <source src={video.src} type={video.src.endsWith('.webm') ? 'video/webm' : video.src.endsWith('.mp4') ? 'video/mp4' : 'video/mp4'} />
             </video>
           )
         })}
       </div>
 
-      {/* Dark Overlay - Radial gradient: lighter center, darker edges - matching irri-hub.com */}
+      {/* Dark Overlay - Radial gradient: lighter center, darker edges - EXACT SAME for all videos */}
       <div 
         className="absolute inset-0 pointer-events-none" 
         style={{
