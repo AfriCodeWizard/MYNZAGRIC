@@ -34,7 +34,7 @@ const valuePacks: ValuePack[] = [
     quantity: 150,
     price: 115000,
     varieties: ["Fuerte", "Hass"],
-    image: "https://images.pexels.com/photos/5853834/pexels-photo-5853834.jpeg?auto=compress&cs=tinysrgb&w=800",
+    image: "https://images.pexels.com/photos/12940878/pexels-photo-12940878.jpeg?auto=compress&cs=tinysrgb&w=800",
     maturity: "3 years"
   },
   {
@@ -44,7 +44,7 @@ const valuePacks: ValuePack[] = [
     quantity: 256,
     price: 175000,
     varieties: ["Pixie Orange"],
-    image: "https://images.pexels.com/photos/1435775/pexels-photo-1435775.jpeg?auto=compress&cs=tinysrgb&w=800",
+    image: "https://images.pexels.com/photos/4502957/pexels-photo-4502957.jpeg?auto=compress&cs=tinysrgb&w=800",
     maturity: "3 years"
   },
   {

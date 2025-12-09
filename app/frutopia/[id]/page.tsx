@@ -44,9 +44,9 @@ const valuePacksData: Record<string, ValuePackDetail> = {
     quantity: 150,
     price: 115000,
     varieties: ["Fuerte", "Hass"],
-    image: "https://images.pexels.com/photos/5853834/pexels-photo-5853834.jpeg?auto=compress&cs=tinysrgb&w=800",
+    image: "https://images.pexels.com/photos/12940878/pexels-photo-12940878.jpeg?auto=compress&cs=tinysrgb&w=800",
     irrigationImage: "https://images.pexels.com/photos/4061662/pexels-photo-4061662.jpeg?auto=compress&cs=tinysrgb&w=800",
-    fruitImage: "https://images.pexels.com/photos/5853834/pexels-photo-5853834.jpeg?auto=compress&cs=tinysrgb&w=800",
+    fruitImage: "https://images.pexels.com/photos/12940878/pexels-photo-12940878.jpeg?auto=compress&cs=tinysrgb&w=800",
     seedlingImage: "https://images.pexels.com/photos/1072824/pexels-photo-1072824.jpeg?auto=compress&cs=tinysrgb&w=800",
     maturity: "3 years",
     description: "Start your avocado farming journey with our complete Avocado Value Pack. This 1-acre solution includes 150 premium grafted avocado seedlings (Fuerte or Hass varieties) and a state-of-the-art button dripper irrigation system. Perfect for commercial farming with professional support included."
@@ -58,9 +58,9 @@ const valuePacksData: Record<string, ValuePackDetail> = {
     quantity: 256,
     price: 175000,
     varieties: ["Pixie Orange"],
-    image: "https://images.pexels.com/photos/1435775/pexels-photo-1435775.jpeg?auto=compress&cs=tinysrgb&w=800",
+    image: "https://images.pexels.com/photos/4502957/pexels-photo-4502957.jpeg?auto=compress&cs=tinysrgb&w=800",
     irrigationImage: "https://images.pexels.com/photos/4061662/pexels-photo-4061662.jpeg?auto=compress&cs=tinysrgb&w=800",
-    fruitImage: "https://images.pexels.com/photos/1435775/pexels-photo-1435775.jpeg?auto=compress&cs=tinysrgb&w=800",
+    fruitImage: "https://images.pexels.com/photos/4502957/pexels-photo-4502957.jpeg?auto=compress&cs=tinysrgb&w=800",
     seedlingImage: "https://images.pexels.com/photos/1072824/pexels-photo-1072824.jpeg?auto=compress&cs=tinysrgb&w=800",
     maturity: "3 years",
     description: "The Pixie Orange Value Pack offers the highest density planting with 256 premium grafted Pixie Orange seedlings per acre. Combined with our precision button dripper irrigation system, this package ensures maximum productivity and efficient water usage for your citrus orchard."
