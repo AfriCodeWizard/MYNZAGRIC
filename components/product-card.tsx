@@ -501,49 +501,52 @@ export default function ProductCard({
         </div>
 
         {/* Price with decorative lines - CodePen exact measurements, slightly reduced */}
-        <div 
-          className="relative inline-block font-black"
-          style={{
-            fontSize: '1.8em',
-            fontWeight: 900,
-            display: 'block',
-            width: '100px',
-            margin: '10px auto 0',
-            position: 'relative',
-            fontFamily: 'var(--font-satisfy), cursive',
-            color: '#059669', // green-600 for website theme
-          }}
-        >
-          <span 
-            className="absolute"
+        {/* Hide price for flowers and trees - price to be communicated upon order request */}
+        {(seedling.category !== "flowers" && seedling.category !== "trees") && (
+          <div 
+            className="relative inline-block font-black"
             style={{
-              content: '',
-              height: '1px',
-              width: '50px',
+              fontSize: '1.8em',
+              fontWeight: 900,
               display: 'block',
-              position: 'absolute',
-              backgroundColor: '#ddd',
-              top: '18px',
-              left: '-50px',
+              width: '100px',
+              margin: '10px auto 0',
+              position: 'relative',
+              fontFamily: 'var(--font-satisfy), cursive',
+              color: '#059669', // green-600 for website theme
             }}
-          />
-          <span>
-            KES {seedling.price.toLocaleString()}
-          </span>
-          <span 
-            className="absolute"
-            style={{
-              content: '',
-              height: '1px',
-              width: '50px',
-              display: 'block',
-              position: 'absolute',
-              backgroundColor: '#ddd',
-              top: '18px',
-              right: '-50px',
-            }}
-          />
-        </div>
+          >
+            <span 
+              className="absolute"
+              style={{
+                content: '',
+                height: '1px',
+                width: '50px',
+                display: 'block',
+                position: 'absolute',
+                backgroundColor: '#ddd',
+                top: '18px',
+                left: '-50px',
+              }}
+            />
+            <span>
+              KES {seedling.price.toLocaleString()}
+            </span>
+            <span 
+              className="absolute"
+              style={{
+                content: '',
+                height: '1px',
+                width: '50px',
+                display: 'block',
+                position: 'absolute',
+                backgroundColor: '#ddd',
+                top: '18px',
+                right: '-50px',
+              }}
+            />
+          </div>
+        )}
 
         {/* Footer Section - CodePen exact measurements, reduced - pushed to bottom */}
         <div className="mt-auto">

@@ -47,7 +47,6 @@ export default function FlowersLandscapesPage() {
         "Seasonal flower arrangements",
         "Garden maintenance services"
       ],
-      price: "From KES 50,000",
       image: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=800&q=80&auto=format&fit=crop"
     },
     {
@@ -63,7 +62,6 @@ export default function FlowersLandscapesPage() {
         "Seasonal flower displays",
         "Sustainable landscape solutions"
       ],
-      price: "From KES 150,000",
       image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80&auto=format&fit=crop"
     },
     {
@@ -79,7 +77,6 @@ export default function FlowersLandscapesPage() {
         "Temporary landscape features",
         "Post-event cleanup"
       ],
-      price: "From KES 80,000",
       image: "https://images.unsplash.com/photo-1519167758481-83f29da2c1fe?w=800&q=80&auto=format&fit=crop"
     },
     {
@@ -95,7 +92,6 @@ export default function FlowersLandscapesPage() {
         "Seasonal replanting",
         "Garden health assessments"
       ],
-      price: "From KES 15,000/month",
       image: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&q=80&auto=format&fit=crop"
     }
   ]
@@ -138,7 +134,7 @@ ${service.description}
 ${service.features.map(f => `• ${f}`).join('\n')}
 
 *PRICING:*
-${service.price}
+Price to be communicated upon order request
 
 ─────────────────────────
 
@@ -178,10 +174,6 @@ Thank you!`
         {/* Content */}
         <div className="relative z-10 h-full min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 mb-6 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/20">
-              <Sparkles className="w-5 h-5 text-yellow-300" />
-              <span className="text-white/90 text-sm font-medium">Premium Flowers & Landscaping</span>
-            </div>
             <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-6 leading-tight">
               Bloom Your
               <br />
@@ -192,22 +184,6 @@ Thank you!`
             <p className="text-xl sm:text-2xl md:text-3xl text-gray-200 mt-6 max-w-4xl mx-auto font-light leading-relaxed">
               Premium flower seedlings & professional landscaping services to transform any space into a vibrant paradise
             </p>
-            <div className="flex flex-wrap items-center justify-center gap-4 mt-10">
-              <a
-                href="#products"
-                className="px-8 py-4 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center gap-2"
-              >
-                <Flower2 className="w-5 h-5" />
-                Browse Flowers
-              </a>
-              <a
-                href="#services"
-                className="px-8 py-4 bg-white/10 backdrop-blur-md text-white font-bold rounded-lg border border-white/20 hover:bg-white/20 transition-all duration-300 flex items-center gap-2"
-              >
-                <Trees className="w-5 h-5" />
-                View Services
-              </a>
-            </div>
           </div>
         </div>
 
@@ -361,8 +337,7 @@ Thank you!`
                       ))}
                     </div>
 
-                    <div className="flex items-center justify-between pt-6 border-t border-white/10">
-                      <span className="text-2xl font-bold text-green-400">{service.price}</span>
+                    <div className="flex items-center justify-end pt-6 border-t border-white/10">
                       <a
                         href={`https://wa.me/254713764658?text=${generateLandscapingMessage(service)}`}
                         target="_blank"
