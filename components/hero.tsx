@@ -116,33 +116,30 @@ export default function Hero() {
             console.error(`Video ${videos[index].id} failed to load:`, e)
           })
           
-          // CRITICAL: Handle loop seamlessly - prevent black frames on restart
-          // Use 'timeupdate' to detect near-end and prepare seamless loop
-          let isLooping = false
+          // CRITICAL: Let HTML5 loop attribute handle looping automatically
+          // Don't manually reset currentTime - this causes seeking which shows black frames
+          // The loop attribute will handle seamless looping without seeking
+          
+          // Monitor for any potential loop gaps and ensure video stays visible
           videoElement.addEventListener('timeupdate', () => {
+            // If video is near end and might loop, ensure it stays visible
             if (videoElement.duration > 0) {
               const timeRemaining = videoElement.duration - videoElement.currentTime
-              // When very close to end (within 0.2s), prepare for seamless loop
-              if (timeRemaining < 0.2 && timeRemaining > 0 && !isLooping) {
-                isLooping = true
-                // Use requestAnimationFrame to reset at the perfect moment
-                requestAnimationFrame(() => {
-                  if (videoElement.readyState >= 2 && !videoElement.seeking) {
-                    videoElement.currentTime = 0
-                    isLooping = false
-                  }
-                })
+              // Very close to end - ensure video stays visible during natural loop
+              if (timeRemaining < 0.1 && index === currentVideoIndex) {
+                videoElement.classList.add('active')
               }
             }
           })
           
-          // Fallback for ended event - should rarely fire due to timeupdate handling
+          // Only handle ended event as a safety net (shouldn't fire with loop attribute)
           videoElement.addEventListener('ended', () => {
-            if (!videoElement.seeking) {
-              videoElement.currentTime = 0
-              if (videoElement.paused) {
-                videoElement.play().catch(() => {})
-              }
+            // If loop attribute fails, ensure video keeps playing and stays visible
+            if (videoElement.paused) {
+              videoElement.play().catch(() => {})
+            }
+            if (index === currentVideoIndex) {
+              videoElement.classList.add('active')
             }
           })
           
@@ -247,20 +244,9 @@ export default function Hero() {
           })
         }
         
-        // CRITICAL: Avoid seeking unless absolutely necessary
-        // Only reset if video has ended (loop completed)
-        // Never seek during active playback to prevent black frames
-        if (nextVid.ended) {
-          // Wait for video to not be seeking before resetting
-          if (!nextVid.seeking) {
-            nextVid.currentTime = 0
-          } else {
-            nextVid.addEventListener('seeked', () => {
-              nextVid.currentTime = 0
-            }, { once: true })
-          }
-        }
-        // Don't reset if video is playing smoothly - let it continue
+        // CRITICAL: NEVER reset currentTime - this causes seeking which shows black frames
+        // Let the loop attribute handle looping automatically
+        // Only ensure video is playing - don't interfere with playback position
         
         // Set z-index for proper layering (next video should be above others but below current)
         nextVid.style.zIndex = "2"
@@ -352,14 +338,17 @@ export default function Hero() {
         nextVid.style.zIndex = "3"
         currentVid.style.zIndex = "2"
         
-        // CRITICAL: Make next video visible FIRST before fading current
+        // CRITICAL: Make next video visible FIRST and wait for it to be fully painted
         // This ensures there's ALWAYS a visible video (no dark gap)
         nextVid.classList.add('active')
         
-        // Use requestAnimationFrame to ensure next video is painted before fading current
+        // Use multiple requestAnimationFrames to ensure next video is fully painted
+        // before fading current - this prevents any dark blink
         requestAnimationFrame(() => {
-          // Now safe to fade out current video
-          currentVid.classList.remove('active')
+          requestAnimationFrame(() => {
+            // Now safe to fade out current video - next video is fully visible
+            currentVid.classList.remove('active')
+          })
         })
         
         // Update state after transition completes (2.5s CSS transition)
