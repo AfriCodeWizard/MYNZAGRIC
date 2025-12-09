@@ -445,7 +445,7 @@ export default function Hero() {
   return (
     <section className="relative min-h-screen w-full overflow-hidden">
       {/* Video Background - Multiple videos with smooth transitions */}
-      <div className="hero-video-wrapper absolute inset-0" style={{ zIndex: 0, backgroundColor: "#000000" }}>
+      <div className="hero-video-wrapper absolute inset-0" style={{ zIndex: 0 }}>
         {videos.map((video, index) => {
           const isCurrent = index === currentVideoIndex
           const isNext = index === (currentVideoIndex + 1) % videos.length
