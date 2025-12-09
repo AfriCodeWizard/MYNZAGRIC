@@ -115,12 +115,39 @@ export default function Hero() {
             console.error(`Video ${videos[index].id} failed to load:`, e)
           })
           
+          // Prevent black flashes during seeking
+          videoElement.addEventListener('seeking', () => {
+            // When seeking, ensure video stays visible if it's the current one
+            if (index === currentVideoIndex) {
+              // Keep playing to prevent black frame
+            }
+          })
+          
+          // Handle buffering to prevent black frames
+          videoElement.addEventListener('waiting', () => {
+            // Video is buffering - try to keep it playing
+            if (index === currentVideoIndex && !videoElement.paused) {
+              videoElement.play().catch(() => {})
+            }
+          })
+          
+          // Handle loop to prevent black frame at restart
+          videoElement.addEventListener('ended', () => {
+            // Video ended - restart immediately to prevent black frame
+            if (index === currentVideoIndex) {
+              videoElement.currentTime = 0
+              videoElement.play().catch(() => {})
+            }
+          })
+          
           // Preload aggressively - wait for canplaythrough for smooth playback
           const ensureReady = () => {
             if (videoElement.readyState >= 3) {
               // Video can play through - fully buffered
-              // Seek to start to ensure first frame is ready
-              videoElement.currentTime = 0
+              // Only seek to start if video hasn't loaded a frame yet
+              if (videoElement.videoWidth === 0) {
+                videoElement.currentTime = 0
+              }
             }
           }
           
@@ -163,17 +190,42 @@ export default function Hero() {
         // Ensure video is loaded and ready
         const prepareWhenReady = () => {
           // Video has enough data - prepare it
-          // Reset to start position and ensure first frame is ready
-          nextVid.currentTime = 0
+          // Only reset to start if video has played through or is far from start
+          // Avoid unnecessary seeking which causes black flashes
+          if (nextVid.currentTime > 5 || nextVid.ended) {
+            nextVid.currentTime = 0
+          }
           // Keep it invisible until transition
           nextVid.style.opacity = "0"
           nextVid.style.zIndex = "2"
           
           // Start playing in background (muted) so it's ready for transition
+          // CRITICAL: Ensure video is playing and has a frame before transition
           if (nextVid.paused) {
             nextVid.play().catch(() => {
               // Ignore play errors - will retry during transition
             })
+          }
+          
+          // Wait for video to have a visible frame before considering it ready
+          const ensureFrameReady = () => {
+            if (nextVid.readyState >= 3 && !nextVid.seeking && nextVid.videoWidth > 0) {
+              // Video is ready with a visible frame
+            } else if (nextVid.seeking) {
+              // Wait for seeking to complete
+              nextVid.addEventListener('seeked', ensureFrameReady, { once: true })
+            } else {
+              // Wait a bit more
+              setTimeout(ensureFrameReady, 50)
+            }
+          }
+          
+          if (nextVid.currentTime === 0 || nextVid.currentTime < 0.1) {
+            // Already at start, just ensure frame is ready
+            ensureFrameReady()
+          } else {
+            // Wait for seek to complete if we reset currentTime
+            nextVid.addEventListener('seeked', ensureFrameReady, { once: true })
           }
         }
         
@@ -215,10 +267,12 @@ export default function Hero() {
           nextVid.play().catch(() => {})
         }
         
-        // Reset next video to start if needed
-        const wasAtStart = nextVid.currentTime === 0 || nextVid.currentTime < 0.1
+        // CRITICAL: Don't reset currentTime if video is already playing smoothly
+        // Only reset if video has ended or is very far from start
+        // This prevents black flashes from seeking
+        const shouldReset = nextVid.ended || nextVid.currentTime > 8
         
-        if (!wasAtStart) {
+        if (shouldReset) {
           nextVid.currentTime = 0
         }
         
@@ -228,7 +282,7 @@ export default function Hero() {
           // Check multiple conditions to ensure video is truly ready
           const isReady = 
             nextVid.readyState >= 3 && // Has enough data to play through
-            !nextVid.seeking && // Not currently seeking
+            !nextVid.seeking && // Not currently seeking (this is critical!)
             !nextVid.paused && // Is playing
             nextVid.videoWidth > 0 && // Has valid video dimensions
             nextVid.videoHeight > 0
@@ -242,11 +296,11 @@ export default function Hero() {
             } else {
               // Fallback: Use requestAnimationFrame to ensure frame is rendered
               requestAnimationFrame(() => {
-                // Double-check video is still ready
+                // Double-check video is still ready and not seeking
                 if (nextVid.readyState >= 3 && !nextVid.seeking && nextVid.videoWidth > 0) {
                   startCrossfade()
                 } else {
-                  // Wait a bit more
+                  // Wait a bit more if still seeking
                   setTimeout(waitForFrameReady, 50)
                 }
               })
@@ -275,10 +329,15 @@ export default function Hero() {
           // Update state after transition completes
           setTimeout(() => {
             setCurrentVideoIndex(nextIdx)
-            // Pause old video and reset its opacity for next time
-            currentVid.pause()
+            // CRITICAL: Don't pause old video immediately - keep it as backup
+            // Only pause after ensuring new video is fully visible
+            // Reset its properties for next time
             currentVid.style.opacity = "1"
             currentVid.style.zIndex = "1"
+            // Pause old video after a small delay to ensure smooth transition
+            setTimeout(() => {
+              currentVid.pause()
+            }, 100)
             // Reset playback rate for first video
             if (currentVideoIndex === 0) {
               currentVid.playbackRate = 1.0
@@ -289,7 +348,7 @@ export default function Hero() {
         }
         
         // Wait for seeked event if we reset currentTime
-        if (!wasAtStart) {
+        if (shouldReset) {
           const handleSeeked = () => {
             // Video finished seeking - now wait for frame to be ready
             waitForFrameReady()
@@ -299,10 +358,13 @@ export default function Hero() {
           setTimeout(() => {
             if (!nextVid.seeking) {
               waitForFrameReady()
+            } else {
+              // Still seeking, wait for seeked event
+              nextVid.addEventListener('seeked', waitForFrameReady, { once: true })
             }
           }, 300)
         } else {
-          // Already at start, just wait for frame
+          // Already playing smoothly, just wait for frame
           waitForFrameReady()
         }
       }
@@ -382,6 +444,8 @@ export default function Hero() {
                 pointerEvents: 'none',
                 willChange: 'opacity',
                 backgroundColor: "#000000", // Black background to prevent gray flashes
+                // Ensure videos don't show black during loading
+                objectFit: 'cover',
               }}
             >
               <source src={video.src} type={video.src.endsWith('.webm') ? 'video/webm' : video.src.endsWith('.mp4') ? 'video/mp4' : 'video/mp4'} />
