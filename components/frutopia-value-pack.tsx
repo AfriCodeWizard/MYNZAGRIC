@@ -54,7 +54,7 @@ const valuePacks: ValuePack[] = [
     quantity: 256,
     price: 145000,
     varieties: ["Tangerine", "Washington Oranges", "Valencia Oranges", "Green Lemon", "Eureka Lemon", "Lisbon Lemon"],
-    image: "https://images.pexels.com/photos/1300972/pexels-photo-1300972.jpeg?auto=compress&cs=tinysrgb&w=800",
+    image: "https://images.pexels.com/photos/28758681/pexels-photo-28758681.jpeg?auto=compress&cs=tinysrgb&w=800",
     maturity: "3 years"
   }
 ]

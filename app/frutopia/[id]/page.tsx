@@ -72,9 +72,9 @@ const valuePacksData: Record<string, ValuePackDetail> = {
     quantity: 256,
     price: 145000,
     varieties: ["Tangerine", "Washington Oranges", "Valencia Oranges", "Green Lemon", "Eureka Lemon", "Lisbon Lemon"],
-    image: "https://images.pexels.com/photos/1300972/pexels-photo-1300972.jpeg?auto=compress&cs=tinysrgb&w=800",
+    image: "https://images.pexels.com/photos/28758681/pexels-photo-28758681.jpeg?auto=compress&cs=tinysrgb&w=800",
     irrigationImage: "https://images.pexels.com/photos/4061662/pexels-photo-4061662.jpeg?auto=compress&cs=tinysrgb&w=800",
-    fruitImage: "https://images.pexels.com/photos/1300972/pexels-photo-1300972.jpeg?auto=compress&cs=tinysrgb&w=800",
+    fruitImage: "https://images.pexels.com/photos/28758681/pexels-photo-28758681.jpeg?auto=compress&cs=tinysrgb&w=800",
     seedlingImage: "https://images.pexels.com/photos/1072824/pexels-photo-1072824.jpeg?auto=compress&cs=tinysrgb&w=800",
     maturity: "3 years",
     description: "Diversify your citrus production with our comprehensive Citrus Value Pack. Choose from 6 premium varieties including tangerines, oranges, and lemons. This package includes 256 grafted seedlings and a complete button dripper irrigation system for efficient water management across your entire citrus orchard."
