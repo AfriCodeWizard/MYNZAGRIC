@@ -240,7 +240,12 @@ export default function ProductCard({
     }
     
     // Start expansion immediately without waiting
-    onAddToCart(seedling)
+    // Set price to 0 for flowers and trees - price will be communicated upon order request
+    const cartItem = {
+      ...seedling,
+      price: (seedling.category === "flowers" || seedling.category === "trees") ? 0 : seedling.price
+    }
+    onAddToCart(cartItem)
     setIsExpanded(true)
     setIsCollapsing(false)
     
@@ -501,8 +506,8 @@ export default function ProductCard({
         </div>
 
         {/* Price with decorative lines - CodePen exact measurements, slightly reduced */}
-        {/* Hide price for flowers and trees - price to be communicated upon order request */}
-        {(seedling.category !== "flowers" && seedling.category !== "trees") && (
+        {/* Price removed for flowers and trees - price to be communicated upon order request */}
+        {seedling.category !== "flowers" && seedling.category !== "trees" && (
           <div 
             className="relative inline-block font-black"
             style={{

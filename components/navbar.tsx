@@ -85,8 +85,20 @@ export default function Navbar() {
   // Generate WhatsApp message for cart
   const generateWhatsAppMessage = () => {
     const itemsText = cart
-      .map((item) => `• ${item.name} x${item.quantity} - KES ${(item.price * item.quantity).toLocaleString()}`)
+      .map((item) => {
+        if (item.price > 0) {
+          return `• ${item.name} x${item.quantity} - KES ${(item.price * item.quantity).toLocaleString()}`
+        } else {
+          return `• ${item.name} x${item.quantity} - Price on request`
+        }
+      })
       .join("\n")
+    
+    const hasPriceOnRequest = cart.some(item => item.price === 0)
+    const totalText = hasPriceOnRequest 
+      ? "Price to be communicated upon order confirmation"
+      : `KES ${totalPrice.toLocaleString()}`
+    
     const message = `*BULK ORDER REQUEST*
 
 ─────────────────────────
@@ -98,11 +110,11 @@ ${itemsText}
 ${deliveryLocation}
 
 *TOTAL AMOUNT:*
-KES ${totalPrice.toLocaleString()}
+${totalText}
 
 ─────────────────────────
 
-I would like to place this bulk order. Please confirm availability and delivery details.
+I would like to place this bulk order. Please confirm availability, pricing, and delivery details.
 
 Thank you!`
     return encodeURIComponent(message)
@@ -683,9 +695,20 @@ Thank you!`
                               <span className="font-medium text-gray-700">Delivery Fee:</span>
                               <span className="text-sm font-bold text-red-600">Pending order confirmation</span>
                             </div>
+                            {cart.some(item => item.price === 0) && (
+                              <div className="flex items-center gap-2 text-xs text-gray-500 italic">
+                                <span>• Some items: Price on request</span>
+                              </div>
+                            )}
                             <div className="flex justify-between items-center">
                               <span className="font-bold text-gray-900">Total:</span>
-                              <span className="text-xl font-bold text-green-600">KES {totalPrice.toLocaleString()}</span>
+                              <span className="text-xl font-bold text-green-600">
+                                {cart.some(item => item.price === 0) ? (
+                                  <span className="text-sm text-gray-500 italic">Price on request</span>
+                                ) : (
+                                  `KES ${totalPrice.toLocaleString()}`
+                                )}
+                              </span>
                             </div>
                           </div>
                           <a
@@ -1092,7 +1115,11 @@ Thank you!`
                     >
                       <div className="flex-1 min-w-0">
                         <p className="font-medium text-gray-900 text-sm truncate">{item.name}</p>
-                        <p className="text-sm text-green-600 font-bold">KES {item.price.toLocaleString()}</p>
+                        {item.price > 0 ? (
+                          <p className="text-sm text-green-600 font-bold">KES {item.price.toLocaleString()}</p>
+                        ) : (
+                          <p className="text-sm text-gray-500 italic">Price on request</p>
+                        )}
                       </div>
                       <div 
                         className="flex items-center gap-2 bg-white rounded-lg border border-green-200"
@@ -1299,8 +1326,21 @@ Thank you!`
                       <span className="text-sm font-bold text-red-600">Pending order confirmation</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="font-bold text-gray-900">Total:</span>
-                      <span className="text-xl font-bold text-green-600">KES {totalPrice.toLocaleString()}</span>
+                      {cart.some(item => item.price === 0) && (
+                        <div className="flex items-center gap-2 text-xs text-gray-500 italic mb-1">
+                          <span>• Some items: Price on request</span>
+                        </div>
+                      )}
+                      <div className="flex justify-between items-center w-full">
+                        <span className="font-bold text-gray-900">Total:</span>
+                        <span className="text-xl font-bold text-green-600">
+                          {cart.some(item => item.price === 0) ? (
+                            <span className="text-sm text-gray-500 italic">Price on request</span>
+                          ) : (
+                            `KES ${totalPrice.toLocaleString()}`
+                          )}
+                        </span>
+                      </div>
                     </div>
                   </div>
                   <div
