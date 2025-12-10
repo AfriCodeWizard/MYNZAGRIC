@@ -11,6 +11,7 @@ interface Seedling {
   price: number
   icon: string
   category: string
+  image?: string
   careGuide?: {
     watering: string
     sunlight: string
@@ -286,9 +287,18 @@ export default function ProductCard({
       {/* Image/Icon Container - CodePen style */}
       <div className="relative w-full overflow-hidden">
         <div className="w-full bg-gradient-to-br from-green-100 to-green-50 flex items-center justify-center" style={{ minHeight: '180px' }}>
-        <div className="text-8xl transform transition-transform duration-300 hover:scale-110">
-          {seedling.icon}
-          </div>
+          {seedling.image ? (
+            <img 
+              src={seedling.image} 
+              alt={seedling.name}
+              className="w-full h-full object-cover transform transition-transform duration-300 hover:scale-110"
+              style={{ minHeight: '180px', objectFit: 'contain' }}
+            />
+          ) : (
+            <div className="text-8xl transform transition-transform duration-300 hover:scale-110">
+              {seedling.icon}
+            </div>
+          )}
         </div>
       </div>
 

@@ -4,6 +4,7 @@ export interface Seedling {
   price: number
   icon: string
   category: string
+  image?: string
   careGuide?: {
     watering: string
     sunlight: string
@@ -111,6 +112,7 @@ export const seedlings: Seedling[] = [
     price: 300,
     icon: "🍊",
     category: "citrus",
+    image: "/Pixies.webp",
     careGuide: {
       watering: "Citrus trees should be planted in a sunny and wind-protected area. They can tolerate high temperatures provided the trees are well supplied with soil moisture. Water regularly, 2-3 times weekly during dry season. Water the plant after planting if soil isn't wet enough.",
       sunlight: "Full sun (8+ hours) for sweet, quality fruit. Citrus trees should be planted in a sunny and wind-protected area, and in frost-free regions because they cannot tolerate severe frosts.",
@@ -162,6 +164,7 @@ export const seedlings: Seedling[] = [
     price: 200,
     icon: "🍊",
     category: "citrus",
+    image: "/Tangerine .webp",
     careGuide: {
       watering: "Citrus trees should be planted in a sunny and wind-protected area. They can tolerate high temperatures provided the trees are well supplied with soil moisture. Water moderately, avoid waterlogging. Water the plant after planting if soil isn't wet enough.",
       sunlight: "Full sun (6-8 hours). Citrus trees should be planted in a sunny and wind-protected area, and in frost-free regions because they cannot tolerate severe frosts.",
@@ -213,6 +216,7 @@ export const seedlings: Seedling[] = [
     price: 500,
     icon: "🍊",
     category: "citrus",
+    image: "/Blood Orange .webp",
     careGuide: {
       watering: "Citrus trees should be planted in a sunny and wind-protected area. They can tolerate high temperatures provided the trees are well supplied with soil moisture. Regular irrigation for good fruit quality. Water the plant after planting if soil isn't wet enough.",
       sunlight: "Full sun (8+ hours). Citrus trees should be planted in a sunny and wind-protected area, and in frost-free regions because they cannot tolerate severe frosts.",
@@ -264,6 +268,7 @@ export const seedlings: Seedling[] = [
     price: 200,
     icon: "🍋",
     category: "citrus",
+    image: "/Lemon .webp",
     careGuide: {
       watering: "Citrus trees should be planted in a sunny and wind-protected area. They can tolerate high temperatures provided the trees are well supplied with soil moisture. Regular watering, don't let soil dry out. Water the plant after planting if soil isn't wet enough.",
       sunlight: "Full sun (6+ hours). Citrus trees should be planted in a sunny and wind-protected area, and in frost-free regions because they cannot tolerate severe frosts.",
@@ -353,6 +358,7 @@ export const seedlings: Seedling[] = [
     price: 150,
     icon: "🍓",
     category: "berries",
+    image: "/Strawberry.webp",
     careGuide: {
       watering: "Water is critically essential when growing strawberries. The plants need a lot of water especially when the runners and flowers are developing. Drip irrigation is highly recommended as it waters at the root. Keep soil consistently moist but not waterlogged. Strawberries are very easy to maintain.",
       sunlight: "Require 6-10 hours of direct sunlight each day. They do well in levelled or slightly higher grounds.",
@@ -404,6 +410,7 @@ export const seedlings: Seedling[] = [
     price: 3000,
     icon: "🫐",
     category: "berries",
+    image: "/Blueberry .webp",
     careGuide: {
       watering: "Consistent moisture is essential, but plants should not be waterlogged. Drip irrigation using harvested rainwater is recommended, as tap water (which is often alkaline) can raise the soil pH over time. Consistent moisture, 4-5 cm per week.",
       sunlight: "Blueberries need 4-6 hours of sunlight daily, with partial shade tolerance. Greenhouses or polytunnels are increasingly used to control the environment and protect against frost in colder areas.",
@@ -438,6 +445,7 @@ export const seedlings: Seedling[] = [
     id: "24",
     name: "Pawpaw",
     price: 150,
+    image: "/Pawpaw .webp",
     icon: "🍈",
     category: "tropical",
     careGuide: {
@@ -457,6 +465,7 @@ export const seedlings: Seedling[] = [
     price: 200,
     icon: "🍅",
     category: "tropical",
+    image: "/Tree Tomato.webp",
     careGuide: {
       watering: "Water regularly, keep soil moist.",
       sunlight: "Full sun (6+ hours).",
@@ -474,6 +483,7 @@ export const seedlings: Seedling[] = [
     price: 1000,
     icon: "🐉",
     category: "tropical",
+    image: "/Dragon Fruit .webp",
     careGuide: {
       watering: "Dragon fruit requires very little water and thrives in arid and semi-arid areas with annual rainfall of 40-60mm. Irrigation: Drip irrigation is recommended as it delivers consistent moisture to roots, reduces water waste and leaf wetness, lowering disease risk. For manual watering, water directly at the plant's base. Avoid wetting stems and fruits to prevent fungal infections. Establishment Stage (first 2-3 months): Water 2-3 times a week or when the top inch is dry. Vegetative Growth Stage: Cut back to once or twice a week. Flowering and Fruiting Stage: Keep soil moist, water deeply once or twice a week, more in heat. Water in the morning or evening to reduce evaporation. Use mulch to keep moisture and block weeds.",
       sunlight: "Ensure it gets 6-8 hours of sun daily. Full sun exposure is essential for optimal fruit production.",
@@ -507,6 +517,7 @@ export const seedlings: Seedling[] = [
     name: "Pears",
     price: 600,
     icon: "🍐",
+    image: "/Pears .webp",
     category: "tropical",
     careGuide: {
       watering: "The plants require moderate and well-distributed rainfall. However, they can be grown under irrigation in dry areas. In warm and dry regions, pear farming requires regular irrigation, fertilization, and continuous optimization of pollination. Regular watering during growing season ensures healthy growth and fruit development.",
@@ -576,6 +587,7 @@ export const seedlings: Seedling[] = [
     price: 250,
     icon: "🍎",
     category: "tropical",
+    image: "/Curstard Apple .webp",
     careGuide: {
       watering: "Water regularly during growing season.",
       sunlight: "Full sun required.",
@@ -593,6 +605,7 @@ export const seedlings: Seedling[] = [
     price: 2000,
     icon: "🫐",
     category: "tropical",
+    image: "/Jabuticaba .webp",
     careGuide: {
       watering: "Needs consistent moisture, with annual rainfall between 1200 to 2000mm being ideal. Irrigation is essential in drier regions to maintain consistent moisture. Mulching helps retain soil moisture. Water thoroughly after planting.",
       sunlight: "Plant in a spot with plenty of sunlight. Full sun exposure is preferred for optimal growth and fruiting.",
@@ -610,6 +623,7 @@ export const seedlings: Seedling[] = [
     price: 1500,
     icon: "🍒",
     category: "tropical",
+    image: "/Brazilian Cherry .webp",
     careGuide: {
       watering: "Moderate watering, allow to dry slightly.",
       sunlight: "Full sun (6+ hours).",
@@ -659,6 +673,7 @@ export const seedlings: Seedling[] = [
     id: "37",
     name: "Persimmon",
     price: 1500,
+    image: "/Persimmon .webp",
     icon: "🍊",
     category: "tropical",
     careGuide: {
@@ -712,6 +727,7 @@ export const seedlings: Seedling[] = [
     price: 800,
     icon: "🍇",
     category: "tropical",
+    image: "/Fig .webp",
     careGuide: {
       watering: "Require 600-1,200 mm of rainfall annually, though they are drought-tolerant once established. In dry areas, supplemental irrigation during flowering and fruiting boosts yields. Water weekly during dry periods for the first two years. Mature trees are drought-tolerant but benefit from irrigation during fruiting (January-February and July-August). Drip irrigation ensures efficient water use.",
       sunlight: "Need 6-8 hours of full sunlight daily for optimal fruit production. Avoid shaded areas to ensure robust growth. Full sun exposure is essential for healthy fruit development.",
@@ -731,6 +747,7 @@ export const seedlings: Seedling[] = [
     price: 350,
     icon: "🌰",
     category: "tropical",
+    image: "/Macadamia.webp",
     careGuide: {
       watering: "Though drought-tolerant, macadamia trees thrive best with 1,200-1,500mm of rain annually. Young trees need more water. During dry spells, extra watering is crucial, especially for growth. Water is vital for macadamia trees, especially young ones. The first 3-4 years are crucial for root development. Each young tree needs 20 litres of water every two weeks. This supports healthy growth. Mature trees are more drought-tolerant but still need regular watering during dry spells. To optimize irrigation: Install a reliable irrigation system suitable for your farm size, monitor soil moisture levels regularly, adjust watering schedules based on seasonal rainfall patterns, consider drip irrigation for water efficiency and cost savings.",
       sunlight: "Full sun (6+ hours) required for optimal growth and nut production.",
@@ -765,6 +782,7 @@ export const seedlings: Seedling[] = [
     price: 300,
     icon: "🍊",
     category: "tropical",
+    image: "/Loquats .webp",
     careGuide: {
       watering: "Prefers 800-1,200 mm of well-distributed rainfall annually. Young trees need watering twice a week until well established. Mature trees can survive on rainfall but benefit from supplemental drip irrigation during dry spells and fruiting season (November-February). Ensure consistent moisture during flowering and fruit development.",
       sunlight: "Needs full sun for fruiting—avoid planting under tree shade or on slopes that face away from the sun. Requires 6-8 hours of direct sunlight daily for optimal growth and fruit quality.",
@@ -779,6 +797,7 @@ export const seedlings: Seedling[] = [
   {
     id: "44",
     name: "Grapes",
+    image: "/Grapes .webp",
     price: 350,
     icon: "🍇",
     category: "tropical",
@@ -833,6 +852,7 @@ export const seedlings: Seedling[] = [
     price: 500,
     icon: "🥝",
     category: "tropical",
+    image: "/Kiwi .webp",
     careGuide: {
       watering: "Needs 1,000-1,500 mm of well-distributed rainfall. In drier areas like parts of Nakuru, drip irrigation during dry spells supports fruiting. Regular watering is essential during establishment and fruiting periods. Water thoroughly after planting and mulch to retain moisture.",
       sunlight: "Requires 6-8 hours of full sunlight daily for healthy growth and sweet fruit. Avoid shaded or low-lying areas. Full sun exposure is essential for optimal fruit development.",
@@ -850,6 +870,7 @@ export const seedlings: Seedling[] = [
     price: 500,
     icon: "🍎",
     category: "tropical",
+    image: "/Pomegranate .webp",
     careGuide: {
       watering: "Requires 500-1,200 mm annually. Pomegranates are drought-tolerant and adapt to semi-arid climates. In drier areas, supplemental irrigation during flowering and fruiting boosts yields. Regular watering during establishment ensures healthy growth.",
       sunlight: "Full sun (6+ hours) required for optimal growth and fruit production. Adequate sunlight is essential for proper flowering and fruit development.",
@@ -867,6 +888,7 @@ export const seedlings: Seedling[] = [
     price: 500,
     icon: "🍑",
     category: "tropical",
+    image: "/Plums .webp",
     careGuide: {
       watering: "Plums require well distributed rainfall of about 800-1200 mm per year. However, they do not tolerate waterlogging making proper drainage essential. Just like other plants, plums need supplementary irrigation during the dry seasons especially during the flowering and fruit development stages. Regular watering during growing season.",
       sunlight: "Full sun (6+ hours).",
@@ -884,6 +906,7 @@ export const seedlings: Seedling[] = [
     price: 3000,
     icon: "🍑",
     category: "tropical",
+    image: "/Peaches .webp",
     careGuide: {
       watering: "Requires 800-1,200 mm annually, well-distributed. In drier areas like parts of Nakuru, drip irrigation during dry spells (January-March) ensures healthy growth. Regular watering is essential during establishment and fruiting periods. Maintain consistent moisture but avoid waterlogging.",
       sunlight: "Needs 6-8 hours of direct sunlight daily for optimal fruit development. Avoid shaded areas to maximize yields. Full sun exposure is essential for healthy growth and fruit quality.",
@@ -901,6 +924,7 @@ export const seedlings: Seedling[] = [
     price: 800,
     icon: "🍑",
     category: "tropical",
+    image: "/Zambarau .webp",
     careGuide: {
       watering: "Requires 600-1,200mm annually. Zambarau is drought-tolerant and can survive in a wide range of conditions. Avoid waterlogged areas. Regular watering during establishment ensures healthy growth, but mature trees require minimal maintenance.",
       sunlight: "Full sun required for optimal growth and fruit production. Zambarau thrives in warm areas with moderate rainfall. Adequate sunlight is essential for healthy development.",
@@ -935,6 +959,7 @@ export const seedlings: Seedling[] = [
     price: 1000,
     icon: "🫒",
     category: "tropical",
+    image: "/Olive.webp",
     careGuide: {
       watering: "Olives are low-maintenance once established. The tree is hardy and tolerates drought, but poor drainage can kill it. Water the young trees regularly during the first two years, then gradually reduce as they adapt. Mulching helps retain soil moisture and suppress weeds.",
       sunlight: "Olive trees need 6–8 hours of direct sunlight daily—plant them where they can soak up the sun! Full sun exposure is essential for optimal growth and fruit production.",
@@ -952,6 +977,7 @@ export const seedlings: Seedling[] = [
     price: 1000,
     icon: "🥥",
     category: "tropical",
+    image: "/Dwarf Coconut .webp",
     careGuide: {
       watering: "Coconuts are drought-tolerant, but water stress reduces fruiting. Young trees especially need regular watering for the first 2-3 years. Farmers in dry areas can use mulching to conserve soil moisture. Annual rainfall between 1,000-2,500 mm is ideal. Ensure consistent moisture, as it is crucial for good yields. Water new saplings well and be prepared to irrigate, especially during dry spells. Soil moisture very often limits coconut production in those areas where long spell of dry weather prevail or where the rainfall is scanty and ill-distributed, so irrigate the palms during summer months in basins around the palm. The irrigation requirement varies according to the soil type and climatic condition. Generally, an adult palm requires 600 to 800 liters of water once in four to seven days at 10-20 cm depth. In coastal sandy soils, sea water can be used for irrigating adult palms. Do not irrigate seedlings and very young palms up to 2 years with sea water.",
       sunlight: "Full sun (6+ hours).",
