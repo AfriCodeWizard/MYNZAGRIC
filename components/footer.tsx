@@ -62,7 +62,7 @@ export default function Footer() {
             </Link>
             <p className="text-green-100 text-sm leading-relaxed">
               Growing the world's future, one seedling at a time. Providing premium fruit seedlings to farmers across the
-              globe since 2020.
+              globe.
             </p>
           </div>
 

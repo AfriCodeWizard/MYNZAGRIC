@@ -33,7 +33,7 @@ const categories: Record<string, {
   avocado: {
     label: "Avocados",
     icon: "🥑",
-    description: "Premium Hass and Fuerte avocado varieties. High-value crop with excellent market demand. Start harvesting delicious, nutrient-rich avocados in 2-3 years. Perfect for export and local markets.",
+    description: "Premium Hass and Fuerte avocado varieties. High-value crop with excellent market demand. Start harvesting delicious, nutrient-rich avocados in 3 years. Perfect for export and local markets.",
     bgImage: "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=800&q=80",
     bgColor: "from-teal-800 to-teal-900"
   },
