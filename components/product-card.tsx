@@ -285,14 +285,23 @@ export default function ProductCard({
       }}
     >
       {/* Image/Icon Container - CodePen style */}
-      <div className="relative w-full overflow-hidden">
-        <div className="w-full bg-gradient-to-br from-green-100 to-green-50 flex items-center justify-center" style={{ minHeight: '180px' }}>
+      <div className="relative w-full overflow-hidden" style={{ minHeight: '180px', height: '180px' }}>
+        <div className="w-full h-full bg-gradient-to-br from-green-100 to-green-50 flex items-center justify-center" style={{ minHeight: '180px', height: '180px' }}>
           {seedling.image ? (
             <img 
               src={seedling.image} 
               alt={seedling.name}
-              className="w-full h-full object-cover transform transition-transform duration-300 hover:scale-110"
-              style={{ minHeight: '180px', objectFit: 'contain' }}
+              className="max-w-full max-h-full object-contain transform transition-transform duration-300 hover:scale-110"
+              style={{ maxHeight: '180px', height: 'auto', width: 'auto' }}
+              onError={(e) => {
+                console.error('Image failed to load:', seedling.image, 'for', seedling.name);
+                // Hide the broken image and show icon instead
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+              }}
+              onLoad={() => {
+                console.log('Image loaded successfully:', seedling.image);
+              }}
             />
           ) : (
             <div className="text-8xl transform transition-transform duration-300 hover:scale-110">
