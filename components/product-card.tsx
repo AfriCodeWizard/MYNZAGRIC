@@ -289,12 +289,17 @@ export default function ProductCard({
         <div className="w-full h-full bg-gradient-to-br from-green-100 to-green-50 flex items-center justify-center" style={{ minHeight: '180px', height: '180px' }}>
           {seedling.image ? (
             <img 
-              src={seedling.image} 
+              src={seedling.image.split('/').map((part, index) => 
+                index === 0 ? part : encodeURIComponent(part)
+              ).join('/')} 
               alt={seedling.name}
               className="max-w-full max-h-full object-contain transform transition-transform duration-300 hover:scale-110"
               style={{ maxHeight: '180px', height: 'auto', width: 'auto' }}
               onError={(e) => {
                 console.error('Image failed to load:', seedling.image, 'for', seedling.name);
+                console.error('Encoded path:', seedling.image.split('/').map((part, index) => 
+                  index === 0 ? part : encodeURIComponent(part)
+                ).join('/'));
                 // Hide the broken image and show icon instead
                 const target = e.target as HTMLImageElement;
                 target.style.display = 'none';
