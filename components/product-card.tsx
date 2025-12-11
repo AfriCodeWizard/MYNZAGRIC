@@ -286,34 +286,40 @@ export default function ProductCard({
     >
       {/* Image/Icon Container - CodePen style */}
       <div className="relative w-full overflow-hidden" style={{ minHeight: '180px', height: '180px' }}>
-        <div className="w-full h-full bg-gradient-to-br from-green-100 to-green-50 flex items-center justify-center" style={{ minHeight: '180px', height: '180px' }}>
-          {seedling.image ? (
-            <img 
-              src={seedling.image.split('/').map((part, index) => 
+        {seedling.image ? (
+          <img 
+            src={seedling.image.split('/').map((part, index) => 
+              index === 0 ? part : encodeURIComponent(part)
+            ).join('/')} 
+            alt={seedling.name}
+            className="w-full h-full object-cover transform transition-transform duration-300 hover:scale-110"
+            style={{ width: '100%', height: '100%', minHeight: '180px' }}
+            onError={(e) => {
+              console.error('Image failed to load:', seedling.image, 'for', seedling.name);
+              console.error('Encoded path:', seedling.image.split('/').map((part, index) => 
                 index === 0 ? part : encodeURIComponent(part)
-              ).join('/')} 
-              alt={seedling.name}
-              className="max-w-full max-h-full object-contain transform transition-transform duration-300 hover:scale-110"
-              style={{ maxHeight: '180px', height: 'auto', width: 'auto' }}
-              onError={(e) => {
-                console.error('Image failed to load:', seedling.image, 'for', seedling.name);
-                console.error('Encoded path:', seedling.image.split('/').map((part, index) => 
-                  index === 0 ? part : encodeURIComponent(part)
-                ).join('/'));
-                // Hide the broken image and show icon instead
-                const target = e.target as HTMLImageElement;
-                target.style.display = 'none';
-              }}
-              onLoad={() => {
-                console.log('Image loaded successfully:', seedling.image);
-              }}
-            />
-          ) : (
-            <div className="text-8xl transform transition-transform duration-300 hover:scale-110">
-              {seedling.icon}
-            </div>
-          )}
-        </div>
+              ).join('/'));
+              // Hide the broken image and show icon instead
+              const target = e.target as HTMLImageElement;
+              target.style.display = 'none';
+              const parent = target.parentElement;
+              if (parent) {
+                const fallback = document.createElement('div');
+                fallback.className = 'w-full h-full bg-gradient-to-br from-green-100 to-green-50 flex items-center justify-center text-8xl transform transition-transform duration-300 hover:scale-110';
+                fallback.style.minHeight = '180px';
+                fallback.textContent = seedling.icon;
+                parent.appendChild(fallback);
+              }
+            }}
+            onLoad={() => {
+              console.log('Image loaded successfully:', seedling.image);
+            }}
+          />
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-green-100 to-green-50 flex items-center justify-center text-8xl transform transition-transform duration-300 hover:scale-110" style={{ minHeight: '180px', height: '180px' }}>
+            {seedling.icon}
+          </div>
+        )}
       </div>
 
       {/* Content Section - CodePen style */}
