@@ -24,7 +24,7 @@ const valuePacks: ValuePack[] = [
     quantity: 150,
     price: 115000,
     varieties: ["Tommy", "Van Dyke", "Apple", "Kent", "Ngowe"],
-    image: "https://images.pexels.com/photos/2294471/pexels-photo-2294471.jpeg?auto=compress&cs=tinysrgb&w=800",
+    image: "/Mango_valuepack.webp",
     maturity: "3 years"
   },
   {
@@ -34,7 +34,7 @@ const valuePacks: ValuePack[] = [
     quantity: 150,
     price: 115000,
     varieties: ["Fuerte", "Hass"],
-    image: "https://images.pexels.com/photos/12940878/pexels-photo-12940878.jpeg?auto=compress&cs=tinysrgb&w=800",
+    image: "/Avocado_valuepack.webp",
     maturity: "3 years"
   },
   {
@@ -44,7 +44,7 @@ const valuePacks: ValuePack[] = [
     quantity: 256,
     price: 175000,
     varieties: ["Pixie Orange"],
-    image: "https://images.pexels.com/photos/4502957/pexels-photo-4502957.jpeg?auto=compress&cs=tinysrgb&w=800",
+    image: "/Pixie_orange_valuepack.webp",
     maturity: "3 years"
   },
   {
@@ -54,7 +54,7 @@ const valuePacks: ValuePack[] = [
     quantity: 256,
     price: 145000,
     varieties: ["Tangerine", "Washington Oranges", "Valencia Oranges", "Green Lemon", "Eureka Lemon", "Lisbon Lemon"],
-    image: "https://images.pexels.com/photos/28758681/pexels-photo-28758681.jpeg?auto=compress&cs=tinysrgb&w=800",
+    image: "/Citrus_valuepack.webp",
     maturity: "3 years"
   }
 ]
@@ -189,72 +189,42 @@ Thank you!`
           {valuePacks.map((pack) => (
             <div
               key={pack.id}
-              className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:bg-white/10 transition-all duration-300 group cursor-pointer"
+              className="relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:border-green-400/50 transition-all duration-500 group cursor-pointer"
               onClick={() => setSelectedPack(selectedPack?.id === pack.id ? null : pack)}
             >
-              {/* Card Image */}
-              <div className="relative h-48 sm:h-56 overflow-hidden">
+              {/* Full Card Image */}
+              <div className="relative h-[400px] sm:h-[450px] overflow-hidden">
                 <Image
                   src={pack.image}
                   alt={pack.name}
                   fill
-                  className="object-cover group-hover:scale-110 transition-transform duration-500"
+                  className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                <div className="absolute bottom-4 left-4 right-4">
-                  <h3 className="text-xl sm:text-2xl font-bold text-white mb-1">{pack.name}</h3>
-                  <p className="text-green-300 text-sm sm:text-base">{pack.fruit}</p>
-                </div>
-                <div className="absolute top-4 right-4 bg-green-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
-                  {pack.quantity} pcs
-                </div>
-              </div>
-
-              {/* Card Content */}
-              <div className="p-5 sm:p-6">
-                <div className="mb-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-gray-400 text-sm">Varieties:</span>
-                    <span className="text-white font-semibold text-sm">{pack.varieties.length} types</span>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {pack.varieties.slice(0, 3).map((variety, idx) => (
-                      <span
-                        key={idx}
-                        className="bg-green-600/20 text-green-300 px-2 py-1 rounded text-xs border border-green-500/30"
-                      >
-                        {variety}
-                      </span>
-                    ))}
-                    {pack.varieties.length > 3 && (
-                      <span className="bg-gray-700/50 text-gray-300 px-2 py-1 rounded text-xs">
-                        +{pack.varieties.length - 3} more
-                      </span>
-                    )}
-                  </div>
+                {/* Subtle gradient overlay for better button visibility */}
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/30" />
+                
+                {/* View More Button - Centered with creative styling */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Link
+                    href={`/frutopia/${pack.id}`}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                    }}
+                    className="relative z-10 bg-green-600/95 hover:bg-green-600 text-white font-bold py-4 px-8 rounded-full transition-all duration-300 flex items-center justify-center gap-3 shadow-2xl hover:shadow-green-500/50 hover:scale-110 group/button backdrop-blur-sm border-2 border-white/20 hover:border-white/40"
+                    style={{
+                      boxShadow: '0 10px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(34, 197, 94, 0.3)'
+                    }}
+                  >
+                    <span className="text-lg">View More</span>
+                    <ArrowUpRight className="w-6 h-6 group-hover/button:translate-x-1 group-hover/button:-translate-y-1 transition-transform duration-300" />
+                    {/* Animated glow effect */}
+                    <div className="absolute inset-0 rounded-full bg-green-400/20 blur-xl group-hover/button:bg-green-400/40 transition-all duration-300 -z-10" />
+                  </Link>
                 </div>
 
-                <div className="flex items-center justify-between mb-4 pt-4 border-t border-white/10">
-                  <div>
-                    <p className="text-gray-400 text-sm mb-1">Maturity Period</p>
-                    <p className="text-white font-semibold">{pack.maturity}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-gray-400 text-sm mb-1">Package Price</p>
-                    <p className="text-2xl font-bold text-green-400">KES {pack.price.toLocaleString()}</p>
-                  </div>
-                </div>
-
-                <Link
-                  href={`/frutopia/${pack.id}`}
-                  onClick={(e) => {
-                    e.stopPropagation()
-                  }}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
-                >
-                  View More
-                  <ArrowUpRight className="w-5 h-5" />
-                </Link>
+                {/* Optional: Subtle corner accent */}
+                <div className="absolute top-4 right-4 w-16 h-16 bg-green-600/20 rounded-full blur-2xl group-hover:bg-green-600/30 transition-all duration-500" />
+                <div className="absolute bottom-4 left-4 w-20 h-20 bg-green-400/10 rounded-full blur-3xl group-hover:bg-green-400/20 transition-all duration-500" />
               </div>
             </div>
           ))}
