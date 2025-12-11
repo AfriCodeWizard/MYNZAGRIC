@@ -501,6 +501,7 @@ export const seedlings: Seedling[] = [
     price: 500,
     icon: "🍌",
     category: "tropical",
+    image: "/Banana_suckers.webp",
     careGuide: {
       watering: "Bananas require consistent moisture, especially during establishment and fruiting. Provide adequate water, especially during dry periods, through drip or furrow irrigation. Regular watering is essential to maintain moist but not waterlogged soil. Mulching helps conserve moisture and suppress weeds.",
       sunlight: "Full sun (6+ hours) required for optimal growth and fruit production. Avoid heavily shaded areas to maximize yields.",
