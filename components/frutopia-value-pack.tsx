@@ -189,42 +189,43 @@ Thank you!`
           {valuePacks.map((pack) => (
             <div
               key={pack.id}
-              className="relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:border-green-400/50 transition-all duration-500 group cursor-pointer"
+              className="relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-visible hover:border-green-400/50 transition-all duration-500 group cursor-pointer"
               onClick={() => setSelectedPack(selectedPack?.id === pack.id ? null : pack)}
             >
-              {/* Full Card Image */}
-              <div className="relative h-[400px] sm:h-[450px] overflow-hidden">
-                <Image
-                  src={pack.image}
-                  alt={pack.name}
-                  fill
-                  className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
-                />
-                {/* Subtle gradient overlay for better button visibility */}
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/30" />
+              {/* Full Card Image - Not constrained */}
+              <div className="relative w-full min-h-[400px] sm:min-h-[450px] flex items-center justify-center overflow-visible">
+                <div className="relative w-full h-full">
+                  <Image
+                    src={pack.image}
+                    alt={pack.name}
+                    width={800}
+                    height={600}
+                    className="w-full h-auto object-contain group-hover:scale-105 transition-transform duration-700 ease-out"
+                    style={{ maxWidth: '100%', height: 'auto' }}
+                  />
+                </div>
                 
-                {/* View More Button - Centered with creative styling */}
-                <div className="absolute inset-0 flex items-center justify-center">
+                {/* View More Button - Bottom Right with Glassy Effect */}
+                <div className="absolute bottom-4 right-4 z-20">
                   <Link
                     href={`/frutopia/${pack.id}`}
                     onClick={(e) => {
                       e.stopPropagation()
                     }}
-                    className="relative z-10 bg-green-600/95 hover:bg-green-600 text-white font-bold py-4 px-8 rounded-full transition-all duration-300 flex items-center justify-center gap-3 shadow-2xl hover:shadow-green-500/50 hover:scale-110 group/button backdrop-blur-sm border-2 border-white/20 hover:border-white/40"
+                    className="relative bg-white/20 backdrop-blur-md hover:bg-white/30 text-white font-bold py-3 px-6 rounded-full transition-all duration-300 flex items-center justify-center gap-2 shadow-2xl hover:shadow-green-500/60 hover:scale-110 group/button border-2 border-white/40 hover:border-white/60"
                     style={{
-                      boxShadow: '0 10px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(34, 197, 94, 0.3)'
+                      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1) inset, 0 0 30px rgba(34, 197, 94, 0.4)',
+                      background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%)',
+                      WebkitBackdropFilter: 'blur(12px)',
+                      backdropFilter: 'blur(12px)'
                     }}
                   >
-                    <span className="text-lg">View More</span>
-                    <ArrowUpRight className="w-6 h-6 group-hover/button:translate-x-1 group-hover/button:-translate-y-1 transition-transform duration-300" />
-                    {/* Animated glow effect */}
-                    <div className="absolute inset-0 rounded-full bg-green-400/20 blur-xl group-hover/button:bg-green-400/40 transition-all duration-300 -z-10" />
+                    <span className="text-base sm:text-lg font-semibold drop-shadow-lg">View More</span>
+                    <ArrowUpRight className="w-5 h-5 sm:w-6 sm:h-6 group-hover/button:translate-x-1 group-hover/button:-translate-y-1 transition-transform duration-300 drop-shadow-lg" />
+                    {/* Glowing ring effect */}
+                    <div className="absolute inset-0 rounded-full bg-green-400/30 blur-md group-hover/button:bg-green-400/50 transition-all duration-300 -z-10 animate-pulse" />
                   </Link>
                 </div>
-
-                {/* Optional: Subtle corner accent */}
-                <div className="absolute top-4 right-4 w-16 h-16 bg-green-600/20 rounded-full blur-2xl group-hover:bg-green-600/30 transition-all duration-500" />
-                <div className="absolute bottom-4 left-4 w-20 h-20 bg-green-400/10 rounded-full blur-3xl group-hover:bg-green-400/20 transition-all duration-500" />
               </div>
             </div>
           ))}

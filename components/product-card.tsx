@@ -295,10 +295,13 @@ export default function ProductCard({
             className="w-full h-full object-cover transform transition-transform duration-300 hover:scale-110"
             style={{ width: '100%', height: '100%', minHeight: '180px' }}
             onError={(e) => {
-              console.error('Image failed to load:', seedling.image, 'for', seedling.name);
-              console.error('Encoded path:', seedling.image.split('/').map((part, index) => 
-                index === 0 ? part : encodeURIComponent(part)
-              ).join('/'));
+              const imagePath = seedling.image;
+              console.error('Image failed to load:', imagePath, 'for', seedling.name);
+              if (imagePath) {
+                console.error('Encoded path:', imagePath.split('/').map((part, index) => 
+                  index === 0 ? part : encodeURIComponent(part)
+                ).join('/'));
+              }
               // Hide the broken image and show icon instead
               const target = e.target as HTMLImageElement;
               target.style.display = 'none';
