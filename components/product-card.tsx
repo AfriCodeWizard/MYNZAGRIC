@@ -285,15 +285,33 @@ export default function ProductCard({
       }}
     >
       {/* Image/Icon Container - CodePen style */}
-      <div className="relative w-full overflow-hidden" style={{ minHeight: '180px', height: '180px' }}>
+      <div className="relative w-full overflow-hidden" style={{ 
+        minHeight: '180px', 
+        height: '180px',
+        ...(seedling.image === '/Peaches .webp' ? {
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        } : {})
+      }}>
         {seedling.image ? (
           <img 
             src={seedling.image.split('/').map((part, index) => 
               index === 0 ? part : encodeURIComponent(part)
             ).join('/')} 
             alt={seedling.name}
-            className="w-full h-full object-cover transform transition-transform duration-300 hover:scale-110"
-            style={{ width: '100%', height: '100%', minHeight: '180px' }}
+            className={`w-full h-full object-cover transform transition-transform duration-300 ${seedling.image === '/Peaches .webp' ? '' : 'hover:scale-110'}`}
+            style={{ 
+              width: '100%', 
+              height: '100%', 
+              minHeight: '180px',
+              ...(seedling.image === '/Peaches .webp' ? {
+                transform: 'rotate(90deg) scale(2)',
+                objectFit: 'cover',
+                width: '120%',
+                height: '120%'
+              } : {})
+            }}
             onError={(e) => {
               console.error('Image failed to load:', seedling.image, 'for', seedling.name);
               console.error('Encoded path:', seedling.image.split('/').map((part, index) => 
