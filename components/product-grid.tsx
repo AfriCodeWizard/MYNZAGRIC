@@ -37,7 +37,7 @@ export default function ProductGrid() {
       value: "mango", 
       label: "Mangoes", 
       icon: "🥭",
-      description: "Choose from 5 premium grafted varieties including Tommy, Apple, Van Dyke, Ngowe, and Alphonso mangoes. Fast-growing, high-yield trees that start fruiting in 2-3 years. Perfect for commercial farming or home gardens.",
+      description: "Choose from premium grafted varieties including Tommy, Apple, Van Dyke, Ngowe, and Alphonso mangoes. Fast-growing, high-yield trees that start fruiting in 3 years. Perfect for commercial farming or home gardens.",
       bgImage: "https://images.pexels.com/photos/16620442/pexels-photo-16620442.jpeg?auto=compress&cs=tinysrgb&w=800",
       fgImage: "https://images.pexels.com/photos/16620442/pexels-photo-16620442.jpeg?auto=compress&cs=tinysrgb&w=480",
       bgColor: "from-blue-900 to-blue-950"
@@ -46,7 +46,7 @@ export default function ProductGrid() {
       value: "citrus", 
       label: "Citrus", 
       icon: "🍊",
-      description: "Explore 12 diverse citrus varieties from sweet Pixies and Valencia oranges to tangy Kumquats and Tangerines. Disease-resistant, grafted seedlings ready for your orchard. Fresh, vitamin-rich fruits year after year.",
+      description: "Explore diverse citrus varieties from sweet Pixies and Valencia oranges to tangy Kumquats and Tangerines. Disease-resistant, grafted seedlings ready for your orchard. Fresh, vitamin-rich fruits year after year.",
       bgImage: "https://images.unsplash.com/photo-1611080626919-7cf5a9dbab5b?w=800&q=80",
       fgImage: "https://images.unsplash.com/photo-1611080626919-7cf5a9dbab5b?w=480&q=80&auto=format&fit=crop",
       bgColor: "from-purple-800 to-purple-900"
@@ -64,7 +64,7 @@ export default function ProductGrid() {
       value: "berries", 
       label: "Berries", 
       icon: "🫐",
-      description: "Sweet success with 3 premium berry varieties. High antioxidant content, perfect for health-conscious markets. Fast-growing plants ideal for small-scale and commercial farming. Fresh berries at your fingertips.",
+      description: "Sweet success with premium berry varieties. High antioxidant content, perfect for health-conscious markets. Fast-growing plants ideal for small-scale and commercial farming. Fresh berries at your fingertips.",
       bgImage: "https://images.unsplash.com/photo-1464965911861-746a04b4bca6?w=800&q=80&auto=format&fit=crop",
       fgImage: "https://images.unsplash.com/photo-1464965911861-746a04b4bca6?w=480&q=80&auto=format&fit=crop",
       bgColor: "from-red-900 to-purple-900"
@@ -73,7 +73,7 @@ export default function ProductGrid() {
       value: "tropical", 
       label: "Tropical", 
       icon: "🍍",
-      description: "Discover 33 exotic tropical fruit varieties including passion fruit, guavas, papayas, and more! Premium grafted seedlings. Transform your farm with diverse, profitable tropical fruits loved by global markets.",
+      description: "Discover exotic tropical fruit varieties including passion fruit, guavas, papayas, and more! Premium grafted seedlings. Transform your farm with diverse, profitable tropical fruits loved by global markets.",
       bgImage: "https://images.unsplash.com/photo-1528821128474-27f963b062bf?w=800&q=80&auto=format&fit=crop",
       fgImage: "https://images.unsplash.com/photo-1528821128474-27f963b062bf?w=480&q=80&auto=format&fit=crop",
       bgColor: "from-orange-800 to-pink-800"
