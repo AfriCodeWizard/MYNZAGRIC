@@ -537,6 +537,7 @@ export const seedlings: Seedling[] = [
     price: 600,
     icon: "🍑",
     category: "tropical",
+    image: "/Giant_Granadilla.webp",
     careGuide: {
       watering: "Requires 100-150 cm of well-distributed rainfall annually. In drier regions, supplemental irrigation is essential, especially during flowering and fruiting stages. Water every 3-5 days during dry periods, ensuring consistent moisture without waterlogging. Drip irrigation is ideal for efficient water use and healthy root development.",
       sunlight: "Needs full sun (6-8 hours daily) for optimal fruit production, though it tolerates partial shade. Avoid heavily shaded areas to maximize yields. Full sun exposure is crucial for large, flavorful fruits.",
@@ -554,6 +555,7 @@ export const seedlings: Seedling[] = [
     price: 200,
     icon: "🍑",
     category: "tropical",
+    image: "/Sweet Granadilla.webp",
     careGuide: {
       watering: "Regular watering needed.",
       sunlight: "Full sun required.",
@@ -571,6 +573,7 @@ export const seedlings: Seedling[] = [
     price: 400,
     icon: "🍑",
     category: "tropical",
+    image: "/Soursop.webp",
     careGuide: {
       watering: "Requires 1,000-1,800 mm of well-distributed rainfall. In semi-arid areas like Kitui, drip irrigation during dry spells ensures healthy growth. Soursop is drought-tolerant but benefits from consistent moisture during establishment and fruiting periods. Regular watering helps maintain healthy growth and fruit development.",
       sunlight: "Needs 6-8 hours of full sunlight daily for robust fruit production. Avoid shaded areas to maximize yields. Full sun exposure is essential for optimal growth and fruit quality.",
@@ -642,6 +645,7 @@ export const seedlings: Seedling[] = [
     price: 600,
     icon: "🍒",
     category: "tropical",
+    image: "/Cherry_Guava.webp",
     careGuide: {
       watering: "Regular watering during growing season.",
       sunlight: "Full sun preferred.",
@@ -659,6 +663,7 @@ export const seedlings: Seedling[] = [
     price: 350,
     icon: "🍎",
     category: "tropical",
+    image: "/White_Sapote.webp",
     careGuide: {
       watering: "Needs 800-1,500 mm of well-distributed rainfall. In semi-arid areas, drip irrigation during dry spells supports fruiting. Water young trees regularly during establishment, then gradually reduce as they adapt. Mulching helps retain soil moisture.",
       sunlight: "Requires 6-8 hours of full sunlight daily for optimal growth and sweet fruit. Avoid shaded, low-lying areas. Full sun exposure is essential for maximum yields.",
@@ -694,6 +699,7 @@ export const seedlings: Seedling[] = [
     price: 800,
     icon: "🍑",
     category: "tropical",
+    image: "/Jackfruit.webp",
     careGuide: {
       watering: "Regular watering during growing season.",
       sunlight: "Full sun (6+ hours).",
@@ -711,6 +717,7 @@ export const seedlings: Seedling[] = [
     price: 750,
     icon: "🍑",
     category: "tropical",
+    image: "/Tamarind.webp",
     careGuide: {
       watering: "Requires temperatures of 20-35°C, with optimal growth at 25-30°C. Tolerates heat up to 40°C and brief frost (-1°C for mature trees), but young trees need protection below 5°C. Annual rainfall of 500-1,500 mm supports growth, with irrigation needed in drier areas. Drought-tolerant once established, but consistent moisture during first 2-3 years improves establishment.",
       sunlight: "Needs 6-8 hours of sunlight daily. Choose a sunny, well-drained site with good exposure. Windbreaks (e.g., Acacia trees) protect young trees from strong winds.",
@@ -766,6 +773,7 @@ export const seedlings: Seedling[] = [
     price: 200,
     icon: "💜",
     category: "tropical",
+    image: "/Purpple_passion.webp",
     careGuide: {
       watering: "Regular watering during growth.",
       sunlight: "Full sun required.",
@@ -819,6 +827,7 @@ export const seedlings: Seedling[] = [
     price: 1000,
     icon: "🍎",
     category: "tropical",
+    image: "/Apple.webp",
     careGuide: {
       watering: "Requires 1000-1800mm rainfall per year. Irrigation should be managed according to the main growth stages: Budbreak-flowering, Beginning of rapid shoot growth, Beginning of fruit fill, Harvest, Leaf fall. Drip irrigation is the best because it is precise. Regular watering is essential, especially during fruit development stages.",
       sunlight: "Full sun (6+ hours) required for optimal growth and fruit production. Avoid shaded areas to maximize yields and fruit quality.",
@@ -836,6 +845,7 @@ export const seedlings: Seedling[] = [
     price: 150,
     icon: "🍈",
     category: "tropical",
+    image: "/Guava.webp",
     careGuide: {
       watering: "Moderate watering, drought tolerant.",
       sunlight: "Full sun required.",
@@ -943,6 +953,7 @@ export const seedlings: Seedling[] = [
     price: 800,
     icon: "🥜",
     category: "tropical",
+    image: "/Cashewnut.webp",
     careGuide: {
       watering: "Cashew trees grow best with annual rainfall between 700-1,200 mm. They tolerate drought, but they don't do well in waterlogged areas. Supplemental irrigation during prolonged dry spells boosts flowering and fruit set. Water regularly during establishment, then reduce frequency as trees mature.",
       sunlight: "Full sun (6+ hours) required for optimal growth and nut production. Cashew trees need adequate sunlight for proper development and yield.",
