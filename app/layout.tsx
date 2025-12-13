@@ -32,10 +32,23 @@ const satisfy = Satisfy({
 })
 
 export const metadata: Metadata = {
-  title: "Mynzagric - Premium Seedlings",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://mynzagric.com'),
+  title: {
+    default: "Mynzagric - Premium Grafted Fruit Seedlings & Irrigation Systems | Kenya",
+    template: "%s | Mynzagric"
+  },
   description:
-    "High-quality grafted fruit seedlings worldwide. Hass avocados, mangoes, citrus, and tropical fruits.",
-  generator: "v0.app",
+    "Buy premium grafted fruit seedlings including Hass avocados, mangoes, citrus, and tropical fruits. Complete 1-acre value packs with drip irrigation systems. Professional agronomical support included.",
+  keywords: ["grafted fruit seedlings", "mango seedlings", "avocado seedlings", "citrus seedlings", "drip irrigation", "fruit farming Kenya", "premium seedlings", "Hass avocado", "Tommy mango", "Valencia orange"],
+  authors: [{ name: "Mynzagric" }],
+  creator: "Mynzagric",
+  publisher: "Mynzagric",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  generator: "Next.js",
   manifest: "/site.webmanifest",
   icons: {
     icon: [
@@ -46,6 +59,30 @@ export const metadata: Metadata = {
     apple: [
       { url: "/apple-touch-icon.png", type: "image/png", sizes: "180x180" },
     ],
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_KE",
+    url: "/",
+    siteName: "Mynzagric",
+    title: "Mynzagric - Premium Grafted Fruit Seedlings & Irrigation Systems",
+    description: "High-quality grafted fruit seedlings worldwide. Hass avocados, mangoes, citrus, and tropical fruits with professional irrigation systems.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Mynzagric - Premium Grafted Fruit Seedlings",
+    description: "High-quality grafted fruit seedlings worldwide. Hass avocados, mangoes, citrus, and tropical fruits.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
   },
 }
 
@@ -64,6 +101,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${geist.variable} ${geistMono.variable} ${acme.variable} ${satisfy.variable}`}>
+      <head>
+        {/* Preconnect to external domains for faster loading */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://images.pexels.com" />
+        <link rel="dns-prefetch" href="https://images.unsplash.com" />
+        <link rel="dns-prefetch" href="https://videos.pexels.com" />
+      </head>
       <body className={`${geist.className} antialiased`} suppressHydrationWarning>
         <CartProviderWrapper>
           {children}
