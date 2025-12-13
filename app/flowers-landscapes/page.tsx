@@ -253,7 +253,6 @@ Thank you!`
                   <ProductCard
                     seedling={seedling}
                     onAddToCart={addToCart}
-                    showAddToCart={true}
                   />
                 </div>
               ))}

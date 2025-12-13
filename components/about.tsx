@@ -11,7 +11,7 @@ if (typeof window !== "undefined") {
 
 function About() {
   const stickyRef = useRef<HTMLDivElement>(null)
-  const blockquoteRef = useRef<HTMLBlockquoteElement>(null)
+  const blockquoteRef = useRef<HTMLQuoteElement>(null)
   const spanRef = useRef<HTMLSpanElement>(null)
   const boxRef = useRef<HTMLDivElement>(null)
   const sectionRef = useRef<HTMLElement>(null)

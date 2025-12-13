@@ -164,7 +164,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     openGraph: {
       title: `${pack.name} - Complete 1-Acre Fruit Farming Package`,
       description: pack.description,
-      type: "product",
+      type: "website",
     },
     alternates: {
       canonical: `/frutopia/${id}`,
@@ -175,6 +175,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 export default function FrutopiaDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params)
   const pack = valuePacksData[resolvedParams.id]
+  const id = resolvedParams.id
 
   useEffect(() => {
     if (!pack) {

@@ -312,11 +312,13 @@ export default function Hero() {
           } else {
             // Fallback: Use triple requestAnimationFrame for guaranteed frame render
             // This ensures the frame is fully painted before showing
+            // Capture nextVid reference to maintain type in nested callbacks
+            const videoElement: HTMLVideoElement = nextVid
             requestAnimationFrame(() => {
               requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
                   // Triple-check video is still ready
-                  if (nextVid.readyState >= 3 && !nextVid.seeking && nextVid.videoWidth > 0) {
+                  if (videoElement && videoElement.readyState >= 3 && videoElement.seeking === false && videoElement.videoWidth > 0) {
                     startCrossfade()
                   } else {
                     // Wait a bit more if still not ready

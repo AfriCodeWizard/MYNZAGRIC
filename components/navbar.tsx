@@ -1025,7 +1025,7 @@ Thank you!`
             const clickedOnCartContent = (e.target as HTMLElement)?.closest('[data-cart-content="true"]')
             if (clickedInsideCart || clickedOnCartContent) {
               e.stopPropagation()
-              e.stopImmediatePropagation()
+              e.nativeEvent.stopImmediatePropagation()
             }
           }}
           onTouchStart={(e) => {
@@ -1034,7 +1034,7 @@ Thank you!`
             const clickedOnCartContent = (e.target as HTMLElement)?.closest('[data-cart-content="true"]')
             if (clickedInsideCart || clickedOnCartContent) {
               e.stopPropagation()
-              e.stopImmediatePropagation()
+              e.nativeEvent.stopImmediatePropagation()
             }
           }}
         >
@@ -1049,15 +1049,15 @@ Thank you!`
             onClick={(e) => {
               // Stop all clicks inside cart from bubbling to backdrop - exactly like desktop
               e.stopPropagation()
-              e.stopImmediatePropagation()
+              e.nativeEvent.stopImmediatePropagation()
             }}
             onMouseDown={(e) => {
               e.stopPropagation()
-              e.stopImmediatePropagation()
+              e.nativeEvent.stopImmediatePropagation()
             }}
             onTouchStart={(e) => {
               e.stopPropagation()
-              e.stopImmediatePropagation()
+              e.nativeEvent.stopImmediatePropagation()
             }}
             data-cart-content="true"
           >
@@ -1354,23 +1354,23 @@ Thank you!`
                     }}
                     onMouseDown={(e) => {
                       e.stopPropagation()
-                      e.stopImmediatePropagation()
+                      e.nativeEvent.stopImmediatePropagation()
                     }}
                     onClick={(e) => {
                       e.stopPropagation()
-                      e.stopImmediatePropagation()
+                      e.nativeEvent.stopImmediatePropagation()
                     }}
                     onTouchStart={(e) => {
                       e.stopPropagation()
-                      e.stopImmediatePropagation()
+                      e.nativeEvent.stopImmediatePropagation()
                     }}
                     onTouchEnd={(e) => {
                       e.stopPropagation()
-                      e.stopImmediatePropagation()
+                      e.nativeEvent.stopImmediatePropagation()
                     }}
                     onTouchMove={(e) => {
                       e.stopPropagation()
-                      e.stopImmediatePropagation()
+                      e.nativeEvent.stopImmediatePropagation()
                     }}
                     data-cart-content="true"
                   >
@@ -1383,7 +1383,7 @@ Thank you!`
                         setIsWhatsAppInteracting(true)
                         // CRITICAL: Stop all propagation immediately
                         e.stopPropagation()
-                        e.stopImmediatePropagation()
+                        e.nativeEvent.stopImmediatePropagation()
                         if (!deliveryLocation) {
                           e.preventDefault()
                           setIsWhatsAppInteracting(false)
@@ -1397,7 +1397,7 @@ Thank you!`
                         setIsWhatsAppInteracting(true)
                         // CRITICAL: Stop all propagation to prevent backdrop from closing cart
                         e.stopPropagation()
-                        e.stopImmediatePropagation()
+                        e.nativeEvent.stopImmediatePropagation()
                         if (!deliveryLocation) {
                           e.preventDefault()
                           setIsWhatsAppInteracting(false)
@@ -1433,7 +1433,7 @@ Thank you!`
                         setIsWhatsAppInteracting(true)
                         // CRITICAL: Stop all propagation immediately
                         e.stopPropagation()
-                        e.stopImmediatePropagation()
+                        e.nativeEvent.stopImmediatePropagation()
                         if (!deliveryLocation) {
                           e.preventDefault()
                           setIsWhatsAppInteracting(false)
@@ -1447,7 +1447,7 @@ Thank you!`
                         setIsWhatsAppInteracting(true)
                         // CRITICAL: Stop all propagation
                         e.stopPropagation()
-                        e.stopImmediatePropagation()
+                        e.nativeEvent.stopImmediatePropagation()
                         if (!deliveryLocation) {
                           e.preventDefault()
                           setIsWhatsAppInteracting(false)
