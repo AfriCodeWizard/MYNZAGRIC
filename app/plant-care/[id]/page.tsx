@@ -244,18 +244,7 @@ export default function PlantCarePage({ params }: { params: Promise<{ id: string
     }
   ]
 
-  return (
-    <>
-      <BreadcrumbSchema items={[
-        { name: "Home", url: "/" },
-        { name: "Seedlings", url: "/#seedlings" },
-        { name: seedling.category.charAt(0).toUpperCase() + seedling.category.slice(1), url: `/seedlings/${seedling.category}` },
-        { name: seedling.name, url: `/plant-care/${seedling.id}` }
-      ]} />
-      <ProductSchema seedling={seedling} />
-      <FAQSchema faqs={faqs} />
-      <div className="min-h-screen bg-[#07090d]">
-        <Navbar />
+  const careItems = [
     {
       key: "watering",
       label: "Watering",
@@ -321,6 +310,19 @@ export default function PlantCarePage({ params }: { params: Promise<{ id: string
       content: care?.pests,
     },
   ]
+
+  return (
+    <>
+      <BreadcrumbSchema items={[
+        { name: "Home", url: "/" },
+        { name: "Seedlings", url: "/#seedlings" },
+        { name: seedling.category.charAt(0).toUpperCase() + seedling.category.slice(1), url: `/seedlings/${seedling.category}` },
+        { name: seedling.name, url: `/plant-care/${seedling.id}` }
+      ]} />
+      <ProductSchema seedling={seedling} />
+      <FAQSchema faqs={faqs} />
+      <div className="min-h-screen bg-[#07090d]">
+        <Navbar />
 
 
       {/* Hero Section */}
