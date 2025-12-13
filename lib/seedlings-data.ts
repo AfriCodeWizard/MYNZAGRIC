@@ -335,6 +335,7 @@ export const seedlings: Seedling[] = [
     price: 200,
     icon: "🥑",
     category: "avocado",
+    image: "/Grafted_Hass_Avocado.webp",
     careGuide: {
       watering: "Water the holes unless the soil is wet enough. Water the seedlings immediately after planting if it is not in the rainy season. Deep watering 1-2x weekly, don't overwater. Avoid waterlogged conditions as avocado plants are sensitive to excessive soil moisture.",
       sunlight: "Full sun (6+ hours) for good production. High temperatures and direct sunshine can cause sunburn damage to exposed fruits. Pruning should be minimized because the tree is very susceptible to sunburn.",
@@ -389,6 +390,7 @@ export const seedlings: Seedling[] = [
     price: 600,
     icon: "🍓",
     category: "berries",
+    image: "/Raspberry.webp",
     careGuide: {
       watering: "Requires 80-120 cm of well-distributed rainfall annually. In drier regions, drip irrigation is crucial during dry spells to maintain consistent moisture. Maintain consistent soil moisture, watering every 3-4 days during dry periods. Drip irrigation is ideal to deliver water directly to roots, reducing fungal risks.",
       sunlight: "Needs full sun (6-8 hours daily) for maximum fruit production, though partial shade is tolerated in hotter areas to prevent berry scorch.",
@@ -406,6 +408,7 @@ export const seedlings: Seedling[] = [
     price: 700,
     icon: "🍓",
     category: "berries",
+    image: "/Blackberry.webp",
     careGuide: {
       watering: "Proper irrigation will boost plant health and production. Regular watering during growing season. Maintain consistent soil moisture.",
       sunlight: "They need at least 6-8 hours of sunlight daily for optimal fruiting. Full sun preferred.",
@@ -441,6 +444,7 @@ export const seedlings: Seedling[] = [
     price: 300,
     icon: "🍇",
     category: "berries",
+    image: "/Mulberry.webp",
     careGuide: {
       watering: "Moderate watering, drought tolerant.",
       sunlight: "Full sun preferred.",
