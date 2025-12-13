@@ -1,8 +1,7 @@
-"use client"
-
-import { use, useEffect } from "react"
+import { use } from "react"
 import Link from "next/link"
 import Image from "next/image"
+import { redirect } from "next/navigation"
 import type { Metadata } from "next"
 import { BreadcrumbSchema } from "@/components/structured-data"
 import { ArrowLeft, Check, X, Droplets, Sprout, GraduationCap, Package, DollarSign, Calendar, Phone, Mail, Leaf, Shield, SprayCan, Sparkles, Truck } from "lucide-react"
@@ -177,14 +176,8 @@ export default function FrutopiaDetailPage({ params }: { params: Promise<{ id: s
   const pack = valuePacksData[resolvedParams.id]
   const id = resolvedParams.id
 
-  useEffect(() => {
-    if (!pack) {
-      window.location.href = "/#frutopia"
-    }
-  }, [pack])
-
   if (!pack) {
-    return null
+    redirect("/#frutopia")
   }
 
   const generateWhatsAppMessage = () => {
