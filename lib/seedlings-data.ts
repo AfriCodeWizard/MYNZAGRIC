@@ -25,6 +25,7 @@ export const seedlings: Seedling[] = [
     price: 200,
     icon: "🥭",
     category: "mango",
+    image: "/Tommy_mango.webp",
     careGuide: {
       watering: "Annual rainfall of 850 to 1000mm is sufficient for mango cultivation. It should be noted that rainfall during flowering season reduces fruit setting. After the plant is well established it can tolerate drought especially when its tap root reaches the water table. Water deeply once a week during dry season.",
       sunlight: "Requires full sun (6-8 hours minimum) for optimal fruit production. Pruning opens up the trees for aeration and penetration of sun rays, which is important for pest and disease management.",
@@ -42,6 +43,7 @@ export const seedlings: Seedling[] = [
     price: 200,
     icon: "🥭",
     category: "mango",
+    image: "/Apple_mango.webp",
     careGuide: {
       watering: "Annual rainfall of 850 to 1000mm is sufficient for mango cultivation. It should be noted that rainfall during flowering season reduces fruit setting. After the plant is well established it can tolerate drought especially when its tap root reaches the water table. Water regularly during growing season, reduce in dry season.",
       sunlight: "Full sun exposure (6+ hours daily). Pruning opens up the trees for aeration and penetration of sun rays, which is important for pest and disease management.",
@@ -59,6 +61,7 @@ export const seedlings: Seedling[] = [
     price: 200,
     icon: "🥭",
     category: "mango",
+    image: "/Vandyke_mango.webp",
     careGuide: {
       watering: "Annual rainfall of 850 to 1000mm is sufficient for mango cultivation. It should be noted that rainfall during flowering season reduces fruit setting. After the plant is well established it can tolerate drought especially when its tap root reaches the water table. Deep watering weekly in hot season.",
       sunlight: "Needs strong sunlight for better yields. Pruning opens up the trees for aeration and penetration of sun rays, which is important for pest and disease management.",
@@ -76,6 +79,7 @@ export const seedlings: Seedling[] = [
     price: 200,
     icon: "🥭",
     category: "mango",
+    image: "/Ngowe_mango.webp",
     careGuide: {
       watering: "Annual rainfall of 850 to 1000mm is sufficient for mango cultivation. It should be noted that rainfall during flowering season reduces fruit setting. After the plant is well established it can tolerate drought especially when its tap root reaches the water table. Moderate watering, drought tolerant once established.",
       sunlight: "Full sun required. Pruning opens up the trees for aeration and penetration of sun rays, which is important for pest and disease management.",
@@ -93,6 +97,7 @@ export const seedlings: Seedling[] = [
     price: 400,
     icon: "🥭",
     category: "mango",
+    image: "/Alphonso_mango.webp",
     careGuide: {
       watering: "Annual rainfall of 850 to 1000mm is sufficient for mango cultivation. It should be noted that rainfall during flowering season reduces fruit setting. After the plant is well established it can tolerate drought especially when its tap root reaches the water table. Regular watering, especially during flowering and fruiting.",
       sunlight: "8+ hours of direct sunlight daily. Pruning opens up the trees for aeration and penetration of sun rays, which is important for pest and disease management.",
@@ -130,6 +135,7 @@ export const seedlings: Seedling[] = [
     price: 200,
     icon: "🍊",
     category: "citrus",
+    image: "/Grafted_Washington_Orange.webp",
     careGuide: {
       watering: "Citrus trees should be planted in a sunny and wind-protected area. They can tolerate high temperatures provided the trees are well supplied with soil moisture. Regular irrigation needed, especially when fruiting. Water the plant after planting if soil isn't wet enough.",
       sunlight: "Requires full sunlight. Citrus trees should be planted in a sunny and wind-protected area, and in frost-free regions because they cannot tolerate severe frosts.",
@@ -147,6 +153,7 @@ export const seedlings: Seedling[] = [
     price: 200,
     icon: "🍊",
     category: "citrus",
+    image: "/Grafted_Valencia_Orange.webp",
     careGuide: {
       watering: "Citrus trees should be planted in a sunny and wind-protected area. They can tolerate high temperatures provided the trees are well supplied with soil moisture. Consistent watering during growing season. Water the plant after planting if soil isn't wet enough.",
       sunlight: "Full sun essential. Citrus trees should be planted in a sunny and wind-protected area, and in frost-free regions because they cannot tolerate severe frosts.",
@@ -182,6 +189,7 @@ export const seedlings: Seedling[] = [
     price: 250,
     icon: "🍊",
     category: "citrus",
+    image: "/Minneola_Tangelo_Orange.webp",
     careGuide: {
       watering: "Citrus trees should be planted in a sunny and wind-protected area. They can tolerate high temperatures provided the trees are well supplied with soil moisture. Regular watering during dry periods. Water the plant after planting if soil isn't wet enough.",
       sunlight: "Full sun required. Citrus trees should be planted in a sunny and wind-protected area, and in frost-free regions because they cannot tolerate severe frosts.",
@@ -199,6 +207,7 @@ export const seedlings: Seedling[] = [
     price: 600,
     icon: "🍊",
     category: "citrus",
+    image: "/Kumquat_Oranges.webp",
     careGuide: {
       watering: "Citrus trees should be planted in a sunny and wind-protected area. They can tolerate high temperatures provided the trees are well supplied with soil moisture. Moderate watering, drought tolerant. Water the plant after planting if soil isn't wet enough.",
       sunlight: "Full sun, 6+ hours daily. Citrus trees should be planted in a sunny and wind-protected area, and in frost-free regions because they cannot tolerate severe frosts.",
@@ -234,6 +243,7 @@ export const seedlings: Seedling[] = [
     price: 250,
     icon: "🍊",
     category: "citrus",
+    image: "/Lime.webp",
     careGuide: {
       watering: "Citrus trees should be planted in a sunny and wind-protected area. They can tolerate high temperatures provided the trees are well supplied with soil moisture. Consistent water, especially when fruiting. Water the plant after planting if soil isn't wet enough.",
       sunlight: "Full sun (6-8 hours). Citrus trees should be planted in a sunny and wind-protected area, and in frost-free regions because they cannot tolerate severe frosts.",
@@ -251,6 +261,7 @@ export const seedlings: Seedling[] = [
     price: 2500,
     icon: "🍋",
     category: "citrus",
+    image: "/Sudachi_Lemon.webp",
     careGuide: {
       watering: "Citrus trees should be planted in a sunny and wind-protected area. They can tolerate high temperatures provided the trees are well supplied with soil moisture. Regular watering, maintain moist soil. Water the plant after planting if soil isn't wet enough.",
       sunlight: "Full sun preferred. Citrus trees should be planted in a sunny and wind-protected area, and in frost-free regions because they cannot tolerate severe frosts.",
@@ -286,6 +297,7 @@ export const seedlings: Seedling[] = [
     price: 800,
     icon: "🍋",
     category: "citrus",
+    image: "/Variagated_Pink_Lemon.webp",
     careGuide: {
       watering: "Citrus trees should be planted in a sunny and wind-protected area. They can tolerate high temperatures provided the trees are well supplied with soil moisture. Regular watering, especially during fruiting. Water the plant after planting if soil isn't wet enough.",
       sunlight: "Full sun for best pink color. Citrus trees should be planted in a sunny and wind-protected area, and in frost-free regions because they cannot tolerate severe frosts.",
@@ -303,6 +315,7 @@ export const seedlings: Seedling[] = [
     price: 350,
     icon: "🍋",
     category: "citrus",
+    image: "/Sweet_Lemon.webp",
     careGuide: {
       watering: "Citrus trees should be planted in a sunny and wind-protected area. They can tolerate high temperatures provided the trees are well supplied with soil moisture. Moderate, consistent watering. Water the plant after planting if soil isn't wet enough.",
       sunlight: "Full sun required. Citrus trees should be planted in a sunny and wind-protected area, and in frost-free regions because they cannot tolerate severe frosts.",
