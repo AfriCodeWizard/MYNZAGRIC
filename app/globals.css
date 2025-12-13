@@ -143,9 +143,12 @@
   }
 }
 
-/* Smooth scroll behavior */
+/* Smooth scroll behavior and consistent root font size */
 html {
   scroll-behavior: smooth;
+  font-size: 16px; /* Explicit root font size for consistent rem calculations */
+  -webkit-text-size-adjust: 100%; /* Prevent iOS Safari from auto-adjusting text size */
+  text-size-adjust: 100%; /* Standard property for text size adjustment */
 }
 
 /* Animation for hover effects and page transitions */
@@ -384,8 +387,8 @@ html {
   position: relative;
   /* so its pseudo is above parent backdrop */
   z-index: 1;
-  /* flexible padding */
-  padding: min(1em, 4vw) min(2em, 2vw);
+  /* flexible padding - using rem instead of vw for consistent scaling */
+  padding: min(1em, 1rem) min(2em, 2rem);
   background-color: #171717;
 }
 

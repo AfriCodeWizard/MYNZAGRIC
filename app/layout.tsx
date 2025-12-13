@@ -1,5 +1,5 @@
 import type React from "react"
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { Geist, Geist_Mono, Acme, Satisfy } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import CartProviderWrapper from "@/components/cart-provider-wrapper"
@@ -47,6 +47,14 @@ export const metadata: Metadata = {
       { url: "/apple-touch-icon.png", type: "image/png", sizes: "180x180" },
     ],
   },
+}
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+  viewportFit: "cover",
 }
 
 export default function RootLayout({
