@@ -101,14 +101,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${geist.variable} ${geistMono.variable} ${acme.variable} ${satisfy.variable}`}>
-      <head>
-        {/* Preconnect to external domains for faster loading */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="dns-prefetch" href="https://images.pexels.com" />
-        <link rel="dns-prefetch" href="https://images.unsplash.com" />
-        <link rel="dns-prefetch" href="https://videos.pexels.com" />
-      </head>
       <body className={`${geist.className} antialiased`} suppressHydrationWarning>
         <CartProviderWrapper>
           {children}
