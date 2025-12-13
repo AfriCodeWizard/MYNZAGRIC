@@ -353,6 +353,7 @@ export const seedlings: Seedling[] = [
     price: 200,
     icon: "🥑",
     category: "avocado",
+    image: "/Grafted_Fuerte_Avocado.webp",
     careGuide: {
       watering: "Water the holes unless the soil is wet enough. Water the seedlings immediately after planting if it is not in the rainy season. Water deeply, avoid waterlogging. Avoid waterlogged conditions as avocado plants are sensitive to excessive soil moisture.",
       sunlight: "Full sun required. High temperatures and direct sunshine can cause sunburn damage to exposed fruits. Pruning should be minimized because the tree is very susceptible to sunburn.",
