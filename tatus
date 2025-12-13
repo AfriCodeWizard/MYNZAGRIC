@@ -1,0 +1,27 @@
+[33mcommit 834da1333d1f5175b8878f3f73d0e3ecedd64b96[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m
+Author: AfriCodeWizard <AfriCodeWizard@users.noreply.github.com>
+Date:   Sat Dec 13 11:07:58 2025 -0800
+
+    fix: resolve cross-domain rendering inconsistency with viewport and font-size
+    
+    - Add explicit viewport metadata export to layout.tsx
+      - Ensures consistent viewport behavior across all domains
+      - Prevents browser default viewport differences between vercel.app and custom domains
+      - Sets initialScale: 1, maximumScale: 5, userScalable: true
+    
+    - Add explicit root font-size (16px) to html element in globals.css
+      - Ensures consistent rem/em calculations across domains
+      - Prevents iOS Safari text size auto-adjustment with text-size-adjust: 100%
+    
+    - Replace viewport-relative units (vw) with rem units in drip-text-section
+      - Removes dependency on viewport width interpretation
+      - Ensures consistent padding regardless of domain
+    
+    Root cause: Missing viewport metadata in Next.js App Router caused browsers
+    to apply different default viewport settings on custom domain vs vercel.app,
+    resulting in scaled-down appearance (smaller fonts, larger spacing).
+    
+    This fix guarantees pixel-consistent rendering across all domains and browsers.
+
+ app/layout.tsx | 51 [32m++++++++++++++++++++++++++++++++++++++++++++++++[m[31m---[m
+ 1 file changed, 48 insertions(+), 3 deletions(-)

@@ -291,9 +291,11 @@ export default function ProductCard({
             src={seedling.image.split('/').map((part, index) => 
               index === 0 ? part : encodeURIComponent(part)
             ).join('/')} 
-            alt={seedling.name}
+            alt={`${seedling.name} - Premium grafted ${seedling.category} seedling available at Mynzagric`}
             className="w-full h-full object-cover transform transition-transform duration-300 hover:scale-110"
             style={{ width: '100%', height: '100%', minHeight: '180px' }}
+            loading="lazy"
+            decoding="async"
             onError={(e) => {
               const imagePath = seedling.image;
               console.error('Image failed to load:', imagePath, 'for', seedling.name);

@@ -1,4 +1,3 @@
-"use client"
 import { use } from "react"
 import Link from "next/link"
 import {
@@ -18,6 +17,8 @@ import {
 import { seedlings } from "@/lib/seedlings-data"
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
+import type { Metadata } from "next"
+import { BreadcrumbSchema, ProductSchema, FAQSchema } from "@/components/structured-data"
 
 const categoryColors: Record<string, { bgColor: string; image: string }> = {
   mango: {
@@ -39,6 +40,34 @@ const categoryColors: Record<string, { bgColor: string; image: string }> = {
   tropical: {
     bgColor: "from-orange-800 to-pink-800",
     image: "https://images.unsplash.com/photo-1528821128474-27f963b062bf?w=800&q=80&auto=format&fit=crop"
+  }
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params
+  const seedling = seedlings.find((s) => s.id === id)
+
+  if (!seedling) {
+    return {
+      title: "Seedling Not Found",
+    }
+  }
+
+  const care = seedling.careGuide
+  const description = `Complete care guide for ${seedling.name}. Learn about watering, sunlight, soil, temperature, fertilizer, spacing, and pest management. ${care?.timeToFruit || 'Fast-growing'} variety perfect for commercial and home farming.`
+
+  return {
+    title: `${seedling.name} Care Guide - Complete Growing Instructions | Mynzagric`,
+    description,
+    keywords: `${seedling.name} care guide, ${seedling.name} growing instructions, ${seedling.category} seedling care, fruit tree care guide, ${seedling.name} planting guide`,
+    openGraph: {
+      title: `${seedling.name} Care Guide - Complete Growing Instructions`,
+      description,
+      type: "article",
+    },
+    alternates: {
+      canonical: `/plant-care/${id}`,
+    },
   }
 }
 
@@ -195,7 +224,38 @@ export default function PlantCarePage({ params }: { params: Promise<{ id: string
 
   const commonIssues = generateIssues()
 
-  const careItems = [
+  // Generate FAQ schema from care guide
+  const faqs = [
+    {
+      question: `How do I care for ${seedling.name}?`,
+      answer: `Follow our complete care guide covering watering (${care?.watering?.substring(0, 100) || 'regular watering'}), sunlight requirements (${care?.sunlight?.substring(0, 50) || 'full sun'}), soil conditions, temperature, fertilizer, spacing, and pest management.`
+    },
+    {
+      question: `When will ${seedling.name} start fruiting?`,
+      answer: care?.timeToFruit || 'Typically 2-3 years from planting for grafted seedlings.'
+    },
+    {
+      question: `What spacing is recommended for ${seedling.name}?`,
+      answer: care?.spacing || 'Follow standard spacing guidelines for optimal growth.'
+    },
+    {
+      question: `What are common pests and diseases for ${seedling.name}?`,
+      answer: care?.pests?.substring(0, 200) || 'Common issues include pests and diseases that can be managed with proper care and preventive measures.'
+    }
+  ]
+
+  return (
+    <>
+      <BreadcrumbSchema items={[
+        { name: "Home", url: "/" },
+        { name: "Seedlings", url: "/#seedlings" },
+        { name: seedling.category.charAt(0).toUpperCase() + seedling.category.slice(1), url: `/seedlings/${seedling.category}` },
+        { name: seedling.name, url: `/plant-care/${seedling.id}` }
+      ]} />
+      <ProductSchema seedling={seedling} />
+      <FAQSchema faqs={faqs} />
+      <div className="min-h-screen bg-[#07090d]">
+        <Navbar />
     {
       key: "watering",
       label: "Watering",
@@ -262,9 +322,6 @@ export default function PlantCarePage({ params }: { params: Promise<{ id: string
     },
   ]
 
-  return (
-    <div className="min-h-screen bg-[#07090d]">
-      <Navbar />
 
       {/* Hero Section */}
       <section className="relative pt-24 pb-12 md:pt-32 md:pb-16 overflow-hidden">
@@ -606,7 +663,8 @@ export default function PlantCarePage({ params }: { params: Promise<{ id: string
         </div>
       </section>
 
-      <Footer />
-    </div>
+        <Footer />
+      </div>
+    </>
   )
 }

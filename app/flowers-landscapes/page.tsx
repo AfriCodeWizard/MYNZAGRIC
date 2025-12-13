@@ -6,6 +6,7 @@ import Footer from "@/components/footer"
 import ProductCard from "@/components/product-card"
 import { seedlings } from "@/lib/seedlings-data"
 import { useCart } from "@/contexts/cart-context"
+import { BreadcrumbSchema } from "@/components/structured-data"
 import { 
   Flower2, 
   Sprout, 
@@ -145,8 +146,13 @@ Thank you!`
   }
 
   return (
-    <div className="min-h-screen bg-[#0e0e0e]">
-      <Navbar />
+    <>
+      <BreadcrumbSchema items={[
+        { name: "Home", url: "/" },
+        { name: "Flowers & Landscaping", url: "/flowers-landscapes" }
+      ]} />
+      <div className="min-h-screen bg-[#0e0e0e]">
+        <Navbar />
       
       {/* Hero Section with Flower Theme */}
       <section className="relative min-h-screen w-full overflow-hidden">
@@ -448,8 +454,9 @@ Thank you!`
         </div>
       </section>
 
-      <Footer />
-    </div>
+        <Footer />
+      </div>
+    </>
   )
 }
 

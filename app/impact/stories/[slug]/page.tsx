@@ -6,6 +6,34 @@ import Link from "next/link"
 import Image from "next/image"
 import { getStoryBySlug, getAllStorySlugs } from "@/lib/success-stories"
 import { notFound } from "next/navigation"
+import type { Metadata } from "next"
+import { BreadcrumbSchema } from "@/components/structured-data"
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params
+  const story = getStoryBySlug(slug)
+
+  if (!story) {
+    return {
+      title: "Story Not Found",
+    }
+  }
+
+  return {
+    title: `${story.name} - Success Story | Mynzagric Impact`,
+    description: story.shortDescription,
+    keywords: `${story.name} success story, ${story.type} farming, agricultural success Kenya, ${story.location} farming`,
+    openGraph: {
+      title: `${story.name} - Success Story`,
+      description: story.shortDescription,
+      type: "article",
+      images: [story.image],
+    },
+    alternates: {
+      canonical: `/impact/stories/${slug}`,
+    },
+  }
+}
 
 export default function StoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params)
@@ -16,8 +44,14 @@ export default function StoryPage({ params }: { params: Promise<{ slug: string }
   }
 
   return (
-    <div className="min-h-screen bg-[#07090d]">
-      <Navbar />
+    <>
+      <BreadcrumbSchema items={[
+        { name: "Home", url: "/" },
+        { name: "Our Impact", url: "/impact" },
+        { name: story.name, url: `/impact/stories/${slug}` }
+      ]} />
+      <div className="min-h-screen bg-[#07090d]">
+        <Navbar />
       
       {/* Back Button */}
       <div className="pt-24 pb-8 px-4 sm:px-6 lg:px-8">
@@ -165,8 +199,9 @@ export default function StoryPage({ params }: { params: Promise<{ slug: string }
         </div>
       </section>
 
-      <Footer />
-    </div>
+        <Footer />
+      </div>
+    </>
   )
 }
 

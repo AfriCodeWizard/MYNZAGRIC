@@ -1,8 +1,8 @@
-"use client"
-
 import { use, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
+import type { Metadata } from "next"
+import { BreadcrumbSchema } from "@/components/structured-data"
 import { ArrowLeft, Check, X, Droplets, Sprout, GraduationCap, Package, DollarSign, Calendar, Phone, Mail, Leaf, Shield, SprayCan, Sparkles, Truck } from "lucide-react"
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
@@ -145,6 +145,31 @@ const excludedItems = [
   }
 ]
 
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params
+  const pack = valuePacksData[id]
+
+  if (!pack) {
+    return {
+      title: "Value Pack Not Found",
+    }
+  }
+
+  return {
+    title: `${pack.name} - Complete 1-Acre Fruit Farming Package | Mynzagric`,
+    description: `${pack.description} Includes ${pack.quantity} premium grafted seedlings, button dripper irrigation system, professional training, and agronomical support. Price: KES ${pack.price.toLocaleString()}.`,
+    keywords: `${pack.name}, fruit value pack, 1 acre fruit farming, drip irrigation package, ${pack.fruit.toLowerCase()}, complete farming package Kenya`,
+    openGraph: {
+      title: `${pack.name} - Complete 1-Acre Fruit Farming Package`,
+      description: pack.description,
+      type: "product",
+    },
+    alternates: {
+      canonical: `/frutopia/${id}`,
+    },
+  }
+}
+
 export default function FrutopiaDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params)
   const pack = valuePacksData[resolvedParams.id]
@@ -192,8 +217,14 @@ Thank you!`
   }
 
   return (
-    <div className="min-h-screen bg-[#07090d]">
-      <Navbar />
+    <>
+      <BreadcrumbSchema items={[
+        { name: "Home", url: "/" },
+        { name: "Frutopia Value Packs", url: "/#frutopia" },
+        { name: pack.name, url: `/frutopia/${id}` }
+      ]} />
+      <div className="min-h-screen bg-[#07090d]">
+        <Navbar />
       
       <section className="pt-24 pb-20 md:pt-32 md:pb-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -508,8 +539,9 @@ Thank you!`
         </div>
       </section>
 
-      <Footer />
-    </div>
+        <Footer />
+      </div>
+    </>
   )
 }
 

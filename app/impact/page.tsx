@@ -1,11 +1,25 @@
-"use client"
-
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
 import { Leaf, Droplet, TrendingUp, Users, CheckCircle2, ArrowRight, MapPin } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { successStories } from "@/lib/success-stories"
+import type { Metadata } from "next"
+import { BreadcrumbSchema } from "@/components/structured-data"
+
+export const metadata: Metadata = {
+  title: "Our Impact - Transforming Agriculture Through Premium Seedlings | Mynzagric",
+  description: "Discover how Mynzagric is transforming agriculture worldwide. 3.2M+ premium seedlings delivered, 30+ years of production per tree, 50-70% water savings with drip irrigation. Read success stories from farmers.",
+  keywords: "agricultural impact, farming success stories, sustainable agriculture, drip irrigation benefits, fruit farming success, agricultural transformation Kenya",
+  openGraph: {
+    title: "Our Impact - Transforming Agriculture Through Premium Seedlings",
+    description: "Discover how Mynzagric is transforming agriculture worldwide with premium seedlings and precision irrigation systems.",
+    type: "website",
+  },
+  alternates: {
+    canonical: "/impact",
+  },
+}
 
 export default function ImpactPage() {
   const impactStats = [
@@ -58,8 +72,13 @@ export default function ImpactPage() {
 
 
   return (
-    <div className="min-h-screen bg-[#07090d]">
-      <Navbar />
+    <>
+      <BreadcrumbSchema items={[
+        { name: "Home", url: "/" },
+        { name: "Our Impact", url: "/impact" }
+      ]} />
+      <div className="min-h-screen bg-[#07090d]">
+        <Navbar />
       
       {/* Hero Section */}
       <section className="relative h-[70vh] min-h-[600px] overflow-hidden">
@@ -234,8 +253,9 @@ export default function ImpactPage() {
         </div>
       </section>
 
-      <Footer />
-    </div>
+        <Footer />
+      </div>
+    </>
   )
 }
 
