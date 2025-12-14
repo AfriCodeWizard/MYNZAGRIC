@@ -297,13 +297,6 @@ export default function ProductCard({
             loading="lazy"
             decoding="async"
             onError={(e) => {
-              const imagePath = seedling.image;
-              console.error('Image failed to load:', imagePath, 'for', seedling.name);
-              if (imagePath) {
-                console.error('Encoded path:', imagePath.split('/').map((part, index) => 
-                  index === 0 ? part : encodeURIComponent(part)
-                ).join('/'));
-              }
               // Hide the broken image and show icon instead
               const target = e.target as HTMLImageElement;
               target.style.display = 'none';
@@ -315,9 +308,6 @@ export default function ProductCard({
                 fallback.textContent = seedling.icon;
                 parent.appendChild(fallback);
               }
-            }}
-            onLoad={() => {
-              console.log('Image loaded successfully:', seedling.image);
             }}
           />
         ) : (
