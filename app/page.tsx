@@ -33,15 +33,10 @@ export const metadata: Metadata = {
 }
 
 export default async function Home() {
-  // Safely get feature flag, default to false if error
-  let enabled = false
-  try {
-    enabled = await createFeatureFlag("my_feature_flag")()
-  } catch (error) {
-    // Feature flag not configured or Statsig key missing - default to false
-    console.warn("Feature flag evaluation failed, defaulting to false:", error)
-    enabled = false
-  }
+  // Feature flag check - non-blocking with timeout for instant page load
+  const featureFlagPromise = createFeatureFlag("my_feature_flag")().catch(() => false)
+  const timeoutPromise = new Promise<boolean>((resolve) => setTimeout(() => resolve(false), 100))
+  const enabled = await Promise.race([featureFlagPromise, timeoutPromise])
 
   return (
     <main className="w-full mx-auto" style={{ maxWidth: '100%', marginLeft: 'auto', marginRight: 'auto' }}>

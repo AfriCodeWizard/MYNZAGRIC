@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react"
 import { Menu, X, ChevronDown, ShoppingBag, Plus, Minus } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { seedlings } from "@/lib/seedlings-data"
 import { cn } from "@/lib/utils"
 import { useCart } from "@/contexts/cart-context"
@@ -1581,13 +1581,14 @@ Thank you!`
 
 // Desktop Nav Link Component with animated underline
 function NavLink({ href, label, shouldShowSolidBackground = false, pathname }: { href: string; label: string; shouldShowSolidBackground?: boolean; pathname: string }) {
+  const router = useRouter()
+  
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     // If we're not on homepage and clicking a hash link, navigate to homepage first
     if (pathname !== '/' && href.startsWith('/#')) {
       e.preventDefault()
-      const hash = href.split('#')[1]
-      // Navigate to homepage first
-      window.location.href = href
+      // Use Next.js router for instant client-side navigation
+      router.push(href)
       // HashNavigation component will handle scrolling after page loads
     } else if (pathname === '/' && href.startsWith('/#')) {
       // On homepage, handle smooth scroll
@@ -1652,14 +1653,15 @@ function MobileNavLink({
   shouldShowSolidBackground?: boolean
   pathname: string
 }) {
+  const router = useRouter()
+  
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     onClick()
     // If we're not on homepage and clicking a hash link, navigate to homepage first
     if (pathname !== '/' && href.startsWith('/#')) {
       e.preventDefault()
-      const hash = href.split('#')[1]
-      // Navigate to homepage with hash
-      window.location.href = href
+      // Use Next.js router for instant client-side navigation
+      router.push(href)
       // HashNavigation component will handle scrolling after page loads
     } else if (pathname === '/' && href.startsWith('/#')) {
       // On homepage, handle smooth scroll

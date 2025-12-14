@@ -10,11 +10,8 @@ export default function HashNavigation() {
   useEffect(() => {
     const hash = window.location.hash
     if (hash) {
-      // Wait for page to fully render, then scroll to section
-      // Increase delay if navigating from another page
-      const delay = pathname === '/' ? 100 : 300
-      
-      setTimeout(() => {
+      // Minimal delay for instant navigation - use requestAnimationFrame for immediate execution
+      const scrollToHash = () => {
         const hashValue = hash.substring(1) // Remove the #
         const element = document.getElementById(hashValue)
         if (element) {
@@ -27,8 +24,18 @@ export default function HashNavigation() {
             top: offsetPosition,
             behavior: 'smooth'
           })
+        } else {
+          // If element not found yet, try again after a very short delay
+          requestAnimationFrame(() => {
+            setTimeout(scrollToHash, 50)
+          })
         }
-      }, delay)
+      }
+      
+      // Use requestAnimationFrame for instant execution on next paint
+      requestAnimationFrame(() => {
+        scrollToHash()
+      })
     }
   }, [pathname])
 
