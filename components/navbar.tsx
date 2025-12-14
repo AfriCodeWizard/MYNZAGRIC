@@ -372,63 +372,94 @@ Thank you!`
                     <div className="p-2">
                       <Link
                         href="/#seedlings"
-                        className="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-green-50 hover:text-green-700 transition-colors"
+                        className="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-green-50 hover:text-green-700 transition-colors font-semibold"
                         role="menuitem"
                         onClick={() => {
                           setIsProductsOpen(false)
                           setActiveDropdown(null)
                         }}
                       >
-                        Fruit Seedlings
+                        All Fruit Seedlings
                       </Link>
+                      <div className="mt-1 pl-4 border-l-2 border-gray-200">
+                        <Link
+                          href="/seedlings/mango"
+                          className="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-green-50 hover:text-green-700 transition-colors"
+                          role="menuitem"
+                          onClick={() => {
+                            setIsProductsOpen(false)
+                            setActiveDropdown(null)
+                          }}
+                        >
+                          🥭 Mangoes
+                        </Link>
+                        <Link
+                          href="/seedlings/citrus"
+                          className="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-green-50 hover:text-green-700 transition-colors"
+                          role="menuitem"
+                          onClick={() => {
+                            setIsProductsOpen(false)
+                            setActiveDropdown(null)
+                          }}
+                        >
+                          🍊 Citrus
+                        </Link>
+                        <Link
+                          href="/seedlings/avocado"
+                          className="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-green-50 hover:text-green-700 transition-colors"
+                          role="menuitem"
+                          onClick={() => {
+                            setIsProductsOpen(false)
+                            setActiveDropdown(null)
+                          }}
+                        >
+                          🥑 Avocados
+                        </Link>
+                        <Link
+                          href="/seedlings/berries"
+                          className="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-green-50 hover:text-green-700 transition-colors"
+                          role="menuitem"
+                          onClick={() => {
+                            setIsProductsOpen(false)
+                            setActiveDropdown(null)
+                          }}
+                        >
+                          🫐 Berries
+                        </Link>
+                        <Link
+                          href="/seedlings/tropical"
+                          className="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-green-50 hover:text-green-700 transition-colors"
+                          role="menuitem"
+                          onClick={() => {
+                            setIsProductsOpen(false)
+                            setActiveDropdown(null)
+                          }}
+                        >
+                          🍍 Tropical
+                        </Link>
+                      </div>
                       <Link
                         href="/flowers-landscapes"
-                        className="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-pink-50 hover:text-pink-700 transition-colors"
+                        className="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-pink-50 hover:text-pink-700 transition-colors mt-2"
                         role="menuitem"
                         onClick={() => {
                           setIsProductsOpen(false)
                           setActiveDropdown(null)
                         }}
                       >
-                        Flowers & Landscaping
+                        🌸 Flowers & Landscaping
                       </Link>
                       <Link
                         href="/#frutopia"
-                        className="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-green-50 hover:text-green-700 transition-colors"
+                        className="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-green-50 hover:text-green-700 transition-colors mt-2"
                         role="menuitem"
                         onClick={() => {
                           setIsProductsOpen(false)
                           setActiveDropdown(null)
                         }}
                       >
-                        Fruitopia Value Pack
+                        📦 Fruitopia Value Pack
                       </Link>
-                      <div className="mt-1 pl-6">
-                        <Link
-                          href="/#frutopia"
-                          className="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-green-50 hover:text-green-700 transition-colors flex items-center gap-2"
-                          role="menuitem"
-                          onClick={() => {
-                            setIsProductsOpen(false)
-                            setActiveDropdown(null)
-                          }}
-                        >
-                          <span className="text-green-600 font-black text-xl leading-none" style={{ fontWeight: 900 }}>—</span>
-                          <span>All Value Packs</span>
-                        </Link>
-                        <Link
-                          href="/#frutopia"
-                          className="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-green-50 hover:text-green-700 transition-colors flex items-center gap-2"
-                          role="menuitem"
-                          onClick={() => {
-                            setIsProductsOpen(false)
-                            setActiveDropdown(null)
-                          }}
-                        >
-                          <span className="text-green-600 font-black text-xl leading-none" style={{ fontWeight: 900 }}>—</span>
-                          <span>Drip Irrigation Kits</span>
-                        </Link>
-                      </div>
                     </div>
                   </div>
                 </>
@@ -877,43 +908,16 @@ Thank you!`
                 )}
               >
                 <div className="pl-4 pr-2 pt-2 space-y-1">
-                  <MobileNavLink href="/#seedlings" label="Fruit Seedlings" onClick={() => { setIsOpen(false); setIsProductsOpen(false); }} shouldShowSolidBackground={shouldShowSolidBackground} pathname={pathname} />
-                  <MobileNavLink href="/flowers-landscapes" label="Flowers & Landscaping" onClick={() => { setIsOpen(false); setIsProductsOpen(false); }} shouldShowSolidBackground={shouldShowSolidBackground} pathname={pathname} />
-                  <MobileNavLink href="/#frutopia" label="Fruitopia Value Pack" onClick={() => { setIsOpen(false); setIsProductsOpen(false); }} shouldShowSolidBackground={shouldShowSolidBackground} pathname={pathname} />
-                  <div className="pl-6 space-y-1">
-                    <Link
-                      href="/#frutopia"
-                      className={cn(
-                        "block px-3 py-2 text-sm rounded-md transition-colors flex items-center gap-2",
-                        shouldShowSolidBackground
-                          ? "text-gray-700 hover:text-green-700 hover:bg-green-50"
-                          : "text-green-200 hover:text-white hover:bg-white/10"
-                      )}
-                      onClick={() => {
-                        setIsOpen(false)
-                        setIsProductsOpen(false)
-                      }}
-                    >
-                      <span className={cn("font-black text-xl leading-none", shouldShowSolidBackground ? "text-green-600" : "text-green-400")} style={{ fontWeight: 900 }}>—</span>
-                      <span>All Value Packs</span>
-                    </Link>
-                    <Link
-                      href="/#frutopia"
-                      className={cn(
-                        "block px-3 py-2 text-sm rounded-md transition-colors flex items-center gap-2",
-                        shouldShowSolidBackground
-                          ? "text-gray-700 hover:text-green-700 hover:bg-green-50"
-                          : "text-green-200 hover:text-white hover:bg-white/10"
-                      )}
-                      onClick={() => {
-                        setIsOpen(false)
-                        setIsProductsOpen(false)
-                      }}
-                    >
-                      <span className={cn("font-black text-xl leading-none", shouldShowSolidBackground ? "text-green-600" : "text-green-400")} style={{ fontWeight: 900 }}>—</span>
-                      <span>Drip Irrigation Kits</span>
-                    </Link>
+                  <MobileNavLink href="/#seedlings" label="All Fruit Seedlings" onClick={() => { setIsOpen(false); setIsProductsOpen(false); }} shouldShowSolidBackground={shouldShowSolidBackground} pathname={pathname} />
+                  <div className="pl-4 space-y-1 border-l-2 border-gray-300/30">
+                    <MobileNavLink href="/seedlings/mango" label="🥭 Mangoes" onClick={() => { setIsOpen(false); setIsProductsOpen(false); }} shouldShowSolidBackground={shouldShowSolidBackground} pathname={pathname} />
+                    <MobileNavLink href="/seedlings/citrus" label="🍊 Citrus" onClick={() => { setIsOpen(false); setIsProductsOpen(false); }} shouldShowSolidBackground={shouldShowSolidBackground} pathname={pathname} />
+                    <MobileNavLink href="/seedlings/avocado" label="🥑 Avocados" onClick={() => { setIsOpen(false); setIsProductsOpen(false); }} shouldShowSolidBackground={shouldShowSolidBackground} pathname={pathname} />
+                    <MobileNavLink href="/seedlings/berries" label="🫐 Berries" onClick={() => { setIsOpen(false); setIsProductsOpen(false); }} shouldShowSolidBackground={shouldShowSolidBackground} pathname={pathname} />
+                    <MobileNavLink href="/seedlings/tropical" label="🍍 Tropical" onClick={() => { setIsOpen(false); setIsProductsOpen(false); }} shouldShowSolidBackground={shouldShowSolidBackground} pathname={pathname} />
                   </div>
+                  <MobileNavLink href="/flowers-landscapes" label="🌸 Flowers & Landscaping" onClick={() => { setIsOpen(false); setIsProductsOpen(false); }} shouldShowSolidBackground={shouldShowSolidBackground} pathname={pathname} />
+                  <MobileNavLink href="/#frutopia" label="📦 Fruitopia Value Pack" onClick={() => { setIsOpen(false); setIsProductsOpen(false); }} shouldShowSolidBackground={shouldShowSolidBackground} pathname={pathname} />
                 </div>
               </div>
             </div>
@@ -1580,16 +1584,26 @@ function NavLink({ href, label, shouldShowSolidBackground = false, pathname }: {
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     // If we're not on homepage and clicking a hash link, navigate to homepage first
     if (pathname !== '/' && href.startsWith('/#')) {
-      // Let Next.js handle the navigation, then scroll after navigation
+      e.preventDefault()
+      const hash = href.split('#')[1]
+      // Navigate to homepage first
+      window.location.href = href
+      // HashNavigation component will handle scrolling after page loads
+    } else if (pathname === '/' && href.startsWith('/#')) {
+      // On homepage, handle smooth scroll
+      e.preventDefault()
       const hash = href.split('#')[1]
       if (hash) {
-        // Small delay to ensure page loads, then scroll
-        setTimeout(() => {
-          const element = document.getElementById(hash)
-          if (element) {
-            element.scrollIntoView({ behavior: 'smooth', block: 'start' })
-          }
-        }, 100)
+        const element = document.getElementById(hash)
+        if (element) {
+          const navbarHeight = 80
+          const elementPosition = element.getBoundingClientRect().top + window.pageYOffset
+          const offsetPosition = elementPosition - navbarHeight
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          })
+        }
       }
     }
   }
@@ -1642,16 +1656,26 @@ function MobileNavLink({
     onClick()
     // If we're not on homepage and clicking a hash link, navigate to homepage first
     if (pathname !== '/' && href.startsWith('/#')) {
-      // Let Next.js handle the navigation, then scroll after navigation
+      e.preventDefault()
+      const hash = href.split('#')[1]
+      // Navigate to homepage with hash
+      window.location.href = href
+      // HashNavigation component will handle scrolling after page loads
+    } else if (pathname === '/' && href.startsWith('/#')) {
+      // On homepage, handle smooth scroll
+      e.preventDefault()
       const hash = href.split('#')[1]
       if (hash) {
-        // Small delay to ensure page loads, then scroll
-        setTimeout(() => {
-          const element = document.getElementById(hash)
-          if (element) {
-            element.scrollIntoView({ behavior: 'smooth', block: 'start' })
-          }
-        }, 100)
+        const element = document.getElementById(hash)
+        if (element) {
+          const navbarHeight = 80
+          const elementPosition = element.getBoundingClientRect().top + window.pageYOffset
+          const offsetPosition = elementPosition - navbarHeight
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          })
+        }
       }
     }
   }

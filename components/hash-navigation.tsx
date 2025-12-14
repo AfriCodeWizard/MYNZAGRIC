@@ -1,15 +1,22 @@
 "use client"
 
 import { useEffect } from "react"
+import { usePathname } from "next/navigation"
 
 export default function HashNavigation() {
-  // Handle hash navigation when page loads
+  const pathname = usePathname()
+  
+  // Handle hash navigation when page loads or pathname changes
   useEffect(() => {
     const hash = window.location.hash
     if (hash) {
       // Wait for page to fully render, then scroll to section
+      // Increase delay if navigating from another page
+      const delay = pathname === '/' ? 100 : 300
+      
       setTimeout(() => {
-        const element = document.getElementById(hash.substring(1))
+        const hashValue = hash.substring(1) // Remove the #
+        const element = document.getElementById(hashValue)
         if (element) {
           // Account for fixed navbar
           const navbarHeight = 80
@@ -21,9 +28,9 @@ export default function HashNavigation() {
             behavior: 'smooth'
           })
         }
-      }, 100)
+      }, delay)
     }
-  }, [])
+  }, [pathname])
 
   return null
 }

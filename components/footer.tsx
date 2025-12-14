@@ -81,7 +81,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="#care" className="hover:text-white transition">
+                <Link href="#care-guides" className="hover:text-white transition">
                   Care Guides
                 </Link>
               </li>
