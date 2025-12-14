@@ -8,7 +8,7 @@ export function OrganizationSchema() {
     "@type": "Organization",
     "name": "Mynzagric",
     "url": baseUrl,
-    "logo": `${baseUrl}/mynzAgric logoOficial (color).webp`,
+    "logo": `${baseUrl}/logo.png`,
     "description": "Premium grafted fruit seedlings and precision irrigation systems for commercial and home farming",
     "address": {
       "@type": "PostalAddress",

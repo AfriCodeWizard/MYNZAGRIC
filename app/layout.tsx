@@ -52,12 +52,17 @@ export const metadata: Metadata = {
   manifest: "/site.webmanifest",
   icons: {
     icon: [
-      { url: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
-      { url: "/favicon-16x16.png", type: "image/png", sizes: "16x16" },
-      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon.png", type: "image/png", sizes: "48x48" }, // Primary favicon for better visibility
+      { url: "/favicon.ico", sizes: "any" }, // ICO fallback
+      { url: "/favicon-32x32.png", type: "image/png", sizes: "32x32" }, // Legacy support
+      { url: "/favicon-16x16.png", type: "image/png", sizes: "16x16" }, // Legacy support
     ],
     apple: [
       { url: "/apple-touch-icon.png", type: "image/png", sizes: "180x180" },
+    ],
+    shortcut: [
+      { url: "/favicon.png" }, // Use larger PNG for shortcut icon
+      { url: "/favicon.ico" }, // ICO fallback
     ],
   },
   openGraph: {
