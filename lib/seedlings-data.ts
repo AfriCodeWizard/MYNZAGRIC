@@ -1026,6 +1026,7 @@ export const seedlings: Seedling[] = [
     price: 350,
     icon: "🌹",
     category: "flowers",
+    image: "/Roses.webp",
     careGuide: {
       watering: "Water deeply 2-3 times per week. Keep soil moist but not waterlogged.",
       sunlight: "Full sun (6-8 hours daily) for best blooms.",
@@ -1043,6 +1044,7 @@ export const seedlings: Seedling[] = [
     price: 300,
     icon: "🌺",
     category: "flowers",
+    image: "/Alstroemeria.webp",
     careGuide: {
       watering: "Water regularly, keep soil consistently moist but well-drained.",
       sunlight: "Full sun to partial shade (4-6 hours).",
@@ -1060,6 +1062,7 @@ export const seedlings: Seedling[] = [
     price: 250,
     icon: "🌿",
     category: "flowers",
+    image: "/Hypericum.webp",
     careGuide: {
       watering: "Water regularly, drought tolerant once established.",
       sunlight: "Full sun to partial shade (4-6 hours).",
@@ -1077,6 +1080,7 @@ export const seedlings: Seedling[] = [
     price: 280,
     icon: "🌸",
     category: "flowers",
+    image: "/Carnations_&_Mini-carnations.webp",
     careGuide: {
       watering: "Water regularly, keep soil moist but not waterlogged.",
       sunlight: "Full sun (6+ hours) for best blooms.",
@@ -1094,6 +1098,7 @@ export const seedlings: Seedling[] = [
     price: 320,
     icon: "🌼",
     category: "flowers",
+    image: "/Gerbera jamesonii.webp",
     careGuide: {
       watering: "Water at base, avoid wetting leaves. Keep soil moist but well-drained.",
       sunlight: "Full sun (6-8 hours) for best blooms.",
@@ -1111,6 +1116,7 @@ export const seedlings: Seedling[] = [
     price: 290,
     icon: "🌻",
     category: "flowers",
+    image: "/Chrysanthemums.webp",
     careGuide: {
       watering: "Water regularly, keep soil consistently moist.",
       sunlight: "Full sun (6+ hours) for best blooms.",
@@ -1128,6 +1134,7 @@ export const seedlings: Seedling[] = [
     price: 200,
     icon: "🌿",
     category: "flowers",
+    image: "/Statice.webp",
     careGuide: {
       watering: "Water moderately, drought tolerant once established.",
       sunlight: "Full sun (6+ hours) for best blooms.",
@@ -1145,6 +1152,7 @@ export const seedlings: Seedling[] = [
     price: 380,
     icon: "🌺",
     category: "flowers",
+    image: "/Arabian_Lilies.webp",
     careGuide: {
       watering: "Water regularly during growing season, reduce in dormancy.",
       sunlight: "Full sun to partial shade (4-6 hours).",
@@ -1162,6 +1170,7 @@ export const seedlings: Seedling[] = [
     price: 400,
     icon: "🌷",
     category: "flowers",
+    image: "/Lilies.webp",
     careGuide: {
       watering: "Water regularly, keep soil moist but well-drained.",
       sunlight: "Full sun to partial shade (4-6 hours).",
@@ -1179,6 +1188,7 @@ export const seedlings: Seedling[] = [
     price: 200,
     icon: "🌻",
     category: "flowers",
+    image: "/Sunflowers.webp",
     careGuide: {
       watering: "Water deeply once or twice per week.",
       sunlight: "Full sun (6-8 hours) essential for growth.",
@@ -1196,6 +1206,7 @@ export const seedlings: Seedling[] = [
     price: 140,
     icon: "🌼",
     category: "flowers",
+    image: "/Zinnias.webp",
     careGuide: {
       watering: "Water at base, avoid wetting leaves. Moderate watering.",
       sunlight: "Full sun (6+ hours) for best blooms.",
@@ -1213,6 +1224,7 @@ export const seedlings: Seedling[] = [
     price: 450,
     icon: "🌺",
     category: "flowers",
+    image: "/Heliconia.webp",
     careGuide: {
       watering: "Water regularly, keep soil consistently moist.",
       sunlight: "Full sun to partial shade (4-6 hours).",
@@ -1230,6 +1242,7 @@ export const seedlings: Seedling[] = [
     price: 500,
     icon: "🦜",
     category: "flowers",
+    image: "/Bird-of-Paradise.webp",
     careGuide: {
       watering: "Water regularly, keep soil moist but well-drained.",
       sunlight: "Full sun to partial shade (4-6 hours).",
@@ -1247,6 +1260,7 @@ export const seedlings: Seedling[] = [
     price: 350,
     icon: "🌺",
     category: "flowers",
+    image: "/Ginger Lilies.webp",
     careGuide: {
       watering: "Water regularly, keep soil consistently moist.",
       sunlight: "Full sun to partial shade (4-6 hours).",
@@ -1264,6 +1278,7 @@ export const seedlings: Seedling[] = [
     price: 180,
     icon: "🌿",
     category: "flowers",
+    image: "/Gypsophila.webp",
     careGuide: {
       watering: "Water moderately, drought tolerant once established.",
       sunlight: "Full sun (6+ hours) for best blooms.",
@@ -1281,6 +1296,7 @@ export const seedlings: Seedling[] = [
     price: 250,
     icon: "🌿",
     category: "flowers",
+    image: "/Eryngium.webp",
     careGuide: {
       watering: "Water moderately, drought tolerant once established.",
       sunlight: "Full sun (6+ hours) for best blooms.",
@@ -1298,6 +1314,7 @@ export const seedlings: Seedling[] = [
     price: 200,
     icon: "🌻",
     category: "flowers",
+    image: "/Solidago.webp",
     careGuide: {
       watering: "Water regularly, drought tolerant once established.",
       sunlight: "Full sun (6+ hours) for best blooms.",
@@ -1315,6 +1332,7 @@ export const seedlings: Seedling[] = [
     price: 220,
     icon: "🌿",
     category: "flowers",
+    image: "/Moluccella.webp",
     careGuide: {
       watering: "Water regularly, keep soil moist but well-drained.",
       sunlight: "Full sun (6+ hours) for best blooms.",
@@ -1333,6 +1351,7 @@ export const seedlings: Seedling[] = [
     price: 400,
     icon: "🔥",
     category: "flowers",
+    image: "/Gloriosa_superba_(Flame Lily).webp",
     careGuide: {
       watering: "Water regularly during growing season, reduce in dormancy.",
       sunlight: "Full sun to partial shade (4-6 hours).",
@@ -1350,6 +1369,7 @@ export const seedlings: Seedling[] = [
     price: 250,
     icon: "🦁",
     category: "flowers",
+    image: "/Leonotis.webp",
     careGuide: {
       watering: "Water moderately, drought tolerant once established.",
       sunlight: "Full sun (6+ hours) for best blooms.",
@@ -1367,6 +1387,7 @@ export const seedlings: Seedling[] = [
     price: 300,
     icon: "🌵",
     category: "flowers",
+    image: "/Aloe Species.webp",
     careGuide: {
       watering: "Water sparingly, drought tolerant. Allow soil to dry between waterings.",
       sunlight: "Full sun (6+ hours) for best blooms.",
@@ -1384,6 +1405,7 @@ export const seedlings: Seedling[] = [
     price: 250,
     icon: "🌺",
     category: "flowers",
+    image: "/Hibiscus_rosa-sinensis_&_Native Hibiscus.webp",
     careGuide: {
       watering: "Water regularly, keep soil consistently moist.",
       sunlight: "Full sun to partial shade (4-6 hours).",
@@ -1401,6 +1423,7 @@ export const seedlings: Seedling[] = [
     price: 350,
     icon: "🌺",
     category: "flowers",
+    image: "/Dombeya_burgessiae.webp",
     careGuide: {
       watering: "Water regularly, keep soil moist but well-drained.",
       sunlight: "Full sun to partial shade (4-6 hours).",
@@ -1418,6 +1441,7 @@ export const seedlings: Seedling[] = [
     price: 200,
     icon: "🌼",
     category: "flowers",
+    image: "/Thunbergia_alata.webp",
     careGuide: {
       watering: "Water regularly, keep soil moist but well-drained.",
       sunlight: "Full sun to partial shade (4-6 hours).",
@@ -1435,6 +1459,7 @@ export const seedlings: Seedling[] = [
     price: 350,
     icon: "🌺",
     category: "flowers",
+    image: "/Clivia_miniata.webp",
     careGuide: {
       watering: "Water regularly during growing season, reduce in dormancy.",
       sunlight: "Partial shade (2-4 hours). Popular in cooler areas.",
@@ -1452,6 +1477,7 @@ export const seedlings: Seedling[] = [
     price: 280,
     icon: "🔥",
     category: "flowers",
+    image: "/Kniphofia_uvaria.webp",
     careGuide: {
       watering: "Water regularly, drought tolerant once established.",
       sunlight: "Full sun (6+ hours) for best blooms.",
@@ -1469,6 +1495,7 @@ export const seedlings: Seedling[] = [
     price: 380,
     icon: "🌺",
     category: "flowers",
+    image: "/Crinum.webp",
     careGuide: {
       watering: "Water regularly, keep soil moist but well-drained.",
       sunlight: "Full sun to partial shade (4-6 hours).",
@@ -1486,6 +1513,7 @@ export const seedlings: Seedling[] = [
     price: 400,
     icon: "🔥",
     category: "flowers",
+    image: "/Scadoxus_multiflorus.webp",
     careGuide: {
       watering: "Water regularly during growing season, reduce in dormancy.",
       sunlight: "Partial shade (2-4 hours).",
@@ -1503,6 +1531,7 @@ export const seedlings: Seedling[] = [
     price: 320,
     icon: "🌺",
     category: "flowers",
+    image: "/Watsonia_species.webp",
     careGuide: {
       watering: "Water regularly during growing season, reduce in dormancy.",
       sunlight: "Full sun (6+ hours) for best blooms.",
@@ -1521,6 +1550,7 @@ export const seedlings: Seedling[] = [
     price: 600,
     icon: "🌳",
     category: "flowers",
+    image: "/Jacaranda_mimosifolia.webp",
     careGuide: {
       watering: "Water regularly during establishment, drought tolerant once established.",
       sunlight: "Full sun (6+ hours) for best flowering.",
@@ -1538,6 +1568,7 @@ export const seedlings: Seedling[] = [
     price: 550,
     icon: "🌳",
     category: "flowers",
+    image: "/Grevillea_robusta.webp",
     careGuide: {
       watering: "Water regularly during establishment, drought tolerant once established.",
       sunlight: "Full sun (6+ hours) for best growth.",
@@ -1555,6 +1586,7 @@ export const seedlings: Seedling[] = [
     price: 650,
     icon: "🔥",
     category: "flowers",
+    image: "/Nandi_Flame.webp",
     careGuide: {
       watering: "Water regularly during establishment, drought tolerant once established.",
       sunlight: "Full sun (6+ hours) for best flowering.",
@@ -1572,6 +1604,7 @@ export const seedlings: Seedling[] = [
     price: 600,
     icon: "🌳",
     category: "flowers",
+    image: "/Cape_Chestnut.webp",
     careGuide: {
       watering: "Water regularly during establishment, drought tolerant once established.",
       sunlight: "Full sun to partial shade (4-6 hours).",
@@ -1589,6 +1622,7 @@ export const seedlings: Seedling[] = [
     price: 580,
     icon: "🌳",
     category: "flowers",
+    image: "/Cordia_abyssinica.webp",
     careGuide: {
       watering: "Water regularly during establishment, drought tolerant once established.",
       sunlight: "Full sun (6+ hours) for best growth.",
