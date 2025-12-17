@@ -29,10 +29,18 @@ import Link from "next/link"
 
 export default function FlowersLandscapesPage() {
   const { addToCart } = useCart()
-  const [activeTab, setActiveTab] = useState<"flowers" | "services">("flowers")
+  const [activeTab, setActiveTab] = useState<"flowers" | "trees" | "services">("flowers")
   
-  // Filter flower seedlings
-  const flowerSeedlings = seedlings.filter(s => s.category === "flowers")
+  // Filter flower seedlings and separate trees from flowers
+  const allFlowerCategory = seedlings.filter(s => s.category === "flowers")
+  
+  // Trees are identified by spacing of "5-8 meters apart" (ornamental trees) or tree icon
+  const treeSeedlings = allFlowerCategory.filter(s => 
+    s.careGuide?.spacing?.includes("5-8 meters") || s.icon === "🌳"
+  )
+  const flowerSeedlings = allFlowerCategory.filter(s => 
+    !s.careGuide?.spacing?.includes("5-8 meters") && s.icon !== "🌳"
+  )
 
   const landscapingServices = [
     {
@@ -202,7 +210,7 @@ Thank you!`
       {/* Tab Navigation */}
       <section className="sticky top-20 z-40 bg-[#0e0e0e] border-b border-white/10 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-center gap-2 py-4">
+          <div className="flex items-center justify-center gap-2 py-4 flex-wrap">
             <button
               onClick={() => setActiveTab("flowers")}
               className={`px-6 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center gap-2 ${
@@ -215,6 +223,17 @@ Thank you!`
               Flower Seedlings
             </button>
             <button
+              onClick={() => setActiveTab("trees")}
+              className={`px-6 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center gap-2 ${
+                activeTab === "trees"
+                  ? "bg-gradient-to-r from-blue-500 to-cyan-600 text-white shadow-lg"
+                  : "text-gray-400 hover:text-white bg-white/5"
+              }`}
+            >
+              <Trees className="w-5 h-5" />
+              Ornamental Trees
+            </button>
+            <button
               onClick={() => setActiveTab("services")}
               className={`px-6 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center gap-2 ${
                 activeTab === "services"
@@ -222,7 +241,7 @@ Thank you!`
                   : "text-gray-400 hover:text-white bg-white/5"
               }`}
             >
-              <Trees className="w-5 h-5" />
+              <Palette className="w-5 h-5" />
               Landscaping Services
             </button>
           </div>
@@ -285,6 +304,69 @@ Thank you!`
                 <h3 className="text-2xl font-bold text-white mb-4">Year-Round Blooms</h3>
                 <p className="text-gray-300 leading-relaxed">
                   Our selection includes varieties that provide continuous blooms throughout the seasons.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Ornamental Trees Section */}
+      {activeTab === "trees" && (
+        <section id="trees" className="py-20 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 bg-blue-500/10 rounded-full border border-blue-500/20">
+                <Trees className="w-5 h-5 text-blue-400" />
+                <span className="text-blue-400 text-sm font-medium">Premium Quality</span>
+              </div>
+              <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6">
+                Ornamental <span className="text-blue-400">Trees</span>
+              </h2>
+              <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+                Transform your landscape with our premium ornamental trees. Each tree is carefully selected for beauty, shade, and environmental benefits.
+              </p>
+            </div>
+
+            {/* Tree Categories */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
+              {treeSeedlings.map((seedling) => (
+                <div key={seedling.id} className="group">
+                  <ProductCard
+                    seedling={seedling}
+                    onAddToCart={addToCart}
+                  />
+                </div>
+              ))}
+            </div>
+
+            {/* Why Choose Our Trees */}
+            <div className="mt-20 grid md:grid-cols-3 gap-8">
+              <div className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-2xl p-8 border border-blue-500/20">
+                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl flex items-center justify-center mb-6">
+                  <Trees className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-4">Premium Quality</h3>
+                <p className="text-gray-300 leading-relaxed">
+                  All our ornamental trees are carefully selected and nurtured for optimal health and stunning visual impact.
+                </p>
+              </div>
+              <div className="bg-gradient-to-br from-green-500/10 to-emerald-500/10 rounded-2xl p-8 border border-green-500/20">
+                <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center mb-6">
+                  <Sun className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-4">Expert Care Guides</h3>
+                <p className="text-gray-300 leading-relaxed">
+                  Comprehensive care instructions included with every purchase to ensure your trees thrive and grow beautifully.
+                </p>
+              </div>
+              <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-2xl p-8 border border-purple-500/20">
+                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center mb-6">
+                  <Sparkles className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-4">Landscape Beauty</h3>
+                <p className="text-gray-300 leading-relaxed">
+                  Our selection includes varieties that provide year-round beauty, shade, and environmental benefits.
                 </p>
               </div>
             </div>
