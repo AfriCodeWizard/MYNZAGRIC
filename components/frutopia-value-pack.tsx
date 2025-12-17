@@ -176,6 +176,15 @@ Thank you!`
             Complete 1-acre farming solutions with premium grafted seedlings and <strong className="text-green-400">precision drip irrigation systems</strong>. Everything you need to start your fruit farming journey.
           </p>
           <div className="mt-6 inline-flex items-center gap-3 bg-green-600/20 border border-green-500/40 rounded-full px-6 py-3">
+            <div className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0">
+              <Image
+                src="/Drip_irrigation.jpg"
+                alt="Drip Irrigation System"
+                fill
+                className="object-cover"
+                sizes="48px"
+              />
+            </div>
             <Droplets className="w-6 h-6 text-green-400" />
             <div className="text-left">
               <p className="text-green-300 font-semibold text-sm">Drip Irrigation Kits Included</p>
@@ -264,15 +273,28 @@ Thank you!`
                 <div className="grid sm:grid-cols-2 gap-3">
                   {includedItems.map((item, idx) => {
                     const IconComponent = item.icon
+                    const isDripIrrigation = item.title.toLowerCase().includes("dripper") || item.title.toLowerCase().includes("irrigation")
                     return (
                       <div
                         key={idx}
                         className={`p-4 rounded-xl border-2 ${item.borderColor} ${item.bgGradient} hover:scale-[1.03] transition-all duration-300 group cursor-pointer`}
                       >
                         <div className="flex items-start gap-3">
-                          <div className={`bg-gradient-to-br ${item.color} p-2.5 rounded-lg group-hover:scale-110 transition-transform duration-300 flex-shrink-0`}>
-                            <IconComponent className={`w-5 h-5 ${item.iconColor}`} />
-                          </div>
+                          {isDripIrrigation ? (
+                            <div className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 ring-2 ring-blue-400/50">
+                              <Image
+                                src="/Drip_irrigation.jpg"
+                                alt="Drip Irrigation System"
+                                fill
+                                className="object-cover"
+                                sizes="48px"
+                              />
+                            </div>
+                          ) : (
+                            <div className={`bg-gradient-to-br ${item.color} p-2.5 rounded-lg group-hover:scale-110 transition-transform duration-300 flex-shrink-0`}>
+                              <IconComponent className={`w-5 h-5 ${item.iconColor}`} />
+                            </div>
+                          )}
                           <div className="flex-1 min-w-0">
                             <p className="text-white font-medium text-sm leading-snug">{item.title}</p>
                           </div>
@@ -347,8 +369,14 @@ Thank you!`
         {/* Key Features Highlight */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           <div className="bg-gradient-to-br from-green-600/20 to-green-700/20 backdrop-blur-sm border-2 border-green-500/40 rounded-xl p-5 text-center hover:bg-green-600/30 transition-colors shadow-lg shadow-green-500/20">
-            <div className="bg-green-600/40 p-3 rounded-lg w-fit mx-auto mb-3 ring-2 ring-green-400/50">
-              <Droplets className="w-6 h-6 text-green-300" />
+            <div className="relative w-20 h-20 mx-auto mb-3 rounded-lg overflow-hidden ring-2 ring-green-400/50">
+              <Image
+                src="/Drip_irrigation.jpg"
+                alt="Drip Irrigation System"
+                fill
+                className="object-cover"
+                sizes="80px"
+              />
             </div>
             <h4 className="text-green-300 font-bold mb-2">Drip Irrigation Kits</h4>
             <p className="text-gray-300 text-sm font-medium">Button dripper system included - Professional precision irrigation for optimal growth</p>
