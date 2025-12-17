@@ -331,11 +331,11 @@ export default function ProductCard({
           style={{
             content: '',
             width: '100%',
-            height: '50px',
+            height: '110px',
             position: 'absolute',
             display: 'block',
             backgroundColor: '#fff',
-            top: '-50px',
+            top: '-110px',
             left: '0',
             zIndex: -1,
           }}
