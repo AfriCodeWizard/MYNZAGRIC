@@ -325,19 +325,18 @@ export default function ProductCard({
           minHeight: '240px',
         }}
       >
-        {/* Diagonal background accent - CodePen exact measurements */}
+        {/* Straight background accent */}
         <div 
           className="absolute bg-white"
           style={{
             content: '',
-            width: '200%',
-            height: '100px',
+            width: '100%',
+            height: '50px',
             position: 'absolute',
             display: 'block',
             backgroundColor: '#fff',
-            transform: 'rotate(-8deg)',
             top: '-50px',
-            left: '-10%',
+            left: '0',
             zIndex: -1,
           }}
         />
