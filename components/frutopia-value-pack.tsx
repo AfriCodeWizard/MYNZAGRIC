@@ -209,8 +209,12 @@ Thank you!`
                     alt={pack.name}
                     width={800}
                     height={600}
-                    className="w-full h-auto object-contain group-hover:scale-105 transition-transform duration-700 ease-out"
+                    priority
+                    quality={85}
+                    loading="eager"
+                    className="w-full h-auto object-contain group-hover:scale-105 transition-transform duration-700 ease-out border-2 border-white/20 rounded-lg"
                     style={{ maxWidth: '100%', height: 'auto' }}
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 50vw"
                   />
                 </div>
                 
