@@ -285,7 +285,7 @@ export default function ProductCard({
       }}
     >
       {/* Image/Icon Container - CodePen style */}
-      <div className="relative w-full overflow-hidden" style={{ minHeight: '110px', height: '110px' }}>
+      <div className="relative w-full overflow-hidden" style={{ minHeight: '180px', height: '180px' }}>
         {seedling.image ? (
           <img 
             src={seedling.image.split('/').map((part, index) => 
@@ -293,7 +293,7 @@ export default function ProductCard({
             ).join('/')} 
             alt={`${seedling.name} - Premium grafted ${seedling.category} seedling available at Mynzagric`}
             className="w-full h-full object-cover transform transition-transform duration-300 hover:scale-110"
-            style={{ width: '100%', height: '100%', minHeight: '110px' }}
+            style={{ width: '100%', height: '100%', minHeight: '180px' }}
             loading="lazy"
             decoding="async"
             onError={(e) => {
@@ -304,14 +304,14 @@ export default function ProductCard({
               if (parent) {
                 const fallback = document.createElement('div');
                 fallback.className = 'w-full h-full bg-gradient-to-br from-green-100 to-green-50 flex items-center justify-center text-8xl transform transition-transform duration-300 hover:scale-110';
-                fallback.style.minHeight = '110px';
+                fallback.style.minHeight = '180px';
                 fallback.textContent = seedling.icon;
                 parent.appendChild(fallback);
               }
             }}
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-green-100 to-green-50 flex items-center justify-center text-8xl transform transition-transform duration-300 hover:scale-110" style={{ minHeight: '110px', height: '110px' }}>
+          <div className="w-full h-full bg-gradient-to-br from-green-100 to-green-50 flex items-center justify-center text-8xl transform transition-transform duration-300 hover:scale-110" style={{ minHeight: '180px', height: '180px' }}>
             {seedling.icon}
           </div>
         )}
