@@ -180,22 +180,22 @@ function About() {
     {
       icon: Heart,
       title: "Passion in every work",
-      description: "Professionally grafted and certified disease-resistant seedlings for beautiful, sustainable produce.",
+      description: "Professionally grafted and certified disease-resistant seedlings for beautiful, sustainable produce. Our team of expert horticulturists carefully selects and nurtures each seedling, ensuring premium quality that delivers exceptional yields. We combine traditional farming wisdom with modern agricultural techniques to bring you the finest fruit trees that thrive in Kenyan conditions.",
     },
     {
       icon: PenTool,
       title: "Collaboration on top",
-      description: "Partnering with farmers to share expertise and achieve growing success together.",
+      description: "Partnering with farmers to share expertise and achieve growing success together. We believe in building lasting relationships with our clients, providing ongoing support from planting to harvest. Our comprehensive agronomical guidance, training programs, and responsive customer service ensure you have everything needed to transform your farming dreams into profitable reality.",
     },
     {
       icon: Leaf,
       title: "Sustainability in check",
-      description: "Committed to eco-friendly practices that nurture both your crops and the environment.",
+      description: "Committed to eco-friendly practices that nurture both your crops and the environment. Our sustainable farming approach includes water-efficient drip irrigation systems, organic fertilization methods, and environmentally responsible packaging. We help you build a farm that not only produces abundant harvests but also contributes positively to soil health and biodiversity for future generations.",
     },
     {
       icon: Lightbulb,
       title: "Creativity unleashed",
-      description: "Innovative solutions tailored to your unique farming vision and goals.",
+      description: "Innovative solutions tailored to your unique farming vision and goals. From custom value packs combining multiple fruit varieties to precision irrigation systems and comprehensive care guides, we design complete farming solutions. Our creative approach helps you maximize your land's potential, whether you're starting a commercial orchard or enhancing your home garden with diverse, profitable fruit trees.",
     },
   ]
 
@@ -232,20 +232,20 @@ function About() {
               {/* Top Row - Cards 1 & 2 */}
               <div
                 ref={card1Ref}
-                className="bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-lg p-3 flex flex-col items-center justify-center text-center shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:shadow-[0_0_30px_rgba(34,197,94,0.5)] transition-shadow duration-300"
+                className="bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-lg p-3.5 flex flex-col items-center justify-center text-center shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:shadow-[0_0_30px_rgba(34,197,94,0.5)] transition-shadow duration-300"
                 style={{ willChange: 'transform, opacity' }}
               >
                 <div className="w-10 h-10 border-2 border-green-400 rounded-md flex items-center justify-center text-green-400 bg-green-400/10 mb-2">
                   <Heart className="w-5 h-5" />
                 </div>
-                <h3 className="font-semibold text-white mb-1 text-xs">{features[0].title}</h3>
-                <p className="text-[10px] text-gray-300 leading-tight">{features[0].description}</p>
+              <h3 className="font-semibold text-white mb-1.5 text-xs">{features[0].title}</h3>
+              <p className="text-[9px] text-gray-300 leading-relaxed">{features[0].description}</p>
               </div>
 
               <div
                 ref={card2Ref}
                 data-card="2"
-                className="bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-lg p-3 flex flex-col items-center justify-center text-center shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:shadow-[0_0_30px_rgba(34,197,94,0.5)] transition-shadow duration-300"
+                className="bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-lg p-3.5 flex flex-col items-center justify-center text-center shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:shadow-[0_0_30px_rgba(34,197,94,0.5)] transition-shadow duration-300"
                 style={{ willChange: 'transform, opacity' }}
               >
                 <div className="w-10 h-10 border-2 border-green-400 rounded-md flex items-center justify-center text-green-400 bg-green-400/10 mb-2">
@@ -258,7 +258,7 @@ function About() {
               {/* Bottom Row - Cards 3 & 4 */}
               <div
                 ref={card3Ref}
-                className="bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-lg p-3 flex flex-col items-center justify-center text-center shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:shadow-[0_0_30px_rgba(34,197,94,0.5)] transition-shadow duration-300"
+                className="bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-lg p-3.5 flex flex-col items-center justify-center text-center shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:shadow-[0_0_30px_rgba(34,197,94,0.5)] transition-shadow duration-300"
                 style={{ willChange: 'transform, opacity' }}
               >
                 <div className="w-10 h-10 border-2 border-green-400 rounded-md flex items-center justify-center text-green-400 bg-green-400/10 mb-2">
@@ -270,7 +270,7 @@ function About() {
 
               <div
                 ref={card4Ref}
-                className="bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-lg p-3 flex flex-col items-center justify-center text-center shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:shadow-[0_0_30px_rgba(34,197,94,0.5)] transition-shadow duration-300"
+                className="bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-lg p-3.5 flex flex-col items-center justify-center text-center shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:shadow-[0_0_30px_rgba(34,197,94,0.5)] transition-shadow duration-300"
                 style={{ willChange: 'transform, opacity' }}
               >
                 <div className="w-10 h-10 border-2 border-green-400 rounded-md flex items-center justify-center text-green-400 bg-green-400/10 mb-2">
@@ -300,20 +300,20 @@ function About() {
             {/* Cards 1 & 2 - Replace office image (larger, foreground, far right) - Side by side */}
             <div
               ref={card1Ref}
-              className="absolute right-6 lg:right-8 top-[20%] w-[28%] md:w-[19.5%] aspect-square bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-lg p-3 lg:p-4 flex flex-col items-center justify-center text-center z-20 shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:shadow-[0_0_30px_rgba(34,197,94,0.5)] transition-shadow duration-300"
+              className="absolute right-6 lg:right-8 top-[20%] w-[28%] md:w-[19.5%] bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-lg p-4 lg:p-5 flex flex-col items-center justify-center text-center z-20 shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:shadow-[0_0_30px_rgba(34,197,94,0.5)] transition-shadow duration-300 min-h-[280px]"
               style={{ willChange: 'transform, opacity' }}
             >
               <div className="w-10 md:h-10 lg:w-12 lg:h-12 border-2 border-green-400 rounded-md flex items-center justify-center text-green-400 bg-green-400/10 mb-2 lg:mb-3">
                 <Heart className="w-5 md:h-5 lg:w-6 lg:h-6" />
               </div>
-              <h3 className="font-semibold text-white mb-1 lg:mb-2 text-xs lg:text-sm">{features[0].title}</h3>
-              <p className="text-[10px] lg:text-xs text-gray-300 leading-tight">{features[0].description}</p>
+              <h3 className="font-semibold text-white mb-2 lg:mb-3 text-xs lg:text-sm">{features[0].title}</h3>
+              <p className="text-[9px] lg:text-[10px] text-gray-300 leading-relaxed">{features[0].description}</p>
             </div>
 
             <div
               ref={card2Ref}
               data-card="2"
-              className="absolute top-[20%] right-[calc(28%+0.5rem)] md:right-auto md:left-auto w-[28%] md:w-[19.5%] aspect-square bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-lg p-3 lg:p-4 flex flex-col items-center justify-center text-center z-20 shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:shadow-[0_0_30px_rgba(34,197,94,0.5)] transition-shadow duration-300"
+              className="absolute top-[20%] right-[calc(28%+0.5rem)] md:right-auto md:left-auto w-[28%] md:w-[19.5%] bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-lg p-4 lg:p-5 flex flex-col items-center justify-center text-center z-20 shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:shadow-[0_0_30px_rgba(34,197,94,0.5)] transition-shadow duration-300 min-h-[280px]"
               style={{ willChange: 'transform, opacity' }}
             >
               <div className="w-10 md:h-10 lg:w-12 lg:h-12 border-2 border-green-400 rounded-md flex items-center justify-center text-green-400 bg-green-400/10 mb-2 lg:mb-3">
@@ -326,7 +326,7 @@ function About() {
             {/* Cards 3 & 4 - Replace building image (smaller, background, below heading line) - Side by side with consistent spacing matching right cards */}
             <div
               ref={card3Ref}
-              className="absolute right-[calc(42%+19%+0.5%)] md:right-[calc(42%+19%+0.5%)] top-[calc(12%+11rem+1rem)] md:top-[calc(17%+14rem+1.25rem)] w-[28%] md:w-[19%] aspect-square bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-lg p-3 lg:p-4 flex flex-col items-center justify-center text-center z-10 shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:shadow-[0_0_30px_rgba(34,197,94,0.5)] transition-shadow duration-300"
+              className="absolute right-[calc(42%+19%+0.5%)] md:right-[calc(42%+19%+0.5%)] top-[calc(12%+11rem+1rem)] md:top-[calc(17%+14rem+1.25rem)] w-[28%] md:w-[19%] bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-lg p-4 lg:p-5 flex flex-col items-center justify-center text-center z-10 shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:shadow-[0_0_30px_rgba(34,197,94,0.5)] transition-shadow duration-300 min-h-[280px]"
               style={{ willChange: 'transform, opacity' }}
             >
               <div className="w-10 md:h-10 lg:w-12 lg:h-12 border-2 border-green-400 rounded-md flex items-center justify-center text-green-400 bg-green-400/10 mb-2 lg:mb-3">
@@ -338,7 +338,7 @@ function About() {
 
             <div
               ref={card4Ref}
-              className="absolute right-[42%] md:right-[42%] top-[calc(12%+11rem+1rem)] md:top-[calc(17%+14rem+1.25rem)] w-[28%] md:w-[19%] aspect-square bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-lg p-3 lg:p-4 flex flex-col items-center justify-center text-center z-10 shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:shadow-[0_0_30px_rgba(34,197,94,0.5)] transition-shadow duration-300"
+              className="absolute right-[42%] md:right-[42%] top-[calc(12%+11rem+1rem)] md:top-[calc(17%+14rem+1.25rem)] w-[28%] md:w-[19%] bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-lg p-4 lg:p-5 flex flex-col items-center justify-center text-center z-10 shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:shadow-[0_0_30px_rgba(34,197,94,0.5)] transition-shadow duration-300 min-h-[280px]"
               style={{ willChange: 'transform, opacity' }}
             >
               <div className="w-10 md:h-10 lg:w-12 lg:h-12 border-2 border-green-400 rounded-md flex items-center justify-center text-green-400 bg-green-400/10 mb-2 lg:mb-3">
