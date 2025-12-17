@@ -461,9 +461,6 @@ export default function ProductGrid() {
                   <h3 className="text-3xl font-bold text-gray-900">
                     {categories.find((c) => c.value === selectedCategory)?.label} <span className="font-light text-green-400">Varieties</span>
                   </h3>
-                  <p className="text-sm text-gray-600 mt-1">
-                    {filteredSeedlings.length} {filteredSeedlings.length === 1 ? 'item' : 'items'} available
-                  </p>
           </div>
         </div>
 

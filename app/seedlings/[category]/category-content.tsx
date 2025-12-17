@@ -59,9 +59,6 @@ export default function SeedlingsCategoryContent({
             <p className="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto">
               {categoryData.description}
             </p>
-            <p className="text-gray-400 mt-4">
-              {seedlings.length} {seedlings.length === 1 ? 'variety' : 'varieties'} available
-            </p>
           </div>
         </div>
       </section>
