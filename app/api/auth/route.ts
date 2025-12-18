@@ -1,12 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
+  return handleAuth(request)
+}
+
+export async function POST(request: NextRequest) {
+  return handleAuth(request)
+}
+
+async function handleAuth(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams
   const code = searchParams.get('code')
   const state = searchParams.get('state')
   const baseUrl = request.nextUrl.origin
 
   // If no code, redirect to GitHub OAuth (initial auth request)
+  // This handles both Decap CMS initial request and direct browser requests
   if (!code) {
     const params = new URLSearchParams({
       client_id: process.env.GITHUB_CLIENT_ID || 'Ov23liMog49BcJaN6uzJ',
