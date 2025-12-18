@@ -4,8 +4,8 @@ import type { NextRequest } from 'next/server'
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
   
-  // Don't interfere with API routes
-  if (pathname.startsWith('/api/')) {
+  // Don't interfere with API routes or static files
+  if (pathname.startsWith('/api/') || pathname.startsWith('/admin/')) {
     return NextResponse.next()
   }
   

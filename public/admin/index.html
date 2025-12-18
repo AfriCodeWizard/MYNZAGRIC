@@ -19,14 +19,8 @@
 <body>
   <div id="nc-root"></div>
   <!-- Include the script that builds the page and powers Decap CMS -->
+  <!-- Decap CMS will auto-initialize and load config from /admin/config.yml -->
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
-  <script>
-    // Initialize Decap CMS - it will auto-load config.yml from /admin/config.yml
-    // The token in the URL hash will be automatically picked up
-    if (window.CMS) {
-      window.CMS.init();
-    }
-  </script>
 </body>
 </html>
 
