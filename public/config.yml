@@ -1,0 +1,37 @@
+backend:
+  name: github
+  repo: AfriCodeWizard/MYNZAGRIC
+  branch: main
+  base_url: https://mynzagric.com
+  auth_scope: repo
+  app_id: Ov23liMog49BcJaN6uzJ
+  proxy_url: /api/auth
+
+media_folder: public/blog-images # Media files will be stored in the repo under public/blog-images
+public_folder: /blog-images # The src attribute for uploaded media will begin with /blog-images
+
+collections:
+  - name: "blog" # Used in routes, e.g., /admin/collections/blog
+    label: "Blog Posts"
+    folder: "content/blog" # The path to the folder where the documents are stored
+    create: true # Allow users to create new documents in this collection
+    slug: "{{slug}}" # Filename template, e.g., YYYY-MM-DD-title.md
+    fields: # The fields for each document, usually in front matter
+      - { label: "Title", name: "title", widget: "string", required: true }
+      - { label: "Slug", name: "slug", widget: "string", required: true, hint: "URL-friendly version of title (e.g., my-awesome-post)" }
+      - { label: "Excerpt", name: "excerpt", widget: "text", required: true, hint: "Short description for preview cards" }
+      - { label: "Featured Image", name: "featuredImage", widget: "image", required: true }
+      - { label: "Author Name", name: "authorName", widget: "string", required: true, default: "Mynzagric Team" }
+      - { label: "Author Avatar", name: "authorAvatar", widget: "image", required: false }
+      - { label: "Author Bio", name: "authorBio", widget: "text", required: false }
+      - { label: "Publish Date", name: "publishedAt", widget: "datetime", required: true, format: "YYYY-MM-DD HH:mm", date_format: "YYYY-MM-DD", time_format: "HH:mm" }
+      - { label: "Updated Date", name: "updatedAt", widget: "datetime", required: false, format: "YYYY-MM-DD HH:mm", date_format: "YYYY-MM-DD", time_format: "HH:mm" }
+      - { label: "Category", name: "category", widget: "string", required: true, hint: "e.g., Farming Tips, Irrigation, Success Stories" }
+      - { label: "Tags", name: "tags", widget: "list", required: false, hint: "Add tags separated by commas" }
+      - { label: "Featured", name: "featured", widget: "boolean", required: false, default: false, hint: "Show on homepage as featured article" }
+      - { label: "Draft", name: "draft", widget: "boolean", required: false, default: false, hint: "Hide from public view" }
+      - { label: "SEO Title", name: "seoTitle", widget: "string", required: false, hint: "Custom SEO title (optional)" }
+      - { label: "SEO Description", name: "seoDescription", widget: "text", required: false, hint: "Custom SEO description (optional)" }
+      - { label: "SEO Keywords", name: "seoKeywords", widget: "list", required: false, hint: "SEO keywords" }
+      - { label: "Body", name: "body", widget: "markdown", required: true, hint: "Main content of the blog post (Markdown supported)" }
+

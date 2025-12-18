@@ -10,23 +10,23 @@ export default function AdminPage() {
       const script = document.createElement('script')
       script.src = 'https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js'
       script.async = true
+      script.onload = () => {
+        // Initialize CMS after script loads
+        if ((window as any).CMS) {
+          ;(window as any).CMS.init({
+            config: {
+              load_config_file: true,
+              config_file_path: '/config.yml'
+            }
+          })
+        }
+      }
       document.body.appendChild(script)
     }
   }, [])
 
   return (
     <>
-      <Script
-        id="decap-cms-config"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
-            if (typeof window !== 'undefined' && window.CMS) {
-              window.CMS.init();
-            }
-          `,
-        }}
-      />
       <div id="nc-root" />
     </>
   )
