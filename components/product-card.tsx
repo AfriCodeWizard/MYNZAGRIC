@@ -285,7 +285,7 @@ export default function ProductCard({
       }}
     >
       {/* Image/Icon Container - CodePen style */}
-      <div className="relative w-full overflow-hidden" style={{ minHeight: '380px', height: '380px' }}>
+      <div className="relative w-full overflow-hidden" style={{ minHeight: '320px', height: '320px' }}>
         {seedling.image ? (
           <img 
             src={seedling.image.split('/').map((part, index) => 
@@ -293,7 +293,7 @@ export default function ProductCard({
             ).join('/')} 
             alt={`${seedling.name} - Premium grafted ${seedling.category} seedling available at Mynzagric`}
             className="w-full h-full object-cover transform transition-transform duration-300 hover:scale-110"
-            style={{ width: '100%', height: '100%', minHeight: '380px', objectFit: 'cover' }}
+            style={{ width: '100%', height: '100%', minHeight: '320px', objectFit: 'cover' }}
             loading="lazy"
             decoding="async"
             onError={(e) => {
@@ -304,14 +304,14 @@ export default function ProductCard({
               if (parent) {
                 const fallback = document.createElement('div');
                 fallback.className = 'w-full h-full bg-gradient-to-br from-green-100 to-green-50 flex items-center justify-center text-8xl transform transition-transform duration-300 hover:scale-110';
-                fallback.style.minHeight = '380px';
+                fallback.style.minHeight = '320px';
                 fallback.textContent = seedling.icon;
                 parent.appendChild(fallback);
               }
             }}
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-green-100 to-green-50 flex items-center justify-center text-8xl transform transition-transform duration-300 hover:scale-110" style={{ minHeight: '380px', height: '380px' }}>
+          <div className="w-full h-full bg-gradient-to-br from-green-100 to-green-50 flex items-center justify-center text-8xl transform transition-transform duration-300 hover:scale-110" style={{ minHeight: '320px', height: '320px' }}>
             {seedling.icon}
           </div>
         )}
@@ -322,7 +322,7 @@ export default function ProductCard({
         className="relative z-10 bg-white pt-4 pb-2 px-4 flex flex-col"
         style={{
           position: 'relative',
-          minHeight: '180px',
+          minHeight: '160px',
         }}
       >
         {/* Straight background accent */}
@@ -341,7 +341,7 @@ export default function ProductCard({
           }}
         />
 
-        {/* Buy Button - Coin Flip Design */}
+        {/* Buy Button - Coin Flip Design - Positioned at bottom of image area */}
         <button
           onClick={handleAddToCart}
           className={cn(
@@ -358,7 +358,7 @@ export default function ProductCard({
           data-expanded={isExpanded}
           style={{
             display: 'block',
-            top: '-35px',
+            top: '-285px', // Position at bottom of image area (320px - 35px)
             right: '30px',
             zIndex: 2,
             width: '70px',
