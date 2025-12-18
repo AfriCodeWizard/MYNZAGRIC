@@ -1,34 +1,20 @@
 "use client"
 
 import { useEffect } from "react"
-import Script from "next/script"
 
 export default function AdminPage() {
   useEffect(() => {
-    // Load Decap CMS script
-    if (typeof window !== "undefined" && !(window as any).CMS) {
-      const script = document.createElement('script')
-      script.src = 'https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js'
-      script.async = true
-      script.onload = () => {
-        // Initialize CMS after script loads
-        if ((window as any).CMS) {
-          ;(window as any).CMS.init({
-            config: {
-              load_config_file: true,
-              config_file_path: '/config.yml'
-            }
-          })
-        }
-      }
-      document.body.appendChild(script)
+    // Redirect to static HTML file to avoid React conflicts
+    // Decap CMS uses its own React instance which conflicts with Next.js React
+    if (typeof window !== "undefined") {
+      window.location.href = "/admin/index.html"
     }
   }, [])
 
   return (
-    <>
-      <div id="nc-root" />
-    </>
+    <div className="flex items-center justify-center min-h-screen bg-[#07090d]">
+      <p className="text-gray-400">Loading admin interface...</p>
+    </div>
   )
 }
 

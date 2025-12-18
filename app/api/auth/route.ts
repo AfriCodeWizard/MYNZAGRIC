@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Redirect back to admin with token in hash
-    const redirectUrl = `${baseUrl}/admin#token=${tokenData.access_token}`
+    const redirectUrl = `${baseUrl}/admin/index.html#token=${tokenData.access_token}`
     return NextResponse.redirect(redirectUrl)
   } catch (error) {
     console.error('OAuth error:', error)
