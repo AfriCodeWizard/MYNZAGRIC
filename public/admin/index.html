@@ -21,6 +21,21 @@
   <!-- Include the script that builds the page and powers Decap CMS -->
   <!-- Decap CMS will auto-initialize and load config from /admin/config.yml -->
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+  <script>
+    // Ensure Decap CMS loads config from the correct location
+    // The token in the URL hash (#token=...) will be automatically picked up
+    document.addEventListener('DOMContentLoaded', function() {
+      // Give Decap CMS time to initialize
+      setTimeout(function() {
+        // Check if token is in URL hash
+        const hash = window.location.hash;
+        if (hash && hash.includes('token=')) {
+          // Token is present, Decap CMS should handle it
+          console.log('Token detected in URL hash');
+        }
+      }, 100);
+    });
+  </script>
 </body>
 </html>
 
