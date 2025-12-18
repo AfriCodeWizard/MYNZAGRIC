@@ -38,7 +38,7 @@ I've created a serverless function at `api/auth.js` that handles the GitHub OAut
    ```
    https://mynzagric.com/api/auth
    ```
-   (Note: This is different from before - it now points to the proxy function)
+   (This points to the OAuth proxy function)
 
 ### 4. Deploy
 
@@ -54,7 +54,7 @@ I've created a serverless function at `api/auth.js` that handles the GitHub OAut
 4. User authorizes on GitHub
 5. GitHub redirects back to `/api/auth` with code
 6. Proxy exchanges code for access token
-7. Proxy redirects to `/admin/index.html` with token
+7. Proxy redirects to `/admin` with token
 8. CMS uses token to access GitHub API
 
 ## Security Notes
