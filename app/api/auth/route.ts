@@ -72,9 +72,32 @@ export async function GET(request: NextRequest) {
     }
 
     // Redirect back to admin with token in hash fragment
-    // Decap CMS expects the token in the URL hash, not query params
-    const redirectUrl = `${baseUrl}/admin/index.html#token=${tokenData.access_token}`
-    return NextResponse.redirect(redirectUrl)
+    // Next.js redirect() doesn't preserve hash fragments, so we use an HTML page with JS redirect
+    const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Redirecting...</title>
+</head>
+<body>
+  <script>
+    // Redirect with hash fragment (server redirects can't include hash)
+    window.location.href = '${baseUrl}/admin/index.html#token=${tokenData.access_token}';
+  </script>
+  <noscript>
+    <p>Redirecting to admin... <a href="${baseUrl}/admin/index.html#token=${tokenData.access_token}">Click here</a> if you are not redirected.</p>
+  </noscript>
+</body>
+</html>
+    `.trim()
+    
+    return new NextResponse(html, {
+      status: 200,
+      headers: {
+        'Content-Type': 'text/html',
+      },
+    })
   } catch (error) {
     console.error('OAuth error:', error)
     return NextResponse.json(
