@@ -248,7 +248,7 @@ Thank you!`
               <div className="grid grid-cols-2 gap-4">
                 <div className="relative h-40 sm:h-48 rounded-xl overflow-hidden">
                   <Image
-                    src={pack.irrigationImage}
+                    src="/Drip_irrigation.jpg"
                     alt="Drip Irrigation System"
                     fill
                     className="object-cover"

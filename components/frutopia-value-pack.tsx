@@ -212,7 +212,7 @@ Thank you!`
                     priority
                     quality={85}
                     loading="eager"
-                    className="w-full h-auto object-contain group-hover:scale-105 transition-transform duration-700 ease-out border-2 border-white/20 rounded-lg"
+                    className="w-full h-auto object-contain group-hover:scale-105 transition-transform duration-700 ease-out border-2 border-green-400/40 rounded-lg"
                     style={{ maxWidth: '100%', height: 'auto' }}
                     sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 50vw"
                   />
