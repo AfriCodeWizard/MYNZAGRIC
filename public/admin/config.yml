@@ -1,6 +1,8 @@
 backend:
-  name: git-gateway
+  name: github  # or 'gitlab' or 'bitbucket' depending on your repo
+  repo: AfriCodeWizard/MYNZAGRIC  # Your GitHub username/repo-name
   branch: main # Branch to update (optional; defaults to master)
+  base_url: https://mynzagric.com  # Your site URL (for OAuth redirect)
 
 media_folder: public/blog-images # Media files will be stored in the repo under public/blog-images
 public_folder: /blog-images # The src attribute for uploaded media will begin with /blog-images
