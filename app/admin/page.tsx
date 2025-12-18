@@ -1,40 +1,23 @@
 "use client"
 
 import { useEffect } from "react"
-import Script from "next/script"
+import { useRouter } from "next/navigation"
 
 export default function AdminPage() {
+  const router = useRouter()
+
   useEffect(() => {
-    // Initialize Decap CMS
-    if (typeof window !== "undefined" && (window as any).CMS) {
-      ;(window as any).CMS.init()
+    // Redirect to static HTML file for Decap CMS
+    // The static file at /admin/index.html is better suited for CMS
+    if (typeof window !== "undefined") {
+      window.location.href = "/admin/index.html"
     }
   }, [])
 
   return (
-    <>
-      <Script
-        src="https://identity.netlify.com/v1/netlify-identity-widget.js"
-        strategy="afterInteractive"
-      />
-      <div id="nc-root" />
-      <Script
-        id="decap-cms"
-        dangerouslySetInnerHTML={{
-          __html: `
-            if (typeof window !== 'undefined' && window.netlifyIdentity) {
-              window.netlifyIdentity.on("init", user => {
-                if (!user) {
-                  window.netlifyIdentity.on("login", () => {
-                    document.location.href = "/admin/";
-                  });
-                }
-              });
-            }
-          `,
-        }}
-      />
-    </>
+    <div className="flex items-center justify-center min-h-screen bg-[#07090d]">
+      <p className="text-gray-400">Loading admin interface...</p>
+    </div>
   )
 }
 
