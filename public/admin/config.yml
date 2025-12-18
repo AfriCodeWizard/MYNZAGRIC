@@ -3,6 +3,8 @@ backend:
   repo: AfriCodeWizard/MYNZAGRIC  # Your GitHub username/repo-name
   branch: main # Branch to update (optional; defaults to master)
   base_url: https://mynzagric.com  # Your site URL (for OAuth redirect)
+  auth_type: implicit  # OAuth implicit flow
+  app_id: Ov23liMog49BcJaN6uzJ  # GitHub OAuth Client ID
 
 media_folder: public/blog-images # Media files will be stored in the repo under public/blog-images
 public_folder: /blog-images # The src attribute for uploaded media will begin with /blog-images
