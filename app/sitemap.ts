@@ -1,6 +1,7 @@
 import { MetadataRoute } from 'next'
 import { seedlings } from '@/lib/seedlings-data'
 import { getAllStorySlugs } from '@/lib/success-stories'
+import { getAllPostSlugs } from '@/lib/blog-data'
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://mynzagric.com'
 
@@ -24,6 +25,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(),
       changeFrequency: 'monthly' as const,
       priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/blog`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.9,
     },
   ]
 
@@ -81,12 +88,22 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.6,
   }))
 
+  // Blog pages
+  const blogSlugs = getAllPostSlugs()
+  const blogPages = blogSlugs.map((slug) => ({
+    url: `${baseUrl}/blog/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.7,
+  }))
+
   return [
     ...staticPages,
     ...categoryPages,
     ...plantCarePages,
     ...valuePackPages,
     ...storyPages,
+    ...blogPages,
   ]
 }
 
