@@ -315,116 +315,116 @@ export default function ProductCard({
             {seedling.icon}
           </div>
         )}
-        
-        {/* Buy Button - Positioned at bottom line of image area */}
-        <button
-          onClick={handleAddToCart}
-          className={cn(
-            "absolute rounded-full text-white coin-flip-button",
-            "active:scale-95",
-            isExpanded && "pointer-events-none coin-flip-disabled",
-            isAnimationPaused && "coin-flip-disabled",
-            // Trigger flip animation: on hover (web) or when in viewport (mobile), 
-            // but NOT during expansion and NOT within 60s of click
-            !isExpanded && 
-            !isAnimationPaused &&
-            ((isMobile && isInViewport) || (!isMobile && isHovered)) ? "coin-flip-active" : ""
-          )}
-          data-expanded={isExpanded}
+      </div>
+
+      {/* Buy Button - Positioned at bottom line of image area, outside image container to avoid overflow clipping */}
+      <button
+        onClick={handleAddToCart}
+        className={cn(
+          "absolute rounded-full text-white coin-flip-button",
+          "active:scale-95",
+          isExpanded && "pointer-events-none coin-flip-disabled",
+          isAnimationPaused && "coin-flip-disabled",
+          // Trigger flip animation: on hover (web) or when in viewport (mobile), 
+          // but NOT during expansion and NOT within 60s of click
+          !isExpanded && 
+          !isAnimationPaused &&
+          ((isMobile && isInViewport) || (!isMobile && isHovered)) ? "coin-flip-active" : ""
+        )}
+        data-expanded={isExpanded}
+        style={{
+          display: 'block',
+          top: '245px', // Position at bottom line of image area (280px - 35px = 245px)
+          right: '30px',
+          zIndex: 20,
+          width: '70px',
+          height: '70px',
+          fontSize: '36px',
+          color: '#fff',
+          borderRadius: '50%',
+          position: 'absolute',
+          overflow: 'hidden',
+          // Smooth transition for expansion and collapse
+          transition: isExpanded 
+            ? 'width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), height 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), right 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), top 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)'
+            : isCollapsing
+            ? 'width 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), height 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), right 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), top 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+            : 'none',
+          ...(isExpanded && {
+            width: '750px',
+            height: '750px',
+            right: '-375px',
+            top: '-375px',
+          }),
+        }}
+        disabled={isExpanded}
+      >
+        <div 
+          ref={flipInnerRef}
+          className="coin-flip-inner"
           style={{
-            display: 'block',
-            bottom: '-35px', // Position at bottom line of image area (half button below, half above)
-            right: '30px',
-            zIndex: 10,
-            width: '70px',
-            height: '70px',
-            fontSize: '36px',
-            color: '#fff',
-            borderRadius: '50%',
-            position: 'absolute',
-            overflow: 'hidden',
-            // Smooth transition for expansion and collapse
-            transition: isExpanded 
-              ? 'width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), height 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), right 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), bottom 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)'
-              : isCollapsing
-              ? 'width 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), height 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), right 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), bottom 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
-              : 'none',
-            ...(isExpanded && {
-              width: '750px',
-              height: '750px',
-              right: '-375px',
-              bottom: '-375px',
-            }),
+            position: 'relative',
+            width: '100%',
+            height: '100%',
+            transformStyle: 'preserve-3d',
+            transform: 'rotateY(0deg)',
           }}
-          disabled={isExpanded}
         >
+          {/* Front side - Shopping Cart Icon */}
           <div 
-            ref={flipInnerRef}
-            className="coin-flip-inner"
+            className="coin-flip-face coin-flip-front"
             style={{
-              position: 'relative',
+              position: 'absolute',
               width: '100%',
               height: '100%',
-              transformStyle: 'preserve-3d',
-              transform: 'rotateY(0deg)',
+              backfaceVisibility: 'hidden',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: '50%',
+              backgroundColor: '#10b981',
             }}
           >
-            {/* Front side - Shopping Cart Icon */}
-            <div 
-              className="coin-flip-face coin-flip-front"
+            <ShoppingCart 
+              className={cn(
+                isExpanded && "opacity-0"
+              )}
               style={{
-                position: 'absolute',
-                width: '100%',
-                height: '100%',
-                backfaceVisibility: 'hidden',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                borderRadius: '50%',
-                backgroundColor: '#10b981',
+                width: '30px',
+                height: '30px',
+                strokeWidth: 2.5,
               }}
-            >
-              <ShoppingCart 
-                className={cn(
-                  isExpanded && "opacity-0"
-                )}
-                style={{
-                  width: '30px',
-                  height: '30px',
-                  strokeWidth: 2.5,
-                }}
-              />
-            </div>
-            
-            {/* Back side - Add to Cart Text */}
-            <div 
-              className="coin-flip-face coin-flip-back"
-              style={{
-                position: 'absolute',
-                width: '100%',
-                height: '100%',
-                backfaceVisibility: 'hidden',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                borderRadius: '50%',
-                backgroundColor: '#000000',
-                transform: 'rotateY(180deg)',
-                fontSize: '11px',
-                fontWeight: 'bold',
-                textAlign: 'center',
-                padding: '4px',
-                lineHeight: '1.2',
-                wordSpacing: '0px',
-                border: '3px solid white',
-                boxSizing: 'border-box',
-              }}
-            >
-              <span style={{ whiteSpace: 'normal', color: 'red', fontSize: '11px', fontWeight: 'bold' }}>Add to Cart</span>
-            </div>
+            />
           </div>
-        </button>
-      </div>
+          
+          {/* Back side - Add to Cart Text */}
+          <div 
+            className="coin-flip-face coin-flip-back"
+            style={{
+              position: 'absolute',
+              width: '100%',
+              height: '100%',
+              backfaceVisibility: 'hidden',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: '50%',
+              backgroundColor: '#000000',
+              transform: 'rotateY(180deg)',
+              fontSize: '11px',
+              fontWeight: 'bold',
+              textAlign: 'center',
+              padding: '4px',
+              lineHeight: '1.2',
+              wordSpacing: '0px',
+              border: '3px solid white',
+              boxSizing: 'border-box',
+            }}
+          >
+            <span style={{ whiteSpace: 'normal', color: 'red', fontSize: '11px', fontWeight: 'bold' }}>Add to Cart</span>
+          </div>
+        </div>
+      </button>
 
       {/* Content Section - CodePen style */}
       <div 
