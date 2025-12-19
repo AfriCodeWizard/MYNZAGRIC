@@ -97,18 +97,34 @@ async function handleAuth(request: NextRequest) {
     // Build the target URL with token in hash
     const targetUrl = `${baseUrl}/admin/index.html#token=${encodeURIComponent(token)}`
     
+    // Set token in cookie as backup (expires in 5 minutes)
+    const cookieExpiry = new Date(Date.now() + 5 * 60 * 1000).toUTCString()
+    const cookieValue = `github_token=${encodeURIComponent(token)}; Path=/; Expires=${cookieExpiry}; SameSite=Lax; Secure`
+    
     // Return minimal HTML that redirects IMMEDIATELY, before any other scripts can run
     // Use inline script in head that executes synchronously
+    // Store token in multiple places: cookie, localStorage, sessionStorage
     const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><script>
 (function(){
   var t='${escapedToken}';
   var u='${baseUrl}/admin/index.html#token='+encodeURIComponent(t);
-  try{sessionStorage.setItem('github_token',t);}catch(e){}
+  
+  // Store token in multiple storage mechanisms as backup
+  try{
+    localStorage.setItem('github_token',t);
+    sessionStorage.setItem('github_token',t);
+  }catch(e){}
+  
+  // Set cookie via document.cookie (since we can't set httpOnly from client)
+  document.cookie='github_token='+encodeURIComponent(t)+'; path=/; max-age=300; SameSite=Lax';
+  
+  // Immediate redirect
   window.location.replace(u);
 })();
 </script><noscript><meta http-equiv="refresh" content="0;url=${targetUrl}"></noscript></head><body><p>Redirecting...<a href="${targetUrl}">Click here if not redirected</a></p></body></html>`
     
-    return new NextResponse(html, {
+    // Create response with cookie header
+    const response = new NextResponse(html, {
       status: 200,
       headers: {
         'Content-Type': 'text/html; charset=utf-8',
@@ -116,8 +132,11 @@ async function handleAuth(request: NextRequest) {
         'Pragma': 'no-cache',
         'Expires': '0',
         'X-Frame-Options': 'SAMEORIGIN',
+        'Set-Cookie': cookieValue,
       },
     })
+    
+    return response
   } catch (error) {
     console.error('OAuth error:', error)
     return NextResponse.json(

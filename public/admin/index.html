@@ -30,25 +30,87 @@
       console.log('Full URL:', window.location.href);
       
       // Check if hash is just #/ (empty hash with slash) or empty
-      if (hash === '#/' || hash === '#' || !hash) {
-        console.warn('Empty hash detected. Token may have been lost during redirect.');
-        // Try to recover token from sessionStorage IMMEDIATELY
+      if (hash === '#/' || hash === '#' || !hash || !hash.includes('token=')) {
+        console.warn('Empty or invalid hash detected. Token may have been lost during redirect.');
+        
+        // Try to recover token from multiple sources (in order of reliability)
+        var recoveredToken = null;
+        
+        // 1. Try localStorage first (most persistent)
         try {
-          var storedToken = sessionStorage.getItem('github_token');
-          if (storedToken) {
-            console.log('Recovering token from sessionStorage');
-            // Use replace to avoid adding to history
-            window.location.replace(window.location.pathname + window.location.search + '#token=' + storedToken);
-            sessionStorage.removeItem('github_token'); // Clean up
-            return; // Exit - page will reload with token
+          recoveredToken = localStorage.getItem('github_token');
+          if (recoveredToken) {
+            console.log('Recovering token from localStorage');
+            localStorage.removeItem('github_token'); // Clean up
           }
         } catch (e) {
-          console.error('Failed to recover token from sessionStorage:', e);
+          console.error('Failed to read from localStorage:', e);
+        }
+        
+        // 2. Try sessionStorage
+        if (!recoveredToken) {
+          try {
+            recoveredToken = sessionStorage.getItem('github_token');
+            if (recoveredToken) {
+              console.log('Recovering token from sessionStorage');
+              sessionStorage.removeItem('github_token'); // Clean up
+            }
+          } catch (e) {
+            console.error('Failed to read from sessionStorage:', e);
+          }
+        }
+        
+        // 3. Try cookie (read from document.cookie)
+        if (!recoveredToken) {
+          try {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+              const cookie = cookies[i].trim();
+              if (cookie.startsWith('github_token=')) {
+                recoveredToken = decodeURIComponent(cookie.substring('github_token='.length));
+                console.log('Recovering token from cookie');
+                // Delete cookie
+                document.cookie = 'github_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+                break;
+              }
+            }
+          } catch (e) {
+            console.error('Failed to read from cookie:', e);
+          }
+        }
+        
+        // If token recovered from storage, set it in hash and reload
+        if (recoveredToken) {
+          console.log('Token recovered, setting hash and reloading...');
+          // Use replace to avoid adding to history
+          window.location.replace(window.location.pathname + window.location.search + '#token=' + encodeURIComponent(recoveredToken));
+          return; // Exit - page will reload with token
+        }
+        
+        // 4. Try API endpoint as last resort (if we came from OAuth) - async
+        if (!recoveredToken && document.referrer && document.referrer.includes('/api/auth')) {
+          console.log('Attempting to fetch token from API endpoint...');
+          fetch('/api/token')
+            .then(response => {
+              if (response.ok) {
+                return response.json();
+              }
+              throw new Error('Token not found in API');
+            })
+            .then(data => {
+              if (data.token) {
+                console.log('Recovered token from API endpoint');
+                window.location.replace(window.location.pathname + window.location.search + '#token=' + encodeURIComponent(data.token));
+              }
+            })
+            .catch(e => {
+              console.error('Failed to fetch token from API:', e);
+            });
         }
         
         // Check if we came from OAuth redirect
         if (document.referrer && document.referrer.includes('/api/auth')) {
-          console.error('Token was lost during redirect from OAuth and not found in sessionStorage.');
+          console.error('Token was lost during redirect from OAuth and not found in any storage.');
           console.error('Please try logging in again.');
         }
         return;
