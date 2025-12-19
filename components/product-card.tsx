@@ -333,9 +333,9 @@ export default function ProductCard({
           data-expanded={isExpanded}
           style={{
             display: 'block',
-            bottom: '0px', // Position at bottom line of image area
+            bottom: '-35px', // Position at bottom line of image area (half button below, half above)
             right: '30px',
-            zIndex: 2,
+            zIndex: 10,
             width: '70px',
             height: '70px',
             fontSize: '36px',
@@ -343,19 +343,17 @@ export default function ProductCard({
             borderRadius: '50%',
             position: 'absolute',
             overflow: 'hidden',
-            transform: 'translateY(50%)', // Center button on the bottom line
             // Smooth transition for expansion and collapse
             transition: isExpanded 
-              ? 'width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), height 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), right 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), bottom 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)'
+              ? 'width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), height 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), right 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), bottom 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)'
               : isCollapsing
-              ? 'width 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), height 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), right 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), bottom 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+              ? 'width 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), height 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), right 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), bottom 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
               : 'none',
             ...(isExpanded && {
               width: '750px',
               height: '750px',
               right: '-375px',
               bottom: '-375px',
-              transform: 'translateY(50%)',
             }),
           }}
           disabled={isExpanded}
@@ -430,25 +428,26 @@ export default function ProductCard({
 
       {/* Content Section - CodePen style */}
       <div 
-        className="relative z-10 bg-white pt-4 pb-2 px-4 flex flex-col"
+        className="relative z-10 bg-white pt-2 pb-2 px-4 flex flex-col"
         style={{
           position: 'relative',
           minHeight: '140px',
+          marginTop: '0px', // Reduce space between image and content
         }}
       >
-        {/* Straight background accent */}
+        {/* Straight background accent - reduced height to match button position */}
         <div 
           className="absolute bg-white"
           style={{
             content: '',
             width: '100%',
-            height: '110px',
+            height: '35px', // Reduced to match button overlap
             position: 'absolute',
             display: 'block',
             backgroundColor: '#fff',
-            top: '-110px',
+            top: '-35px',
             left: '0',
-            zIndex: -1,
+            zIndex: 1, // Behind button but above image
           }}
         />
 
