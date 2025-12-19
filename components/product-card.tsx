@@ -424,6 +424,7 @@ export default function ProductCard({
             </div>
           </div>
         </button>
+      </div>
 
       {/* Content Section - CodePen style */}
       <div 
