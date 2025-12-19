@@ -22,29 +22,47 @@
   <!-- Decap CMS will auto-initialize and load config from /admin/config.yml -->
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
   <script>
-    // Ensure Decap CMS loads config and reads token correctly
-    document.addEventListener('DOMContentLoaded', function() {
-      // Fix token format if it has wrong format (#/token= instead of #token=)
+    // Fix token format immediately (before Decap CMS loads)
+    // Decap CMS expects #token= not #/token=
+    (function() {
       const hash = window.location.hash;
       if (hash && hash.includes('token=')) {
-        // Check if format is wrong (#/token= instead of #token=)
+        // Fix wrong format (#/token= -> #token=)
         if (hash.startsWith('#/token=')) {
-          // Fix the format
+          const token = hash.replace('#/token=', '');
+          window.location.replace(window.location.pathname + '#token=' + token);
+          console.log('Fixed token format: #/token= -> #token=');
+          return; // Exit early, let page reload with correct format
+        }
+        // Also check for other wrong formats
+        if (hash.startsWith('#token=')) {
+          console.log('Token format correct:', hash.substring(0, 30) + '...');
+        }
+      }
+    })();
+    
+    // Ensure Decap CMS loads config and reads token correctly
+    document.addEventListener('DOMContentLoaded', function() {
+      // Double-check token format after page loads
+      const hash = window.location.hash;
+      if (hash && hash.includes('token=')) {
+        if (hash.startsWith('#/token=')) {
           const token = hash.replace('#/token=', '');
           window.location.hash = '#token=' + token;
-          console.log('Fixed token format in URL hash');
-        } else {
-          console.log('Token detected in URL hash:', hash.substring(0, 20) + '...');
+          console.log('Fixed token format on DOMContentLoaded');
         }
       }
       
-      // Give Decap CMS time to initialize and read the token
+      // Log token status for debugging
       setTimeout(function() {
         const currentHash = window.location.hash;
         if (currentHash && currentHash.includes('token=')) {
-          console.log('Token ready for Decap CMS:', currentHash.substring(0, 20) + '...');
+          console.log('Token present for Decap CMS:', currentHash.substring(0, 30) + '...');
+          console.log('Decap CMS should authenticate automatically');
+        } else {
+          console.warn('No token found in URL hash. Decap CMS will show login page.');
         }
-      }, 500);
+      }, 1000);
     });
   </script>
 </body>
