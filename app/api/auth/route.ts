@@ -85,72 +85,28 @@ async function handleAuth(request: NextRequest) {
     // Next.js redirect() doesn't preserve hash fragments, so we use an HTML page with JS redirect
     const token = tokenData.access_token
     
-    // Escape token for use in JavaScript string
-    const escapedToken = token.replace(/'/g, "\\'").replace(/"/g, '\\"')
+    // Escape token for use in JavaScript string (handle all special characters)
+    const escapedToken = token
+      .replace(/\\/g, '\\\\')  // Escape backslashes first
+      .replace(/'/g, "\\'")      // Escape single quotes
+      .replace(/"/g, '\\"')      // Escape double quotes
+      .replace(/\n/g, '\\n')     // Escape newlines
+      .replace(/\r/g, '\\r')     // Escape carriage returns
+      .replace(/\t/g, '\\t')     // Escape tabs
     
-    const html = `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>Redirecting...</title>
-  <meta http-equiv="refresh" content="0;url=${baseUrl}/admin/index.html#token=${encodeURIComponent(token)}">
-  <script>
-    // Store token in sessionStorage as backup in case hash is lost
-    try {
-      sessionStorage.setItem('github_token', '${escapedToken}');
-      console.log('Token stored in sessionStorage as backup');
-    } catch (e) {
-      console.error('Failed to store token in sessionStorage:', e);
-    }
+    // Build the target URL with token in hash
+    const targetUrl = `${baseUrl}/admin/index.html#token=${encodeURIComponent(token)}`
     
-    // Immediate redirect - CRITICAL: Use #token= not #/token=
-    // Execute immediately, before any other scripts
-    (function() {
-      var token = '${escapedToken}';
-      var targetUrl = '${baseUrl}/admin/index.html#token=' + encodeURIComponent(token);
-      
-      console.log('OAuth redirect: Setting hash to #token=' + token.substring(0, 10) + '...');
-      
-      // Try multiple methods to ensure redirect works
-      try {
-        // Method 1: location.replace (preferred - doesn't add to history)
-        if (window.location.replace) {
-          window.location.replace(targetUrl);
-          return;
-        }
-      } catch (e) {
-        console.error('location.replace failed:', e);
-      }
-      
-      try {
-        // Method 2: location.href
-        window.location.href = targetUrl;
-      } catch (e) {
-        console.error('location.href failed:', e);
-        // Method 3: Direct hash assignment as last resort
-        window.location.hash = '#token=' + encodeURIComponent(token);
-        window.location.pathname = '/admin/index.html';
-      }
-    })();
-  </script>
-</head>
-<body>
-  <p>Redirecting to admin...</p>
-  <p>If you are not redirected, <a href="${baseUrl}/admin/index.html#token=${encodeURIComponent(token)}">click here</a>.</p>
-  <script>
-    // Backup redirect after page loads
-    setTimeout(function() {
-      var token = '${escapedToken}';
-      if (!window.location.hash || !window.location.hash.includes('token=')) {
-        console.warn('Token not in hash, attempting backup redirect');
-        window.location.href = '${baseUrl}/admin/index.html#token=' + encodeURIComponent(token);
-      }
-    }, 100);
-  </script>
-</body>
-</html>
-    `.trim()
+    // Return minimal HTML that redirects IMMEDIATELY, before any other scripts can run
+    // Use inline script in head that executes synchronously
+    const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><script>
+(function(){
+  var t='${escapedToken}';
+  var u='${baseUrl}/admin/index.html#token='+encodeURIComponent(t);
+  try{sessionStorage.setItem('github_token',t);}catch(e){}
+  window.location.replace(u);
+})();
+</script><noscript><meta http-equiv="refresh" content="0;url=${targetUrl}"></noscript></head><body><p>Redirecting...<a href="${targetUrl}">Click here if not redirected</a></p></body></html>`
     
     return new NextResponse(html, {
       status: 200,

@@ -29,24 +29,26 @@
       console.log('Initial hash:', hash);
       console.log('Full URL:', window.location.href);
       
-      // Check if hash is just #/ (empty hash with slash)
-      if (hash === '#/' || hash === '#') {
+      // Check if hash is just #/ (empty hash with slash) or empty
+      if (hash === '#/' || hash === '#' || !hash) {
         console.warn('Empty hash detected. Token may have been lost during redirect.');
+        // Try to recover token from sessionStorage IMMEDIATELY
+        try {
+          var storedToken = sessionStorage.getItem('github_token');
+          if (storedToken) {
+            console.log('Recovering token from sessionStorage');
+            // Use replace to avoid adding to history
+            window.location.replace(window.location.pathname + window.location.search + '#token=' + storedToken);
+            sessionStorage.removeItem('github_token'); // Clean up
+            return; // Exit - page will reload with token
+          }
+        } catch (e) {
+          console.error('Failed to recover token from sessionStorage:', e);
+        }
+        
         // Check if we came from OAuth redirect
         if (document.referrer && document.referrer.includes('/api/auth')) {
-          console.error('Token was lost during redirect from OAuth.');
-          // Try to recover token from sessionStorage
-          try {
-            var storedToken = sessionStorage.getItem('github_token');
-            if (storedToken) {
-              console.log('Recovering token from sessionStorage');
-              window.location.hash = '#token=' + storedToken;
-              sessionStorage.removeItem('github_token'); // Clean up
-              return;
-            }
-          } catch (e) {
-            console.error('Failed to recover token from sessionStorage:', e);
-          }
+          console.error('Token was lost during redirect from OAuth and not found in sessionStorage.');
           console.error('Please try logging in again.');
         }
         return;
