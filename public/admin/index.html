@@ -26,43 +26,70 @@
     // Decap CMS expects #token= not #/token=
     (function() {
       const hash = window.location.hash;
-      if (hash && hash.includes('token=')) {
-        // Fix wrong format (#/token= -> #token=)
+      console.log('Initial hash:', hash);
+      
+      if (hash) {
+        // Handle various token formats
+        let token = null;
+        
+        // Check for #/token= format
         if (hash.startsWith('#/token=')) {
-          const token = hash.replace('#/token=', '');
-          window.location.replace(window.location.pathname + '#token=' + token);
-          console.log('Fixed token format: #/token= -> #token=');
+          token = hash.replace('#/token=', '');
+          console.log('Found token in #/token= format, fixing...');
+          window.location.replace(window.location.pathname + window.location.search + '#token=' + token);
           return; // Exit early, let page reload with correct format
         }
-        // Also check for other wrong formats
+        
+        // Check for #token= format (correct)
         if (hash.startsWith('#token=')) {
+          token = hash.replace('#token=', '');
           console.log('Token format correct:', hash.substring(0, 30) + '...');
+        }
+        
+        // Check for token= without # (edge case)
+        if (hash.includes('token=') && !hash.startsWith('#token=') && !hash.startsWith('#/token=')) {
+          const match = hash.match(/token=([^&]+)/);
+          if (match) {
+            token = match[1];
+            console.log('Found token in hash, fixing format...');
+            window.location.replace(window.location.pathname + window.location.search + '#token=' + token);
+            return;
+          }
+        }
+        
+        if (token) {
+          console.log('Token detected, length:', token.length);
         }
       }
     })();
     
     // Ensure Decap CMS loads config and reads token correctly
     document.addEventListener('DOMContentLoaded', function() {
-      // Double-check token format after page loads
-      const hash = window.location.hash;
-      if (hash && hash.includes('token=')) {
-        if (hash.startsWith('#/token=')) {
-          const token = hash.replace('#/token=', '');
-          window.location.hash = '#token=' + token;
-          console.log('Fixed token format on DOMContentLoaded');
-        }
-      }
-      
-      // Log token status for debugging
+      // Wait a bit for any redirects to complete
       setTimeout(function() {
-        const currentHash = window.location.hash;
-        if (currentHash && currentHash.includes('token=')) {
-          console.log('Token present for Decap CMS:', currentHash.substring(0, 30) + '...');
-          console.log('Decap CMS should authenticate automatically');
+        const hash = window.location.hash;
+        console.log('Hash after DOMContentLoaded:', hash);
+        
+        if (hash && hash.includes('token=')) {
+          // Fix any remaining format issues
+          if (hash.startsWith('#/token=')) {
+            const token = hash.replace('#/token=', '');
+            window.location.hash = '#token=' + token;
+            console.log('Fixed token format on DOMContentLoaded');
+            return; // Let page update
+          }
+          
+          if (hash.startsWith('#token=')) {
+            const token = hash.replace('#token=', '');
+            console.log('Token present for Decap CMS:', token.substring(0, 20) + '...');
+            console.log('Decap CMS should authenticate automatically');
+          }
         } else {
-          console.warn('No token found in URL hash. Decap CMS will show login page.');
+          console.warn('No token found in URL hash. Current hash:', hash);
+          console.warn('Decap CMS will show login page.');
+          console.warn('Full URL:', window.location.href);
         }
-      }, 1000);
+      }, 500);
     });
   </script>
 </body>
