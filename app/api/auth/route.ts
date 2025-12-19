@@ -96,6 +96,14 @@ async function handleAuth(request: NextRequest) {
   <title>Redirecting...</title>
   <meta http-equiv="refresh" content="0;url=${baseUrl}/admin/index.html#token=${encodeURIComponent(token)}">
   <script>
+    // Store token in sessionStorage as backup in case hash is lost
+    try {
+      sessionStorage.setItem('github_token', '${escapedToken}');
+      console.log('Token stored in sessionStorage as backup');
+    } catch (e) {
+      console.error('Failed to store token in sessionStorage:', e);
+    }
+    
     // Immediate redirect - CRITICAL: Use #token= not #/token=
     // Execute immediately, before any other scripts
     (function() {

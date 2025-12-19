@@ -34,7 +34,20 @@
         console.warn('Empty hash detected. Token may have been lost during redirect.');
         // Check if we came from OAuth redirect
         if (document.referrer && document.referrer.includes('/api/auth')) {
-          console.error('Token was lost during redirect from OAuth. Please try logging in again.');
+          console.error('Token was lost during redirect from OAuth.');
+          // Try to recover token from sessionStorage
+          try {
+            var storedToken = sessionStorage.getItem('github_token');
+            if (storedToken) {
+              console.log('Recovering token from sessionStorage');
+              window.location.hash = '#token=' + storedToken;
+              sessionStorage.removeItem('github_token'); // Clean up
+              return;
+            }
+          } catch (e) {
+            console.error('Failed to recover token from sessionStorage:', e);
+          }
+          console.error('Please try logging in again.');
         }
         return;
       }
