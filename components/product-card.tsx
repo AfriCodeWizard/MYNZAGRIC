@@ -285,7 +285,7 @@ export default function ProductCard({
       }}
     >
       {/* Image/Icon Container - CodePen style */}
-      <div className="relative w-full overflow-hidden" style={{ minHeight: '280px', height: '280px' }}>
+      <div className="relative w-full" style={{ minHeight: '280px', height: '280px', overflow: 'hidden' }}>
         {seedling.image ? (
           <img 
             src={seedling.image.split('/').map((part, index) => 
@@ -424,7 +424,6 @@ export default function ProductCard({
             </div>
           </div>
         </button>
-      </div>
 
       {/* Content Section - CodePen style */}
       <div 
