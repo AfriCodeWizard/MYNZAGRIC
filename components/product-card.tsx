@@ -334,6 +334,8 @@ export default function ProductCard({
         data-expanded={isExpanded}
         style={{
           display: 'block',
+          visibility: 'visible',
+          opacity: 1,
           top: '245px', // Position at bottom line of image area (280px - 35px = 245px)
           right: '30px',
           zIndex: 20,
