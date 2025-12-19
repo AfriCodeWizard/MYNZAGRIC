@@ -81,32 +81,32 @@ async function handleAuth(request: NextRequest) {
     }
 
     // Redirect back to admin with token in hash fragment
+    // CRITICAL: Use #token= not #/token= (Decap CMS expects #token=)
     // Next.js redirect() doesn't preserve hash fragments, so we use an HTML page with JS redirect
-    // This is the most reliable way to pass the token to Decap CMS
-    // Use immediate redirect with proper error handling
+    const token = tokenData.access_token
     const html = `
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
   <title>Redirecting...</title>
-  <meta http-equiv="refresh" content="0;url=${baseUrl}/admin/index.html#token=${tokenData.access_token}">
+  <meta http-equiv="refresh" content="0;url=${baseUrl}/admin/index.html#token=${token}">
 </head>
 <body>
   <script>
-    // Immediate redirect - try multiple methods for maximum compatibility
+    // Immediate redirect - CRITICAL: Use #token= not #/token=
     (function() {
       try {
         // Primary method: location.replace (doesn't add to history)
-        window.location.replace('${baseUrl}/admin/index.html#token=${tokenData.access_token}');
+        window.location.replace('${baseUrl}/admin/index.html#token=${token}');
       } catch (e) {
         // Fallback: location.href
-        window.location.href = '${baseUrl}/admin/index.html#token=${tokenData.access_token}';
+        window.location.href = '${baseUrl}/admin/index.html#token=${token}';
       }
     })();
   </script>
   <noscript>
-    <p>Redirecting to admin... <a href="${baseUrl}/admin/index.html#token=${tokenData.access_token}">Click here</a> if you are not redirected.</p>
+    <p>Redirecting to admin... <a href="${baseUrl}/admin/index.html#token=${token}">Click here</a> if you are not redirected.</p>
   </noscript>
 </body>
 </html>

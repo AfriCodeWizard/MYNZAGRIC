@@ -22,18 +22,29 @@
   <!-- Decap CMS will auto-initialize and load config from /admin/config.yml -->
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
   <script>
-    // Ensure Decap CMS loads config from the correct location
-    // The token in the URL hash (#token=...) will be automatically picked up
+    // Ensure Decap CMS loads config and reads token correctly
     document.addEventListener('DOMContentLoaded', function() {
-      // Give Decap CMS time to initialize
-      setTimeout(function() {
-        // Check if token is in URL hash
-        const hash = window.location.hash;
-        if (hash && hash.includes('token=')) {
-          // Token is present, Decap CMS should handle it
-          console.log('Token detected in URL hash');
+      // Fix token format if it has wrong format (#/token= instead of #token=)
+      const hash = window.location.hash;
+      if (hash && hash.includes('token=')) {
+        // Check if format is wrong (#/token= instead of #token=)
+        if (hash.startsWith('#/token=')) {
+          // Fix the format
+          const token = hash.replace('#/token=', '');
+          window.location.hash = '#token=' + token;
+          console.log('Fixed token format in URL hash');
+        } else {
+          console.log('Token detected in URL hash:', hash.substring(0, 20) + '...');
         }
-      }, 100);
+      }
+      
+      // Give Decap CMS time to initialize and read the token
+      setTimeout(function() {
+        const currentHash = window.location.hash;
+        if (currentHash && currentHash.includes('token=')) {
+          console.log('Token ready for Decap CMS:', currentHash.substring(0, 20) + '...');
+        }
+      }, 500);
     });
   </script>
 </body>
