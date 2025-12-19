@@ -83,17 +83,27 @@ async function handleAuth(request: NextRequest) {
     // Redirect back to admin with token in hash fragment
     // Next.js redirect() doesn't preserve hash fragments, so we use an HTML page with JS redirect
     // This is the most reliable way to pass the token to Decap CMS
+    // Use immediate redirect with proper error handling
     const html = `
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
   <title>Redirecting...</title>
+  <meta http-equiv="refresh" content="0;url=${baseUrl}/admin/index.html#token=${tokenData.access_token}">
 </head>
 <body>
   <script>
-    // Redirect with hash fragment (server redirects can't include hash)
-    window.location.replace('${baseUrl}/admin/index.html#token=${tokenData.access_token}');
+    // Immediate redirect - try multiple methods for maximum compatibility
+    (function() {
+      try {
+        // Primary method: location.replace (doesn't add to history)
+        window.location.replace('${baseUrl}/admin/index.html#token=${tokenData.access_token}');
+      } catch (e) {
+        // Fallback: location.href
+        window.location.href = '${baseUrl}/admin/index.html#token=${tokenData.access_token}';
+      }
+    })();
   </script>
   <noscript>
     <p>Redirecting to admin... <a href="${baseUrl}/admin/index.html#token=${tokenData.access_token}">Click here</a> if you are not redirected.</p>
@@ -105,8 +115,11 @@ async function handleAuth(request: NextRequest) {
     return new NextResponse(html, {
       status: 200,
       headers: {
-        'Content-Type': 'text/html',
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Content-Type': 'text/html; charset=utf-8',
+        'Cache-Control': 'no-cache, no-store, must-revalidate, max-age=0',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+        'X-Frame-Options': 'SAMEORIGIN',
       },
     })
   } catch (error) {
