@@ -84,30 +84,62 @@ async function handleAuth(request: NextRequest) {
     // CRITICAL: Use #token= not #/token= (Decap CMS expects #token=)
     // Next.js redirect() doesn't preserve hash fragments, so we use an HTML page with JS redirect
     const token = tokenData.access_token
+    
+    // Escape token for use in JavaScript string
+    const escapedToken = token.replace(/'/g, "\\'").replace(/"/g, '\\"')
+    
     const html = `
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
   <title>Redirecting...</title>
-  <meta http-equiv="refresh" content="0;url=${baseUrl}/admin/index.html#token=${token}">
-</head>
-<body>
+  <meta http-equiv="refresh" content="0;url=${baseUrl}/admin/index.html#token=${encodeURIComponent(token)}">
   <script>
     // Immediate redirect - CRITICAL: Use #token= not #/token=
+    // Execute immediately, before any other scripts
     (function() {
+      var token = '${escapedToken}';
+      var targetUrl = '${baseUrl}/admin/index.html#token=' + encodeURIComponent(token);
+      
+      console.log('OAuth redirect: Setting hash to #token=' + token.substring(0, 10) + '...');
+      
+      // Try multiple methods to ensure redirect works
       try {
-        // Primary method: location.replace (doesn't add to history)
-        window.location.replace('${baseUrl}/admin/index.html#token=${token}');
+        // Method 1: location.replace (preferred - doesn't add to history)
+        if (window.location.replace) {
+          window.location.replace(targetUrl);
+          return;
+        }
       } catch (e) {
-        // Fallback: location.href
-        window.location.href = '${baseUrl}/admin/index.html#token=${token}';
+        console.error('location.replace failed:', e);
+      }
+      
+      try {
+        // Method 2: location.href
+        window.location.href = targetUrl;
+      } catch (e) {
+        console.error('location.href failed:', e);
+        // Method 3: Direct hash assignment as last resort
+        window.location.hash = '#token=' + encodeURIComponent(token);
+        window.location.pathname = '/admin/index.html';
       }
     })();
   </script>
-  <noscript>
-    <p>Redirecting to admin... <a href="${baseUrl}/admin/index.html#token=${token}">Click here</a> if you are not redirected.</p>
-  </noscript>
+</head>
+<body>
+  <p>Redirecting to admin...</p>
+  <p>If you are not redirected, <a href="${baseUrl}/admin/index.html#token=${encodeURIComponent(token)}">click here</a>.</p>
+  <script>
+    // Backup redirect after page loads
+    setTimeout(function() {
+      var token = '${escapedToken}';
+      if (!window.location.hash || !window.location.hash.includes('token=')) {
+        console.warn('Token not in hash, attempting backup redirect');
+        window.location.href = '${baseUrl}/admin/index.html#token=' + encodeURIComponent(token);
+      }
+    }, 100);
+  </script>
 </body>
 </html>
     `.trim()

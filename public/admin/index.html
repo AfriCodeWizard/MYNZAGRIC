@@ -27,6 +27,17 @@
     (function() {
       const hash = window.location.hash;
       console.log('Initial hash:', hash);
+      console.log('Full URL:', window.location.href);
+      
+      // Check if hash is just #/ (empty hash with slash)
+      if (hash === '#/' || hash === '#') {
+        console.warn('Empty hash detected. Token may have been lost during redirect.');
+        // Check if we came from OAuth redirect
+        if (document.referrer && document.referrer.includes('/api/auth')) {
+          console.error('Token was lost during redirect from OAuth. Please try logging in again.');
+        }
+        return;
+      }
       
       if (hash) {
         // Handle various token formats
@@ -44,6 +55,7 @@
         if (hash.startsWith('#token=')) {
           token = hash.replace('#token=', '');
           console.log('Token format correct:', hash.substring(0, 30) + '...');
+          console.log('Token length:', token.length);
         }
         
         // Check for token= without # (edge case)
@@ -59,6 +71,8 @@
         
         if (token) {
           console.log('Token detected, length:', token.length);
+        } else if (hash && hash !== '#/' && hash !== '#') {
+          console.warn('Hash exists but no token found:', hash);
         }
       }
     })();
