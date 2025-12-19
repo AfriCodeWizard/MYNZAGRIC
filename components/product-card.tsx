@@ -438,7 +438,6 @@ export default function ProductCard({
           position: 'relative',
           minHeight: '140px',
           marginTop: '0px', // Reduce space between image and content
-          paddingRight: '110px', // Add extra padding on right to prevent button from covering text (70px button + 30px margin + 10px buffer)
         }}
       >
         {/* Straight background accent - reduced height to match button position */}
