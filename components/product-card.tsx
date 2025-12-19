@@ -285,7 +285,7 @@ export default function ProductCard({
       }}
     >
       {/* Image/Icon Container - CodePen style */}
-      <div className="relative w-full overflow-hidden" style={{ minHeight: '320px', height: '320px' }}>
+      <div className="relative w-full overflow-hidden" style={{ minHeight: '280px', height: '280px' }}>
         {seedling.image ? (
           <img 
             src={seedling.image.split('/').map((part, index) => 
@@ -293,7 +293,7 @@ export default function ProductCard({
             ).join('/')} 
             alt={`${seedling.name} - Premium grafted ${seedling.category} seedling available at Mynzagric`}
             className="w-full h-full object-cover transform transition-transform duration-300 hover:scale-110"
-            style={{ width: '100%', height: '100%', minHeight: '320px', objectFit: 'cover' }}
+            style={{ width: '100%', height: '100%', minHeight: '280px', objectFit: 'cover' }}
             loading="lazy"
             decoding="async"
             onError={(e) => {
@@ -304,44 +304,19 @@ export default function ProductCard({
               if (parent) {
                 const fallback = document.createElement('div');
                 fallback.className = 'w-full h-full bg-gradient-to-br from-green-100 to-green-50 flex items-center justify-center text-8xl transform transition-transform duration-300 hover:scale-110';
-                fallback.style.minHeight = '320px';
+                fallback.style.minHeight = '280px';
                 fallback.textContent = seedling.icon;
                 parent.appendChild(fallback);
               }
             }}
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-green-100 to-green-50 flex items-center justify-center text-8xl transform transition-transform duration-300 hover:scale-110" style={{ minHeight: '320px', height: '320px' }}>
+          <div className="w-full h-full bg-gradient-to-br from-green-100 to-green-50 flex items-center justify-center text-8xl transform transition-transform duration-300 hover:scale-110" style={{ minHeight: '280px', height: '280px' }}>
             {seedling.icon}
           </div>
         )}
-      </div>
-
-      {/* Content Section - CodePen style */}
-      <div 
-        className="relative z-10 bg-white pt-4 pb-2 px-4 flex flex-col"
-        style={{
-          position: 'relative',
-          minHeight: '160px',
-        }}
-      >
-        {/* Straight background accent */}
-        <div 
-          className="absolute bg-white"
-          style={{
-            content: '',
-            width: '100%',
-            height: '110px',
-            position: 'absolute',
-            display: 'block',
-            backgroundColor: '#fff',
-            top: '-110px',
-            left: '0',
-            zIndex: -1,
-          }}
-        />
-
-        {/* Buy Button - Coin Flip Design - Positioned at bottom of image area */}
+        
+        {/* Buy Button - Positioned at bottom line of image area */}
         <button
           onClick={handleAddToCart}
           className={cn(
@@ -358,7 +333,7 @@ export default function ProductCard({
           data-expanded={isExpanded}
           style={{
             display: 'block',
-            top: '-285px', // Position at bottom of image area (320px - 35px)
+            bottom: '0px', // Position at bottom line of image area
             right: '30px',
             zIndex: 2,
             width: '70px',
@@ -368,17 +343,19 @@ export default function ProductCard({
             borderRadius: '50%',
             position: 'absolute',
             overflow: 'hidden',
+            transform: 'translateY(50%)', // Center button on the bottom line
             // Smooth transition for expansion and collapse
             transition: isExpanded 
-              ? 'width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), height 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), right 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), top 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)'
+              ? 'width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), height 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), right 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), bottom 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)'
               : isCollapsing
-              ? 'width 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), height 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), right 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), top 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+              ? 'width 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), height 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), right 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), bottom 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
               : 'none',
             ...(isExpanded && {
               width: '750px',
               height: '750px',
               right: '-375px',
-              top: '-375px',
+              bottom: '-375px',
+              transform: 'translateY(50%)',
             }),
           }}
           disabled={isExpanded}
@@ -449,6 +426,31 @@ export default function ProductCard({
             </div>
           </div>
         </button>
+      </div>
+
+      {/* Content Section - CodePen style */}
+      <div 
+        className="relative z-10 bg-white pt-4 pb-2 px-4 flex flex-col"
+        style={{
+          position: 'relative',
+          minHeight: '140px',
+        }}
+      >
+        {/* Straight background accent */}
+        <div 
+          className="absolute bg-white"
+          style={{
+            content: '',
+            width: '100%',
+            height: '110px',
+            position: 'absolute',
+            display: 'block',
+            backgroundColor: '#fff',
+            top: '-110px',
+            left: '0',
+            zIndex: -1,
+          }}
+        />
 
         {/* Success Checkmark Overlay - CodePen exact measurements - Only show on green side */}
         <div 
