@@ -317,7 +317,8 @@ export default function ProductCard({
         )}
       </div>
 
-      {/* Buy Button - Positioned at bottom line of image area, outside image container to avoid overflow clipping */}
+      {/* Buy Button - Positioned exactly on the boundary line between image and text areas */}
+      {/* Half button (35px) on image area, half button (35px) on text area */}
       <button
         onClick={handleAddToCart}
         className={cn(
@@ -336,8 +337,9 @@ export default function ProductCard({
           display: 'block',
           visibility: 'visible',
           opacity: 1,
-          top: '245px', // Position at bottom line of image area (280px - 35px = 245px)
+          top: '280px', // Position at exact boundary line (280px = end of image area)
           right: '30px',
+          transform: 'translateY(-50%)', // Center button on the boundary line (half above, half below)
           zIndex: 20,
           width: '70px',
           height: '70px',
@@ -348,15 +350,16 @@ export default function ProductCard({
           overflow: 'hidden',
           // Smooth transition for expansion and collapse
           transition: isExpanded 
-            ? 'width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), height 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), right 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), top 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)'
+            ? 'width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), height 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), right 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), top 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)'
             : isCollapsing
-            ? 'width 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), height 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), right 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), top 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+            ? 'width 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), height 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), right 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), top 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
             : 'none',
           ...(isExpanded && {
             width: '750px',
             height: '750px',
             right: '-375px',
             top: '-375px',
+            transform: 'translateY(-50%)', // Maintain centering during expansion
           }),
         }}
         disabled={isExpanded}
@@ -435,6 +438,7 @@ export default function ProductCard({
           position: 'relative',
           minHeight: '140px',
           marginTop: '0px', // Reduce space between image and content
+          paddingRight: '110px', // Add extra padding on right to prevent button from covering text (70px button + 30px margin + 10px buffer)
         }}
       >
         {/* Straight background accent - reduced height to match button position */}
