@@ -10,8 +10,15 @@ export function middleware(request: NextRequest) {
   }
   
   // Redirect /admin to /admin/index.html to serve static HTML directly
+  // Preserve hash fragment if present (for OAuth token)
   if (pathname === '/admin') {
-    return NextResponse.redirect(new URL('/admin/index.html', request.url))
+    const url = new URL('/admin/index.html', request.url)
+    // Preserve hash fragment from original URL
+    if (request.url.includes('#')) {
+      const hash = request.url.split('#')[1]
+      url.hash = hash
+    }
+    return NextResponse.redirect(url)
   }
   
   return NextResponse.next()
