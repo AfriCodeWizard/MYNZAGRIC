@@ -337,7 +337,7 @@ export default function ProductCard({
           display: 'block',
           visibility: 'visible',
           opacity: 1,
-          top: '280px', // Position at exact boundary line (280px = end of image area)
+          top: '265px', // Position slightly above boundary line (moved up 15px from original)
           right: '30px',
           transform: 'translateY(-50%)', // Center button on the boundary line (half above, half below)
           zIndex: 20,
