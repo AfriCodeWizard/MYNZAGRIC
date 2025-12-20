@@ -80,78 +80,18 @@ async function handleAuth(request: NextRequest) {
       )
     }
 
-    // Redirect back to admin with token in hash fragment
-    // CRITICAL: Use #token= not #/token= (Decap CMS expects #token=)
-    // Next.js redirect() doesn't preserve hash fragments, so we use an HTML page with JS redirect
-    const token = tokenData.access_token
-    
-    // Escape token for use in JavaScript string (handle all special characters)
-    const escapedToken = token
-      .replace(/\\/g, '\\\\')  // Escape backslashes first
-      .replace(/'/g, "\\'")      // Escape single quotes
-      .replace(/"/g, '\\"')      // Escape double quotes
-      .replace(/\n/g, '\\n')     // Escape newlines
-      .replace(/\r/g, '\\r')     // Escape carriage returns
-      .replace(/\t/g, '\\t')     // Escape tabs
-    
-    // Build the target URL with token in hash
-    const targetUrl = `${baseUrl}/admin/index.html#token=${encodeURIComponent(token)}`
-    
-    // Set token in cookie as backup (expires in 5 minutes)
-    const cookieExpiry = new Date(Date.now() + 5 * 60 * 1000).toUTCString()
-    const cookieValue = `github_token=${encodeURIComponent(token)}; Path=/; Expires=${cookieExpiry}; SameSite=Lax; Secure`
-    
-    // Return minimal HTML that redirects IMMEDIATELY, before any other scripts can run
-    // Use inline script in head that executes synchronously
-    // Store token in multiple places: cookie, localStorage, sessionStorage
-    // CRITICAL: Use window.location.replace() to avoid adding to history and ensure hash is preserved
-    const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Redirecting...</title><script>
-(function(){
-  try {
-    var t='${escapedToken}';
-    var targetUrl='${baseUrl}/admin/index.html#token='+encodeURIComponent(t);
-    
-    // Store token in multiple storage mechanisms as backup BEFORE redirect
-    try{
-      localStorage.setItem('github_token',t);
-      sessionStorage.setItem('github_token',t);
-    }catch(e){
-      console.error('Failed to store token in storage:',e);
-    }
-    
-    // Set cookie via document.cookie (since we can't set httpOnly from client)
-    try{
-      document.cookie='github_token='+encodeURIComponent(t)+'; path=/; max-age=300; SameSite=Lax; Secure';
-    }catch(e){
-      console.error('Failed to set cookie:',e);
-    }
-    
-    // CRITICAL: Use replace() not assign() to avoid history entry
-    // This ensures the hash fragment is preserved
-    console.log('Redirecting to admin with token...');
-    window.location.replace(targetUrl);
-  } catch(e) {
-    console.error('Redirect error:',e);
-    // Fallback: try direct navigation
-    window.location.href='${targetUrl}';
-  }
-})();
-</script><noscript><meta http-equiv="refresh" content="0;url=${targetUrl}"></noscript></head><body style="font-family:system-ui;text-align:center;padding:2rem;"><p>Redirecting to admin...</p><p><a href="${targetUrl}">Click here if not redirected automatically</a></p></body></html>`
-    
-    // Create response with cookie header
-    const response = new NextResponse(html, {
-      status: 200,
+    // When using proxy_url, Decap CMS expects JSON response with token
+    // Decap CMS will handle the redirect itself
+    return NextResponse.json({
+      token: tokenData.access_token,
+      provider: 'github',
+    }, {
       headers: {
-        'Content-Type': 'text/html; charset=utf-8',
-        'Cache-Control': 'no-cache, no-store, must-revalidate, max-age=0',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
         'Pragma': 'no-cache',
         'Expires': '0',
-        'X-Frame-Options': 'SAMEORIGIN',
-        'Set-Cookie': cookieValue,
       },
     })
-    
-    return response
   } catch (error) {
     console.error('OAuth error:', error)
     return NextResponse.json(
