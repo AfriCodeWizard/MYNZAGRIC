@@ -106,9 +106,33 @@
         } catch (e) {
           console.error('Failed to read cookie:', e);
         }
+        
+        // Try API endpoint as last resort (only if coming from OAuth redirect)
+        if (document.referrer && document.referrer.includes('/api/auth')) {
+          console.log('Attempting to fetch token from API endpoint...');
+          fetch('/api/token')
+            .then(response => {
+              if (response.ok) {
+                return response.json();
+              }
+              throw new Error('Token not found');
+            })
+            .then(data => {
+              if (data.token) {
+                console.log('✓ Token recovered from API');
+                window.location.replace(window.location.pathname + window.location.search + '#token=' + encodeURIComponent(data.token));
+              } else {
+                console.log('⚠ No token in API response - user needs to log in');
+              }
+            })
+            .catch(e => {
+              console.log('⚠ Could not fetch token from API:', e.message);
+              console.log('Decap CMS will load and show login page');
+            });
+        }
       }
       
-      // If we have a token, ensure it's in the hash
+      // If we have a token, ensure it's in the hash and set up protection
       if (token) {
         console.log('✓ Token confirmed, length:', token.length);
         console.log('Token is in hash - Decap CMS can now load');
@@ -128,7 +152,8 @@
           }
         }, 100);
       } else {
-        console.log('⚠ No token found - user needs to log in');
+        console.log('⚠ No token found - Decap CMS will show login page');
+        // Still allow Decap CMS to load so user can log in
       }
     })();
   </script>
@@ -145,14 +170,13 @@
           return;
         }
         
-        // Verify token is still in hash
+        // Check if token is in hash (optional - Decap CMS can show login page if no token)
         const hash = window.location.hash;
-        if (!hash || !hash.startsWith('#token=')) {
-          console.error('✗ Token not in hash when loading Decap CMS');
-          return;
+        if (hash && hash.startsWith('#token=')) {
+          console.log('✓ DOM ready, #nc-root exists, token in hash - loading Decap CMS');
+        } else {
+          console.log('✓ DOM ready, #nc-root exists, no token - loading Decap CMS (will show login page)');
         }
-        
-        console.log('✓ DOM ready, #nc-root exists, token in hash - loading Decap CMS');
         const script = document.createElement('script');
         script.src = 'https://unpkg.com/decap-cms@3.9.0/dist/decap-cms.js';
         script.async = true;
