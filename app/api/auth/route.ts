@@ -82,37 +82,24 @@ async function handleAuth(request: NextRequest) {
 
     const token = tokenData.access_token
     
-    // Check if request is from Decap CMS (has Accept: application/json or X-Requested-With header)
+    // Check if this is a browser redirect (not AJAX)
     const acceptHeader = request.headers.get('accept') || ''
-    const isDecapCMSRequest = acceptHeader.includes('application/json') || 
-                               request.headers.get('x-requested-with') === 'XMLHttpRequest'
+    const isBrowserRedirect = !acceptHeader.includes('application/json') && 
+                             !request.headers.get('x-requested-with')
     
-    if (isDecapCMSRequest) {
-      // Decap CMS is making an AJAX request - return JSON
-      return NextResponse.json({
-        token: token,
-        provider: 'github',
-      }, {
-        headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache',
-          'Expires': '0',
-        },
-      })
-    }
-    
-    // Browser redirect from GitHub - redirect to admin with token in hash
-    const escapedToken = token
-      .replace(/\\/g, '\\\\')
-      .replace(/'/g, "\\'")
-      .replace(/"/g, '\\"')
-      .replace(/\n/g, '\\n')
-      .replace(/\r/g, '\\r')
-      .replace(/\t/g, '\\t')
-    
-    const targetUrl = `${baseUrl}/admin/index.html#token=${encodeURIComponent(token)}`
-    
-    const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Redirecting...</title><script>
+    if (isBrowserRedirect) {
+      // Browser was redirected from GitHub - return HTML that redirects to admin with token
+      const escapedToken = token
+        .replace(/\\/g, '\\\\')
+        .replace(/'/g, "\\'")
+        .replace(/"/g, '\\"')
+        .replace(/\n/g, '\\n')
+        .replace(/\r/g, '\\r')
+        .replace(/\t/g, '\\t')
+      
+      const targetUrl = `${baseUrl}/admin/index.html#token=${encodeURIComponent(token)}`
+      
+      const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Authenticating...</title><script>
 (function(){
   var t='${escapedToken}';
   var u='${targetUrl}';
@@ -122,13 +109,27 @@ async function handleAuth(request: NextRequest) {
   }catch(e){}
   window.location.replace(u);
 })();
-</script><noscript><meta http-equiv="refresh" content="0;url=${targetUrl}"></noscript></head><body><p>Redirecting...</p></body></html>`
+</script><noscript><meta http-equiv="refresh" content="0;url=${targetUrl}"></noscript></head><body><p>Authenticating...</p></body></html>`
+      
+      return new NextResponse(html, {
+        status: 200,
+        headers: {
+          'Content-Type': 'text/html; charset=utf-8',
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+        },
+      })
+    }
     
-    return new NextResponse(html, {
-      status: 200,
+    // AJAX request from Decap CMS - return JSON
+    return NextResponse.json({
+      token: token,
+      provider: 'github',
+    }, {
       headers: {
-        'Content-Type': 'text/html; charset=utf-8',
         'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+        'Content-Type': 'application/json',
       },
     })
   } catch (error) {
