@@ -43,10 +43,10 @@
       }
     })();
   </script>
-  <!-- Load Decap CMS SYNCHRONOUSLY in head - it will read hash during initialization -->
-  <script src="https://unpkg.com/decap-cms@3.9.0/dist/decap-cms.js"></script>
 </head>
 <body>
   <div id="nc-root"></div>
+  <!-- Load Decap CMS SYNCHRONOUSLY at end of body - DOM exists, hash is normalized -->
+  <script src="https://unpkg.com/decap-cms@3.9.0/dist/decap-cms.js"></script>
 </body>
 </html>
