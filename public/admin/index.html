@@ -144,10 +144,20 @@
         }
       }
       
-      // If we have a token, ensure it's in the hash and set up protection
+      // If we have a token, ensure it's in the hash BEFORE Decap CMS loads
       if (token) {
         console.log('✓ Token confirmed, length:', token.length);
-        console.log('Token is in hash - Decap CMS can now load');
+        
+        // CRITICAL: Ensure token is in hash in Decap CMS format (#/token=) BEFORE Decap CMS loads
+        const currentHash = window.location.hash;
+        if (!currentHash.startsWith('#/token=')) {
+          console.log('→ Setting token in hash in Decap CMS format (#/token=) before Decap CMS loads...');
+          const newUrl = window.location.pathname + window.location.search + '#/token=' + encodeURIComponent(token);
+          window.history.replaceState(null, '', newUrl);
+          console.log('✓ Token set in hash - Decap CMS will read it on initialization');
+        } else {
+          console.log('✓ Token already in hash in correct format (#/token=)');
+        }
         
         // Store token globally so it can be restored if needed
         window.__DECAP_TOKEN__ = token;
@@ -274,20 +284,19 @@
               console.log('→ Dispatching hashchange event to trigger Decap CMS authentication...');
               window.dispatchEvent(new HashChangeEvent('hashchange'));
               
-              // Check if Decap CMS has authenticated after a delay
+              // Log status but don't auto-reload (causes infinite loop)
               setTimeout(function() {
-                console.log('→ Checking if Decap CMS has authenticated...');
-                // Check if we're still on the login page (Decap CMS shows login if not authenticated)
+                console.log('→ Checking Decap CMS authentication status...');
                 const ncRoot = document.getElementById('nc-root');
-                const isLoginPage = ncRoot && (ncRoot.innerHTML.includes('Login') || ncRoot.innerHTML.includes('login'));
-                
-                if (isLoginPage && tokenInHash) {
-                  console.log('⚠ Still on login page despite token in hash');
-                  console.log('→ Reloading page so Decap CMS can read token on initialization...');
-                  // Reload the page so Decap CMS can read the token when it initializes
-                  window.location.reload();
-                } else {
-                  console.log('✓ Decap CMS appears to have processed the token');
+                if (ncRoot) {
+                  const hasLoginButton = ncRoot.textContent && ncRoot.textContent.includes('Login');
+                  if (hasLoginButton && tokenInHash) {
+                    console.warn('⚠ Decap CMS still showing login page despite token in hash');
+                    console.warn('→ Token is present but Decap CMS may not have read it');
+                    console.warn('→ Try manually refreshing the page once');
+                  } else {
+                    console.log('✓ Decap CMS appears to have processed the token');
+                  }
                 }
               }, 3000);
             } else {
