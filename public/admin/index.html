@@ -279,26 +279,80 @@
                 console.log('✓ Token format corrected');
               }
               
-              // Try to trigger Decap CMS authentication by dispatching hashchange event
-              // This might help Decap CMS detect the token
-              console.log('→ Dispatching hashchange event to trigger Decap CMS authentication...');
+              // Try multiple methods to trigger Decap CMS authentication
+              console.log('→ Attempting to trigger Decap CMS authentication...');
+              
+              // Method 1: Dispatch hashchange event
               window.dispatchEvent(new HashChangeEvent('hashchange'));
               
-              // Log status but don't auto-reload (causes infinite loop)
+              // Method 2: Try to access Decap CMS API and manually authenticate
               setTimeout(function() {
-                console.log('→ Checking Decap CMS authentication status...');
-                const ncRoot = document.getElementById('nc-root');
-                if (ncRoot) {
-                  const hasLoginButton = ncRoot.textContent && ncRoot.textContent.includes('Login');
-                  if (hasLoginButton && tokenInHash) {
-                    console.warn('⚠ Decap CMS still showing login page despite token in hash');
-                    console.warn('→ Token is present but Decap CMS may not have read it');
-                    console.warn('→ Try manually refreshing the page once');
-                  } else {
-                    console.log('✓ Decap CMS appears to have processed the token');
+                console.log('→ Checking for Decap CMS API...');
+                
+                // Try to find Decap CMS instance
+                if (window.CMS) {
+                  console.log('✓ Found window.CMS, attempting manual authentication...');
+                  try {
+                    // Decap CMS might have an authenticate method
+                    if (typeof window.CMS.authenticate === 'function') {
+                      window.CMS.authenticate({ token: tokenInHash });
+                      console.log('→ Called CMS.authenticate()');
+                    }
+                  } catch (e) {
+                    console.error('Error calling CMS.authenticate:', e);
                   }
                 }
-              }, 3000);
+                
+                // Check if netlifyIdentity is available (Decap CMS uses this internally)
+                if (window.netlifyIdentity) {
+                  console.log('✓ Found netlifyIdentity');
+                  try {
+                    // Try to set the token
+                    if (window.netlifyIdentity.setAuthToken) {
+                      window.netlifyIdentity.setAuthToken(tokenInHash);
+                      console.log('→ Called netlifyIdentity.setAuthToken()');
+                    }
+                  } catch (e) {
+                    console.error('Error setting auth token:', e);
+                  }
+                }
+                
+                // Method 3: Check authentication status after a delay
+                setTimeout(function() {
+                  console.log('→ Final authentication status check...');
+                  const ncRoot = document.getElementById('nc-root');
+                  if (ncRoot) {
+                    const hasLoginButton = ncRoot.textContent && ncRoot.textContent.includes('Login');
+                    if (hasLoginButton && tokenInHash) {
+                      console.warn('⚠ Decap CMS still showing login page despite token in hash');
+                      console.warn('→ Token is present but Decap CMS may not have read it');
+                      console.warn('→ Current hash:', window.location.hash);
+                      
+                      // One-time reload to let Decap CMS read token on initialization
+                      // Only reload if we haven't reloaded before (check sessionStorage)
+                      const hasReloaded = sessionStorage.getItem('decap_auth_reload_attempted');
+                      if (!hasReloaded && window.location.hash.includes('token=')) {
+                        console.log('→ Attempting one-time reload so Decap CMS can read token on initialization...');
+                        sessionStorage.setItem('decap_auth_reload_attempted', 'true');
+                        // Ensure token is in hash before reload
+                        if (!window.location.hash.startsWith('#/token=')) {
+                          const token = tokenInHash;
+                          window.location.replace(window.location.pathname + window.location.search + '#/token=' + encodeURIComponent(token));
+                        } else {
+                          window.location.reload();
+                        }
+                      } else {
+                        console.warn('→ Already attempted reload, or token not in hash');
+                        console.warn('→ Try manually refreshing the page once');
+                      }
+                    } else {
+                      console.log('✓ Decap CMS appears to have processed the token');
+                      // Clear reload flag if authenticated
+                      sessionStorage.removeItem('decap_auth_reload_attempted');
+                    }
+                  }
+                }, 2000);
+              }, 1000);
             } else {
               console.warn('⚠ Token missing from hash after Decap CMS load');
               if (window.__DECAP_TOKEN__) {
