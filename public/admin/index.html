@@ -227,7 +227,7 @@
           console.log('✓ Decap CMS script loaded successfully');
           console.log('→ Waiting for Decap CMS to initialize...');
           
-          // Check hash after Decap CMS loads
+          // Check hash after Decap CMS loads and ensure it authenticates
           setTimeout(function() {
             const hashAfterLoad = window.location.hash;
             console.log('Hash after Decap CMS load:', hashAfterLoad);
@@ -238,8 +238,13 @@
               if (hashAfterLoad.startsWith('#token=')) {
                 tokenInHash = hashAfterLoad.replace('#token=', '');
                 console.log('✓ Token found in hash (#token= format)');
+                // Convert to Decap CMS format
+                const newUrl = window.location.pathname + window.location.search + '#/token=' + encodeURIComponent(tokenInHash);
+                window.history.replaceState(null, '', newUrl);
+                console.log('→ Converted to Decap CMS format (#/token=)');
+                tokenInHash = decodeURIComponent(hashAfterLoad.replace('#token=', ''));
               } else if (hashAfterLoad.startsWith('#/token=')) {
-                tokenInHash = hashAfterLoad.replace('#/token=', '');
+                tokenInHash = decodeURIComponent(hashAfterLoad.replace('#/token=', ''));
                 console.log('✓ Token found in hash (#/token= format - Decap CMS format)');
                 // Decap CMS uses #/token= format, this is correct!
               } else {
@@ -255,6 +260,36 @@
             if (tokenInHash) {
               console.log('✓ Token present in hash, length:', tokenInHash.length);
               console.log('→ Decap CMS should authenticate with this token');
+              
+              // Ensure token is in Decap CMS format
+              if (!hashAfterLoad.startsWith('#/token=')) {
+                console.log('→ Ensuring token is in Decap CMS format...');
+                const newUrl = window.location.pathname + window.location.search + '#/token=' + encodeURIComponent(tokenInHash);
+                window.history.replaceState(null, '', newUrl);
+                console.log('✓ Token format corrected');
+              }
+              
+              // Try to trigger Decap CMS authentication by dispatching hashchange event
+              // This might help Decap CMS detect the token
+              console.log('→ Dispatching hashchange event to trigger Decap CMS authentication...');
+              window.dispatchEvent(new HashChangeEvent('hashchange'));
+              
+              // Check if Decap CMS has authenticated after a delay
+              setTimeout(function() {
+                console.log('→ Checking if Decap CMS has authenticated...');
+                // Check if we're still on the login page (Decap CMS shows login if not authenticated)
+                const ncRoot = document.getElementById('nc-root');
+                const isLoginPage = ncRoot && (ncRoot.innerHTML.includes('Login') || ncRoot.innerHTML.includes('login'));
+                
+                if (isLoginPage && tokenInHash) {
+                  console.log('⚠ Still on login page despite token in hash');
+                  console.log('→ Reloading page so Decap CMS can read token on initialization...');
+                  // Reload the page so Decap CMS can read the token when it initializes
+                  window.location.reload();
+                } else {
+                  console.log('✓ Decap CMS appears to have processed the token');
+                }
+              }, 3000);
             } else {
               console.warn('⚠ Token missing from hash after Decap CMS load');
               if (window.__DECAP_TOKEN__) {
@@ -263,6 +298,8 @@
                 const newUrl = window.location.pathname + window.location.search + '#/token=' + encodeURIComponent(window.__DECAP_TOKEN__);
                 window.history.replaceState(null, '', newUrl);
                 console.log('✓ Token restored in Decap CMS format (#/token=)');
+                // Trigger hashchange to notify Decap CMS
+                window.dispatchEvent(new HashChangeEvent('hashchange'));
               }
             }
           }, 2000);
