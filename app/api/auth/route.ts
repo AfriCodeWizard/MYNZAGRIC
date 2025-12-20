@@ -80,16 +80,55 @@ async function handleAuth(request: NextRequest) {
       )
     }
 
-    // When using proxy_url, Decap CMS expects JSON response with token
-    // Decap CMS will handle the redirect itself
-    return NextResponse.json({
-      token: tokenData.access_token,
-      provider: 'github',
-    }, {
+    const token = tokenData.access_token
+    
+    // Check if request is from Decap CMS (has Accept: application/json or X-Requested-With header)
+    const acceptHeader = request.headers.get('accept') || ''
+    const isDecapCMSRequest = acceptHeader.includes('application/json') || 
+                               request.headers.get('x-requested-with') === 'XMLHttpRequest'
+    
+    if (isDecapCMSRequest) {
+      // Decap CMS is making an AJAX request - return JSON
+      return NextResponse.json({
+        token: token,
+        provider: 'github',
+      }, {
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+        },
+      })
+    }
+    
+    // Browser redirect from GitHub - redirect to admin with token in hash
+    const escapedToken = token
+      .replace(/\\/g, '\\\\')
+      .replace(/'/g, "\\'")
+      .replace(/"/g, '\\"')
+      .replace(/\n/g, '\\n')
+      .replace(/\r/g, '\\r')
+      .replace(/\t/g, '\\t')
+    
+    const targetUrl = `${baseUrl}/admin/index.html#token=${encodeURIComponent(token)}`
+    
+    const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Redirecting...</title><script>
+(function(){
+  var t='${escapedToken}';
+  var u='${targetUrl}';
+  try{
+    localStorage.setItem('github_token',t);
+    sessionStorage.setItem('github_token',t);
+  }catch(e){}
+  window.location.replace(u);
+})();
+</script><noscript><meta http-equiv="refresh" content="0;url=${targetUrl}"></noscript></head><body><p>Redirecting...</p></body></html>`
+    
+    return new NextResponse(html, {
+      status: 200,
       headers: {
+        'Content-Type': 'text/html; charset=utf-8',
         'Cache-Control': 'no-cache, no-store, must-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0',
       },
     })
   } catch (error) {
