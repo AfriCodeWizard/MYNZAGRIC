@@ -13,20 +13,30 @@ async function handleAuth(request: NextRequest) {
   const code = searchParams.get('code')
   const state = searchParams.get('state')
   const baseUrl = request.nextUrl.origin
+  
+  console.log('=== OAuth Handler Called ===')
+  console.log('URL:', request.url)
+  console.log('Method:', request.method)
+  console.log('Code:', code ? 'present' : 'missing')
+  console.log('State:', state)
+  console.log('Accept header:', request.headers.get('accept'))
+  console.log('X-Requested-With:', request.headers.get('x-requested-with'))
+  console.log('Referer:', request.headers.get('referer'))
 
   // If no code, redirect to GitHub OAuth (initial auth request)
   // This handles both Decap CMS initial request and direct browser requests
   if (!code) {
+    console.log('→ No code found, redirecting to GitHub OAuth')
     const params = new URLSearchParams({
       client_id: process.env.GITHUB_CLIENT_ID || 'Ov23liMog49BcJaN6uzJ',
       redirect_uri: `${baseUrl}/api/auth`,
       scope: 'repo',
       state: state || Math.random().toString(36).substring(7),
     })
-
-    return NextResponse.redirect(
-      `https://github.com/login/oauth/authorize?${params.toString()}`
-    )
+    
+    const githubUrl = `https://github.com/login/oauth/authorize?${params.toString()}`
+    console.log('→ Redirecting to:', githubUrl)
+    return NextResponse.redirect(githubUrl)
   }
 
   // Exchange code for token (OAuth callback)
@@ -81,13 +91,20 @@ async function handleAuth(request: NextRequest) {
     }
 
     const token = tokenData.access_token
+    console.log('✓ Token received from GitHub, length:', token.length)
     
     // Check if this is a browser redirect (not AJAX)
     const acceptHeader = request.headers.get('accept') || ''
-    const isBrowserRedirect = !acceptHeader.includes('application/json') && 
-                             !request.headers.get('x-requested-with')
+    const xRequestedWith = request.headers.get('x-requested-with')
+    const isBrowserRedirect = !acceptHeader.includes('application/json') && !xRequestedWith
+    
+    console.log('→ Request type detection:')
+    console.log('  - Accept header:', acceptHeader)
+    console.log('  - X-Requested-With:', xRequestedWith)
+    console.log('  - Is browser redirect:', isBrowserRedirect)
     
     if (isBrowserRedirect) {
+      console.log('→ Detected browser redirect - returning HTML redirect page')
       // Browser was redirected from GitHub - return HTML that redirects to admin with token
       const escapedToken = token
         .replace(/\\/g, '\\\\')
@@ -98,19 +115,26 @@ async function handleAuth(request: NextRequest) {
         .replace(/\t/g, '\\t')
       
       const targetUrl = `${baseUrl}/admin/index.html#token=${encodeURIComponent(token)}`
+      console.log('→ Target URL:', targetUrl)
       
       const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Authenticating...</title><script>
-(function(){
-  var t='${escapedToken}';
-  var u='${targetUrl}';
-  try{
-    localStorage.setItem('github_token',t);
-    sessionStorage.setItem('github_token',t);
-  }catch(e){}
-  window.location.replace(u);
-})();
-</script><noscript><meta http-equiv="refresh" content="0;url=${targetUrl}"></noscript></head><body><p>Authenticating...</p></body></html>`
+console.log('=== OAuth Redirect Page Loaded ===');
+console.log('Token length:', ${token.length});
+var t='${escapedToken}';
+var u='${targetUrl}';
+console.log('Target URL:', u);
+try{
+  localStorage.setItem('github_token',t);
+  sessionStorage.setItem('github_token',t);
+  console.log('✓ Token stored in localStorage and sessionStorage');
+}catch(e){
+  console.error('✗ Failed to store token:', e);
+}
+console.log('→ Redirecting to admin page...');
+window.location.replace(u);
+</script><noscript><meta http-equiv="refresh" content="0;url=${targetUrl}"></noscript></head><body><p>Authenticating...</p><script>console.log('If you see this, JavaScript is disabled');</script></body></html>`
       
+      console.log('→ Returning HTML redirect page')
       return new NextResponse(html, {
         status: 200,
         headers: {
@@ -120,6 +144,7 @@ async function handleAuth(request: NextRequest) {
       })
     }
     
+    console.log('→ Detected AJAX request - returning JSON')
     // AJAX request from Decap CMS - return JSON
     return NextResponse.json({
       token: token,

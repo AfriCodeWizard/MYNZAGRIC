@@ -150,14 +150,22 @@
         window.__DECAP_TOKEN__ = token;
         
         // Monitor hash to restore token if Decap CMS clears it
-        setInterval(function() {
+        let hashMonitorCount = 0;
+        const hashMonitor = setInterval(function() {
+          hashMonitorCount++;
           const currentHash = window.location.hash;
           if (!currentHash || !currentHash.startsWith('#token=')) {
             if (window.__DECAP_TOKEN__) {
-              console.log('⚠ Hash cleared, restoring token...');
+              console.log('⚠ Hash cleared (check #' + hashMonitorCount + '), restoring token...');
               const newUrl = window.location.pathname + window.location.search + '#token=' + encodeURIComponent(window.__DECAP_TOKEN__);
               window.history.replaceState(null, '', newUrl);
+              console.log('✓ Token restored in hash');
             }
+          }
+          // Stop monitoring after 30 seconds
+          if (hashMonitorCount > 300) {
+            clearInterval(hashMonitor);
+            console.log('Hash monitoring stopped after 30 seconds');
           }
         }, 100);
       } else {
@@ -170,30 +178,66 @@
     // Load Decap CMS after DOM is ready and token is in hash
     (function() {
       function loadDecapCMS() {
+        console.log('=== loadDecapCMS() called ===');
+        
         // Verify #nc-root exists
         const ncRoot = document.getElementById('nc-root');
         if (!ncRoot) {
-          console.error('✗ #nc-root element not found');
+          console.error('✗ #nc-root element not found, retrying...');
           // Retry after a short delay
           setTimeout(loadDecapCMS, 50);
           return;
         }
+        console.log('✓ #nc-root element found');
         
         // Check if token is in hash (optional - Decap CMS can show login page if no token)
         const hash = window.location.hash;
+        console.log('Current hash:', hash);
         if (hash && hash.startsWith('#token=')) {
+          const tokenFromHash = hash.replace('#token=', '');
+          console.log('✓ Token found in hash, length:', tokenFromHash.length);
           console.log('✓ DOM ready, #nc-root exists, token in hash - loading Decap CMS');
         } else {
+          console.log('⚠ No token in hash');
           console.log('✓ DOM ready, #nc-root exists, no token - loading Decap CMS (will show login page)');
         }
+        
+        console.log('→ Creating Decap CMS script element...');
         const script = document.createElement('script');
         script.src = 'https://unpkg.com/decap-cms@3.9.0/dist/decap-cms.js';
         script.async = true;
-        script.onerror = function() {
-          console.error('✗ Failed to load Decap CMS, trying fallback...');
+        
+        script.onload = function() {
+          console.log('✓ Decap CMS script loaded successfully');
+          console.log('→ Waiting for Decap CMS to initialize...');
+          
+          // Check hash after Decap CMS loads
+          setTimeout(function() {
+            const hashAfterLoad = window.location.hash;
+            console.log('Hash after Decap CMS load:', hashAfterLoad);
+            if (hashAfterLoad && hashAfterLoad.startsWith('#token=')) {
+              console.log('✓ Token still present in hash - Decap CMS should authenticate');
+            } else {
+              console.warn('⚠ Token missing from hash after Decap CMS load');
+              if (window.__DECAP_TOKEN__) {
+                console.log('→ Attempting to restore token...');
+                const newUrl = window.location.pathname + window.location.search + '#token=' + encodeURIComponent(window.__DECAP_TOKEN__);
+                window.history.replaceState(null, '', newUrl);
+                console.log('✓ Token restored');
+              }
+            }
+          }, 2000);
+        };
+        
+        script.onerror = function(e) {
+          console.error('✗ Failed to load Decap CMS from unpkg:', e);
+          console.log('→ Trying fallback CDN...');
           const fallback = document.createElement('script');
           fallback.src = 'https://cdn.jsdelivr.net/npm/decap-cms@3.9.0/dist/decap-cms.js';
           fallback.async = true;
+          fallback.onload = function() {
+            console.log('✓ Decap CMS loaded from fallback CDN');
+          };
           fallback.onerror = function() {
             console.error('✗ All CDN attempts failed');
             const loadingDiv = document.getElementById('auth-loading');
@@ -204,7 +248,10 @@
           };
           document.head.appendChild(fallback);
         };
+        
+        console.log('→ Appending Decap CMS script to head...');
         document.head.appendChild(script);
+        console.log('✓ Script element appended');
       }
       
       // Wait for DOM to be ready
