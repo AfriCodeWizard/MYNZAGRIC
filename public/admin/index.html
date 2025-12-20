@@ -163,18 +163,6 @@
         showAuthError();
       }
       
-      function showAuthError() {
-        const loadingDiv = document.getElementById('auth-loading');
-        if (loadingDiv) {
-          loadingDiv.innerHTML = `
-            <p style="color: #ef4444; font-weight: bold;">Authentication Failed</p>
-            <p>Please try logging in again.</p>
-            <button onclick="window.location.reload()" style="padding: 0.5rem 1rem; background: #10b981; color: white; border: none; border-radius: 0.5rem; cursor: pointer; margin-top: 1rem;">
-              Retry
-            </button>
-          `;
-        }
-      }
       
       function loadDecapCMS() {
         // Hide loading indicator
@@ -183,25 +171,86 @@
           loadingDiv.classList.add('hidden');
         }
         
-        // Load Decap CMS script
-        const script = document.createElement('script');
-        script.src = 'https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js';
-        script.async = true;
-        script.onload = function() {
-          console.log('✓ Decap CMS loaded');
-          // Verify token is still in hash
-          const currentHash = window.location.hash;
-          if (currentHash && currentHash.startsWith('#token=')) {
-            console.log('✓ Token still present when Decap CMS loads');
-          } else {
-            console.error('✗ Token lost after Decap CMS load!');
+        // Load Decap CMS script with fallback CDNs
+        // Using specific versions to avoid resolution issues
+        const cdnUrls = [
+          'https://unpkg.com/decap-cms@3.9.0/dist/decap-cms.js',
+          'https://cdn.jsdelivr.net/npm/decap-cms@3.9.0/dist/decap-cms.js',
+          'https://unpkg.com/decap-cms@3.8.0/dist/decap-cms.js',
+          'https://cdn.jsdelivr.net/npm/decap-cms@3.8.0/dist/decap-cms.js'
+        ];
+        
+        let currentIndex = 0;
+        
+        function tryLoadScript(index) {
+          if (index >= cdnUrls.length) {
+            console.error('✗ All CDN attempts failed');
+            showAuthError('Failed to load Decap CMS. Please check your internet connection and try again.');
+            return;
           }
-        };
-        script.onerror = function() {
-          console.error('✗ Failed to load Decap CMS script');
-          showAuthError();
-        };
-        document.head.appendChild(script);
+          
+          console.log('Attempting to load Decap CMS from:', cdnUrls[index]);
+          
+          // Set timeout for loading (10 seconds)
+          const timeout = setTimeout(function() {
+            console.warn('⚠ Timeout loading from:', cdnUrls[index]);
+            // Remove script if still loading
+            const existingScript = document.querySelector('script[data-decap-cms]');
+            if (existingScript) {
+              existingScript.remove();
+            }
+            // Try next CDN
+            currentIndex++;
+            tryLoadScript(currentIndex);
+          }, 10000);
+          
+          const script = document.createElement('script');
+          script.src = cdnUrls[index];
+          script.async = true;
+          script.defer = false; // Load immediately when added
+          script.crossOrigin = 'anonymous';
+          script.setAttribute('data-decap-cms', 'true');
+          
+          script.onload = function() {
+            clearTimeout(timeout);
+            console.log('✓ Decap CMS loaded from:', cdnUrls[index]);
+            // Verify token is still in hash
+            const currentHash = window.location.hash;
+            if (currentHash && currentHash.startsWith('#token=')) {
+              console.log('✓ Token still present when Decap CMS loads');
+            } else {
+              console.error('✗ Token lost after Decap CMS load!');
+            }
+          };
+          
+          script.onerror = function(e) {
+            clearTimeout(timeout);
+            console.warn('⚠ Failed to load from:', cdnUrls[index], e);
+            // Remove failed script
+            script.remove();
+            // Try next CDN
+            currentIndex++;
+            tryLoadScript(currentIndex);
+          };
+          
+          document.head.appendChild(script);
+        }
+        
+        tryLoadScript(0);
+      }
+      
+      function showAuthError(message) {
+        const defaultMessage = message || 'Authentication Failed. Please try logging in again.';
+        const loadingDiv = document.getElementById('auth-loading');
+        if (loadingDiv) {
+          loadingDiv.innerHTML = `
+            <p style="color: #ef4444; font-weight: bold;">${defaultMessage}</p>
+            <button onclick="window.location.reload()" style="padding: 0.5rem 1rem; background: #10b981; color: white; border: none; border-radius: 0.5rem; cursor: pointer; margin-top: 1rem;">
+              Retry
+            </button>
+          `;
+          loadingDiv.classList.remove('hidden');
+        }
       }
     })();
   </script>
