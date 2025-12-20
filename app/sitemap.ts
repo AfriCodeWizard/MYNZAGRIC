@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next'
 import { seedlings } from '@/lib/seedlings-data'
 import { getAllStorySlugs } from '@/lib/success-stories'
-import { getAllPostSlugs } from '@/lib/blog-data'
+import { getAllPostSlugs } from '@/lib/blog-loader'
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://mynzagric.com'
 
