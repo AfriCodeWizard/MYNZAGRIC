@@ -114,7 +114,8 @@ async function handleAuth(request: NextRequest) {
         .replace(/\r/g, '\\r')
         .replace(/\t/g, '\\t')
       
-      const targetUrl = `${baseUrl}/admin/index.html#token=${encodeURIComponent(token)}`
+      // Decap CMS uses #/token= format (with slash), not #token=
+      const targetUrl = `${baseUrl}/admin/index.html#/token=${encodeURIComponent(token)}`
       console.log('→ Target URL:', targetUrl)
       
       const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Authenticating...</title><script>
