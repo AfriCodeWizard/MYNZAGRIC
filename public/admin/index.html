@@ -41,22 +41,25 @@
       let token = null;
       
       // Extract token from hash if present (from proxy redirect)
+      // Decap CMS uses #/token= format, but we also support #token= for initial redirects
       if (hash && hash.includes('token=')) {
         if (hash.startsWith('#token=')) {
           token = decodeURIComponent(hash.replace('#token=', ''));
-          console.log('✓ Token found in hash (correct format)');
+          console.log('✓ Token found in hash (#token= format)');
+          // Convert to Decap CMS format: #/token=
+          window.location.replace(window.location.pathname + window.location.search + '#/token=' + encodeURIComponent(token));
+          return; // Exit - page will reload with correct format
         } else if (hash.startsWith('#/token=')) {
           token = decodeURIComponent(hash.replace('#/token=', ''));
-          console.log('⚠ Token found but wrong format (#/token=), fixing...');
-          window.location.replace(window.location.pathname + window.location.search + '#token=' + encodeURIComponent(token));
-          return; // Exit - page will reload
+          console.log('✓ Token found in hash (#/token= format - Decap CMS format)');
+          // This is the correct format for Decap CMS, keep it
         } else {
           // Try to extract from hash
           const match = hash.match(/token=([^&]+)/);
           if (match) {
             token = decodeURIComponent(match[1]);
-            console.log('⚠ Token found but format needs fixing');
-            window.location.replace(window.location.pathname + window.location.search + '#token=' + encodeURIComponent(token));
+            console.log('⚠ Token found but format needs fixing, converting to Decap CMS format');
+            window.location.replace(window.location.pathname + window.location.search + '#/token=' + encodeURIComponent(token));
             return;
           }
         }
@@ -150,16 +153,19 @@
         window.__DECAP_TOKEN__ = token;
         
         // Monitor hash to restore token if Decap CMS clears it
+        // Note: Decap CMS uses #/token= format, not #token=
         let hashMonitorCount = 0;
         const hashMonitor = setInterval(function() {
           hashMonitorCount++;
           const currentHash = window.location.hash;
-          if (!currentHash || !currentHash.startsWith('#token=')) {
+          const hasToken = currentHash && (currentHash.startsWith('#token=') || currentHash.startsWith('#/token='));
+          if (!hasToken) {
             if (window.__DECAP_TOKEN__) {
-              console.log('⚠ Hash cleared (check #' + hashMonitorCount + '), restoring token...');
-              const newUrl = window.location.pathname + window.location.search + '#token=' + encodeURIComponent(window.__DECAP_TOKEN__);
+              console.log('⚠ Hash cleared (check #' + hashMonitorCount + '), restoring token in Decap CMS format...');
+              // Use Decap CMS format: #/token=
+              const newUrl = window.location.pathname + window.location.search + '#/token=' + encodeURIComponent(window.__DECAP_TOKEN__);
               window.history.replaceState(null, '', newUrl);
-              console.log('✓ Token restored in hash');
+              console.log('✓ Token restored in hash (#/token= format)');
             }
           }
           // Stop monitoring after 30 seconds
@@ -191,11 +197,21 @@
         console.log('✓ #nc-root element found');
         
         // Check if token is in hash (optional - Decap CMS can show login page if no token)
+        // Decap CMS uses #/token= format
         const hash = window.location.hash;
         console.log('Current hash:', hash);
-        if (hash && hash.startsWith('#token=')) {
-          const tokenFromHash = hash.replace('#token=', '');
-          console.log('✓ Token found in hash, length:', tokenFromHash.length);
+        let tokenFromHash = null;
+        if (hash) {
+          if (hash.startsWith('#token=')) {
+            tokenFromHash = hash.replace('#token=', '');
+            console.log('✓ Token found in hash (#token= format), length:', tokenFromHash.length);
+          } else if (hash.startsWith('#/token=')) {
+            tokenFromHash = hash.replace('#/token=', '');
+            console.log('✓ Token found in hash (#/token= format - Decap CMS format), length:', tokenFromHash.length);
+          }
+        }
+        
+        if (tokenFromHash) {
           console.log('✓ DOM ready, #nc-root exists, token in hash - loading Decap CMS');
         } else {
           console.log('⚠ No token in hash');
@@ -215,15 +231,38 @@
           setTimeout(function() {
             const hashAfterLoad = window.location.hash;
             console.log('Hash after Decap CMS load:', hashAfterLoad);
-            if (hashAfterLoad && hashAfterLoad.startsWith('#token=')) {
-              console.log('✓ Token still present in hash - Decap CMS should authenticate');
+            
+            // Check if token is in hash (handle both #token= and #/token= formats)
+            let tokenInHash = null;
+            if (hashAfterLoad) {
+              if (hashAfterLoad.startsWith('#token=')) {
+                tokenInHash = hashAfterLoad.replace('#token=', '');
+                console.log('✓ Token found in hash (#token= format)');
+              } else if (hashAfterLoad.startsWith('#/token=')) {
+                tokenInHash = hashAfterLoad.replace('#/token=', '');
+                console.log('✓ Token found in hash (#/token= format - Decap CMS format)');
+                // Decap CMS uses #/token= format, this is correct!
+              } else {
+                // Try to extract token from hash
+                const match = hashAfterLoad.match(/token=([^&]+)/);
+                if (match) {
+                  tokenInHash = decodeURIComponent(match[1]);
+                  console.log('✓ Token extracted from hash');
+                }
+              }
+            }
+            
+            if (tokenInHash) {
+              console.log('✓ Token present in hash, length:', tokenInHash.length);
+              console.log('→ Decap CMS should authenticate with this token');
             } else {
               console.warn('⚠ Token missing from hash after Decap CMS load');
               if (window.__DECAP_TOKEN__) {
                 console.log('→ Attempting to restore token...');
-                const newUrl = window.location.pathname + window.location.search + '#token=' + encodeURIComponent(window.__DECAP_TOKEN__);
+                // Use Decap CMS format: #/token=
+                const newUrl = window.location.pathname + window.location.search + '#/token=' + encodeURIComponent(window.__DECAP_TOKEN__);
                 window.history.replaceState(null, '', newUrl);
-                console.log('✓ Token restored');
+                console.log('✓ Token restored in Decap CMS format (#/token=)');
               }
             }
           }, 2000);
