@@ -14,174 +14,196 @@
     #nc-root {
       min-height: 100vh;
     }
+    .auth-loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .auth-loading.hidden {
+      display: none;
+    }
   </style>
 </head>
 <body>
   <div id="nc-root"></div>
-  <!-- Include the script that builds the page and powers Decap CMS -->
-  <!-- Decap CMS will auto-initialize and load config from /admin/config.yml -->
-  <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+  <div id="auth-loading" class="auth-loading">
+    <p>Authenticating...</p>
+  </div>
+  
   <script>
-    // Fix token format immediately (before Decap CMS loads)
-    // Decap CMS expects #token= not #/token=
+    // CRITICAL: This script MUST run BEFORE Decap CMS loads
+    // It ensures the token is in the hash before Decap CMS initializes
+    
     (function() {
-      const hash = window.location.hash;
-      console.log('Initial hash:', hash);
-      console.log('Full URL:', window.location.href);
+      console.log('=== Decap CMS Auth Initialization ===');
+      console.log('Initial URL:', window.location.href);
+      console.log('Initial hash:', window.location.hash);
       
-      // Check if hash is just #/ (empty hash with slash) or empty
-      if (hash === '#/' || hash === '#' || !hash || !hash.includes('token=')) {
-        console.warn('Empty or invalid hash detected. Token may have been lost during redirect.');
+      const hash = window.location.hash;
+      let token = null;
+      let needsRecovery = false;
+      
+      // Extract token from hash if present
+      if (hash && hash.includes('token=')) {
+        if (hash.startsWith('#token=')) {
+          token = decodeURIComponent(hash.replace('#token=', ''));
+          console.log('✓ Token found in hash (correct format)');
+        } else if (hash.startsWith('#/token=')) {
+          token = decodeURIComponent(hash.replace('#/token=', ''));
+          console.log('⚠ Token found but wrong format (#/token=), fixing...');
+          window.location.replace(window.location.pathname + window.location.search + '#token=' + encodeURIComponent(token));
+          return; // Exit - page will reload
+        } else {
+          // Try to extract from hash
+          const match = hash.match(/token=([^&]+)/);
+          if (match) {
+            token = decodeURIComponent(match[1]);
+            console.log('⚠ Token found but format needs fixing');
+            window.location.replace(window.location.pathname + window.location.search + '#token=' + encodeURIComponent(token));
+            return;
+          }
+        }
+      }
+      
+      // If no token in hash, try to recover from storage
+      if (!token) {
+        console.log('⚠ No token in hash, attempting recovery...');
+        needsRecovery = true;
         
-        // Try to recover token from multiple sources (in order of reliability)
-        var recoveredToken = null;
-        
-        // 1. Try localStorage first (most persistent)
+        // Try localStorage
         try {
-          recoveredToken = localStorage.getItem('github_token');
-          if (recoveredToken) {
-            console.log('Recovering token from localStorage');
-            localStorage.removeItem('github_token'); // Clean up
+          token = localStorage.getItem('github_token');
+          if (token) {
+            console.log('✓ Token recovered from localStorage');
+            localStorage.removeItem('github_token');
           }
         } catch (e) {
-          console.error('Failed to read from localStorage:', e);
+          console.error('Failed to read localStorage:', e);
         }
         
-        // 2. Try sessionStorage
-        if (!recoveredToken) {
+        // Try sessionStorage
+        if (!token) {
           try {
-            recoveredToken = sessionStorage.getItem('github_token');
-            if (recoveredToken) {
-              console.log('Recovering token from sessionStorage');
-              sessionStorage.removeItem('github_token'); // Clean up
+            token = sessionStorage.getItem('github_token');
+            if (token) {
+              console.log('✓ Token recovered from sessionStorage');
+              sessionStorage.removeItem('github_token');
             }
           } catch (e) {
-            console.error('Failed to read from sessionStorage:', e);
+            console.error('Failed to read sessionStorage:', e);
           }
         }
         
-        // 3. Try cookie (read from document.cookie)
-        if (!recoveredToken) {
+        // Try cookie
+        if (!token) {
           try {
             const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-              const cookie = cookies[i].trim();
+            for (let cookie of cookies) {
+              cookie = cookie.trim();
               if (cookie.startsWith('github_token=')) {
-                recoveredToken = decodeURIComponent(cookie.substring('github_token='.length));
-                console.log('Recovering token from cookie');
-                // Delete cookie
+                token = decodeURIComponent(cookie.substring('github_token='.length));
+                console.log('✓ Token recovered from cookie');
                 document.cookie = 'github_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
                 break;
               }
             }
           } catch (e) {
-            console.error('Failed to read from cookie:', e);
+            console.error('Failed to read cookie:', e);
           }
         }
         
-        // If token recovered from storage, set it in hash and reload
-        if (recoveredToken) {
-          console.log('Token recovered, setting hash and reloading...');
-          // Use replace to avoid adding to history
-          window.location.replace(window.location.pathname + window.location.search + '#token=' + encodeURIComponent(recoveredToken));
-          return; // Exit - page will reload with token
-        }
-        
-        // 4. Try API endpoint as last resort (if we came from OAuth) - async
-        if (!recoveredToken && document.referrer && document.referrer.includes('/api/auth')) {
-          console.log('Attempting to fetch token from API endpoint...');
+        // Try API endpoint (async, but we'll wait for it)
+        if (!token && document.referrer && document.referrer.includes('/api/auth')) {
+          console.log('Attempting to fetch token from API...');
           fetch('/api/token')
             .then(response => {
               if (response.ok) {
                 return response.json();
               }
-              throw new Error('Token not found in API');
+              throw new Error('Token not found');
             })
             .then(data => {
               if (data.token) {
-                console.log('Recovered token from API endpoint');
-                window.location.replace(window.location.pathname + window.location.search + '#token=' + encodeURIComponent(data.token));
+                console.log('✓ Token recovered from API');
+                token = data.token;
+                // Set token in hash and reload
+                window.location.replace(window.location.pathname + window.location.search + '#token=' + encodeURIComponent(token));
+              } else {
+                console.error('✗ No token in API response');
+                showAuthError();
               }
             })
             .catch(e => {
-              console.error('Failed to fetch token from API:', e);
+              console.error('✗ Failed to fetch token from API:', e);
+              showAuthError();
             });
+          return; // Wait for async fetch
         }
-        
-        // Check if we came from OAuth redirect
-        if (document.referrer && document.referrer.includes('/api/auth')) {
-          console.error('Token was lost during redirect from OAuth and not found in any storage.');
-          console.error('Please try logging in again.');
-        }
-        return;
       }
       
-      if (hash) {
-        // Handle various token formats
-        let token = null;
-        
-        // Check for #/token= format
-        if (hash.startsWith('#/token=')) {
-          token = hash.replace('#/token=', '');
-          console.log('Found token in #/token= format, fixing...');
-          window.location.replace(window.location.pathname + window.location.search + '#token=' + token);
-          return; // Exit early, let page reload with correct format
+      // If we have a token (from hash or recovery), ensure it's in the hash
+      if (token) {
+        if (needsRecovery || !hash.startsWith('#token=')) {
+          console.log('Setting token in hash...');
+          window.location.replace(window.location.pathname + window.location.search + '#token=' + encodeURIComponent(token));
+          return; // Exit - page will reload with token in hash
         }
         
-        // Check for #token= format (correct)
-        if (hash.startsWith('#token=')) {
-          token = hash.replace('#token=', '');
-          console.log('Token format correct:', hash.substring(0, 30) + '...');
-          console.log('Token length:', token.length);
-        }
-        
-        // Check for token= without # (edge case)
-        if (hash.includes('token=') && !hash.startsWith('#token=') && !hash.startsWith('#/token=')) {
-          const match = hash.match(/token=([^&]+)/);
-          if (match) {
-            token = match[1];
-            console.log('Found token in hash, fixing format...');
-            window.location.replace(window.location.pathname + window.location.search + '#token=' + token);
-            return;
-          }
-        }
-        
-        if (token) {
-          console.log('Token detected, length:', token.length);
-        } else if (hash && hash !== '#/' && hash !== '#') {
-          console.warn('Hash exists but no token found:', hash);
+        // Token is in hash correctly - proceed to load Decap CMS
+        console.log('✓ Token confirmed in hash, length:', token.length);
+        console.log('Loading Decap CMS...');
+        loadDecapCMS();
+      } else {
+        // No token found anywhere
+        console.error('✗ No token found in hash, storage, or API');
+        console.error('User needs to log in again');
+        showAuthError();
+      }
+      
+      function showAuthError() {
+        const loadingDiv = document.getElementById('auth-loading');
+        if (loadingDiv) {
+          loadingDiv.innerHTML = `
+            <p style="color: #ef4444; font-weight: bold;">Authentication Failed</p>
+            <p>Please try logging in again.</p>
+            <button onclick="window.location.reload()" style="padding: 0.5rem 1rem; background: #10b981; color: white; border: none; border-radius: 0.5rem; cursor: pointer; margin-top: 1rem;">
+              Retry
+            </button>
+          `;
         }
       }
-    })();
-    
-    // Ensure Decap CMS loads config and reads token correctly
-    document.addEventListener('DOMContentLoaded', function() {
-      // Wait a bit for any redirects to complete
-      setTimeout(function() {
-        const hash = window.location.hash;
-        console.log('Hash after DOMContentLoaded:', hash);
-        
-        if (hash && hash.includes('token=')) {
-          // Fix any remaining format issues
-          if (hash.startsWith('#/token=')) {
-            const token = hash.replace('#/token=', '');
-            window.location.hash = '#token=' + token;
-            console.log('Fixed token format on DOMContentLoaded');
-            return; // Let page update
-          }
-          
-          if (hash.startsWith('#token=')) {
-            const token = hash.replace('#token=', '');
-            console.log('Token present for Decap CMS:', token.substring(0, 20) + '...');
-            console.log('Decap CMS should authenticate automatically');
-          }
-        } else {
-          console.warn('No token found in URL hash. Current hash:', hash);
-          console.warn('Decap CMS will show login page.');
-          console.warn('Full URL:', window.location.href);
+      
+      function loadDecapCMS() {
+        // Hide loading indicator
+        const loadingDiv = document.getElementById('auth-loading');
+        if (loadingDiv) {
+          loadingDiv.classList.add('hidden');
         }
-      }, 500);
-    });
+        
+        // Load Decap CMS script
+        const script = document.createElement('script');
+        script.src = 'https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js';
+        script.async = true;
+        script.onload = function() {
+          console.log('✓ Decap CMS loaded');
+          // Verify token is still in hash
+          const currentHash = window.location.hash;
+          if (currentHash && currentHash.startsWith('#token=')) {
+            console.log('✓ Token still present when Decap CMS loads');
+          } else {
+            console.error('✗ Token lost after Decap CMS load!');
+          }
+        };
+        script.onerror = function() {
+          console.error('✗ Failed to load Decap CMS script');
+          showAuthError();
+        };
+        document.head.appendChild(script);
+      }
+    })();
   </script>
 </body>
 </html>
