@@ -583,6 +583,7 @@ Thank you!`
             </div>
 
             <NavLink href="/impact" label="Impact" shouldShowSolidBackground={shouldShowSolidBackground} pathname={pathname} />
+            <NavLink href="/blog" label="Blog" shouldShowSolidBackground={shouldShowSolidBackground} pathname={pathname} />
             <NavLink href="/#contact" label="Contact" shouldShowSolidBackground={shouldShowSolidBackground} pathname={pathname} />
           </div>
 
@@ -987,6 +988,7 @@ Thank you!`
             </div>
 
             <MobileNavLink href="/impact" label="Impact" onClick={() => setIsOpen(false)} shouldShowSolidBackground={shouldShowSolidBackground} pathname={pathname} />
+            <MobileNavLink href="/blog" label="Blog" onClick={() => setIsOpen(false)} shouldShowSolidBackground={shouldShowSolidBackground} pathname={pathname} />
             <MobileNavLink href="/#contact" label="Contact" onClick={() => setIsOpen(false)} shouldShowSolidBackground={shouldShowSolidBackground} pathname={pathname} />
           </nav>
         </div>
