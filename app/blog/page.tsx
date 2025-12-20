@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { Calendar, Clock, ArrowRight, Tag, User } from 'lucide-react'
 import { getAllPosts } from '@/lib/blog-loader'
 import { BlogPost } from '@/lib/blog-data'
+import Footer from '@/components/footer'
 
 export const metadata: Metadata = {
   title: 'Blog - Mynzagric | Farming Tips, Irrigation Guides & Agricultural Insights',
@@ -249,6 +250,7 @@ export default function BlogPage() {
           </Link>
         </div>
       </section>
+      <Footer />
     </div>
   )
 }

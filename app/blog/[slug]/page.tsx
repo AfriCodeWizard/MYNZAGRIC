@@ -7,6 +7,7 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { getPostBySlug, getAllPosts, getAllPostSlugs } from '@/lib/blog-loader'
 import { BlogPost } from '@/lib/blog-data'
+import Footer from '@/components/footer'
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>
@@ -292,6 +293,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           </Link>
         </div>
       </section>
+      <Footer />
     </div>
   )
 }
