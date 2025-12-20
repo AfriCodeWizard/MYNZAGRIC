@@ -34,11 +34,13 @@
       console.log('=== Decap CMS Auth Initialization (HEAD) ===');
       console.log('Initial URL:', window.location.href);
       console.log('Initial hash:', window.location.hash);
+      console.log('Initial search:', window.location.search);
       
       const hash = window.location.hash;
+      const search = window.location.search;
       let token = null;
       
-      // Extract token from hash if present
+      // Extract token from hash if present (from proxy redirect)
       if (hash && hash.includes('token=')) {
         if (hash.startsWith('#token=')) {
           token = decodeURIComponent(hash.replace('#token=', ''));
@@ -58,6 +60,13 @@
             return;
           }
         }
+      }
+      
+      // Check for OAuth code in query params (direct GitHub OAuth callback)
+      // Decap CMS will handle this, but we can log it for debugging
+      if (search && search.includes('code=') && !token) {
+        console.log('✓ OAuth code found in query params - Decap CMS will handle authentication');
+        // Decap CMS will process this automatically
       }
       
       // If no token in hash, try to recover from storage
