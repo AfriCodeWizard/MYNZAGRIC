@@ -108,7 +108,7 @@
         }
       }
       
-      // If we have a token, ensure it's in the hash and load Decap CMS
+      // If we have a token, ensure it's in the hash
       if (token) {
         console.log('✓ Token confirmed, length:', token.length);
         console.log('Token is in hash - Decap CMS can now load');
@@ -132,8 +132,58 @@
       }
     })();
   </script>
-  <!-- Load Decap CMS - it will read the token from hash when it initializes -->
-  <script src="https://unpkg.com/decap-cms@3.9.0/dist/decap-cms.js"></script>
+  <script>
+    // Load Decap CMS after DOM is ready and token is in hash
+    (function() {
+      function loadDecapCMS() {
+        // Verify #nc-root exists
+        const ncRoot = document.getElementById('nc-root');
+        if (!ncRoot) {
+          console.error('✗ #nc-root element not found');
+          // Retry after a short delay
+          setTimeout(loadDecapCMS, 50);
+          return;
+        }
+        
+        // Verify token is still in hash
+        const hash = window.location.hash;
+        if (!hash || !hash.startsWith('#token=')) {
+          console.error('✗ Token not in hash when loading Decap CMS');
+          return;
+        }
+        
+        console.log('✓ DOM ready, #nc-root exists, token in hash - loading Decap CMS');
+        const script = document.createElement('script');
+        script.src = 'https://unpkg.com/decap-cms@3.9.0/dist/decap-cms.js';
+        script.async = true;
+        script.onerror = function() {
+          console.error('✗ Failed to load Decap CMS, trying fallback...');
+          const fallback = document.createElement('script');
+          fallback.src = 'https://cdn.jsdelivr.net/npm/decap-cms@3.9.0/dist/decap-cms.js';
+          fallback.async = true;
+          fallback.onerror = function() {
+            console.error('✗ All CDN attempts failed');
+            const loadingDiv = document.getElementById('auth-loading');
+            if (loadingDiv) {
+              loadingDiv.classList.remove('hidden');
+              loadingDiv.innerHTML = '<p style="color: #ef4444;">Failed to load Decap CMS. Please refresh the page.</p>';
+            }
+          };
+          document.head.appendChild(fallback);
+        };
+        document.head.appendChild(script);
+      }
+      
+      // Wait for DOM to be ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', loadDecapCMS);
+      } else {
+        // DOM is already ready, but wait a tick to ensure #nc-root is rendered
+        setTimeout(loadDecapCMS, 0);
+      }
+    })();
+  </script>
+  <!-- Decap CMS will be loaded after DOM is ready and token is confirmed -->
 </head>
 <body>
   <div id="nc-root"></div>
