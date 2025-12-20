@@ -315,7 +315,7 @@ Thank you!`
                 className={cn(
                   "relative px-4 py-2 uppercase text-sm font-medium transition-colors duration-300",
                   "focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-transparent rounded",
-                  "flex items-center gap-2",
+                  "flex items-center gap-2 whitespace-nowrap",
                   shouldShowSolidBackground
                     ? "text-gray-900 hover:text-green-600"
                     : "text-white hover:text-green-300"
@@ -489,7 +489,7 @@ Thank you!`
                 className={cn(
                   "relative px-4 py-2 uppercase text-sm font-medium transition-colors duration-300",
                   "focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-transparent rounded",
-                  "flex items-center gap-2",
+                  "flex items-center gap-2 whitespace-nowrap",
                   shouldShowSolidBackground
                     ? "text-gray-900 hover:text-green-600"
                     : "text-white hover:text-green-300"
