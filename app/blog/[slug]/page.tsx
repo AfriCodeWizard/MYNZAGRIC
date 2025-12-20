@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { Calendar, Clock, ArrowLeft, Tag, User, Share2, Facebook, Twitter, Linkedin } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { getPostBySlug, getAllPosts } from '@/lib/blog-loader'
+import { getPostBySlug, getAllPosts, getAllPostSlugs } from '@/lib/blog-loader'
 import { BlogPost } from '@/lib/blog-data'
 
 interface BlogPostPageProps {
