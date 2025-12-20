@@ -2,7 +2,7 @@
 title: "Maximizing Fruit Yield: Best Practices for Grafted Seedlings"
 slug: "maximizing-fruit-yield-best-practices"
 excerpt: "Discover proven strategies to maximize your fruit yield with grafted seedlings. Learn about proper spacing, pruning techniques, fertilization schedules, and pest management for optimal harvests."
-featuredImage: "/Drip_irrigation.jpg"
+featuredImage: "/premium-grafted-fruit-seedlings-ready-for-planting.jpg"
 authorName: "Mynzagric Team"
 authorAvatar: "/placeholder-user.jpg"
 authorBio: "Our expert team of agronomists and irrigation specialists with over 20 years of combined experience in modern farming solutions."

@@ -2,7 +2,7 @@
 title: "Sustainable Farming: Modern Techniques for Long-Term Agricultural Success"
 slug: "sustainable-farming-modern-techniques"
 excerpt: "Explore modern sustainable farming techniques that protect the environment while maximizing productivity. Learn about soil health, water conservation, integrated pest management, and organic practices for profitable, eco-friendly agriculture."
-featuredImage: "/Drip_irrigation.jpg"
+featuredImage: "/premium-grafted-fruit-seedlings-ready-for-planting.jpg"
 authorName: "Mynzagric Team"
 authorAvatar: "/placeholder-user.jpg"
 authorBio: "Our expert team of agronomists and irrigation specialists with over 20 years of combined experience in modern farming solutions."
