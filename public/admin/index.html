@@ -4,6 +4,43 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Content Manager</title>
+  <script>
+    // Log current URL info before Decap CMS loads
+    console.log('=== Current Page Info ===');
+    console.log('Full URL:', window.location.href);
+    console.log('Origin:', window.location.origin);
+    console.log('Pathname:', window.location.pathname);
+    console.log('Hash:', window.location.hash);
+    console.log('Search:', window.location.search);
+    
+    // Intercept fetch/XHR to see what Decap CMS is sending
+    const originalFetch = window.fetch;
+    window.fetch = function(...args) {
+      console.log('=== Fetch Request ===');
+      console.log('URL:', args[0]);
+      if (typeof args[0] === 'string' && args[0].includes('github.com/login/oauth')) {
+        console.log('🔍 GitHub OAuth request detected!');
+        console.log('Full URL:', args[0]);
+        const url = new URL(args[0]);
+        console.log('Redirect URI in request:', url.searchParams.get('redirect_uri'));
+      }
+      return originalFetch.apply(this, args);
+    };
+    
+    // Also intercept XMLHttpRequest
+    const originalOpen = XMLHttpRequest.prototype.open;
+    XMLHttpRequest.prototype.open = function(method, url, ...rest) {
+      console.log('=== XHR Request ===');
+      console.log('Method:', method);
+      console.log('URL:', url);
+      if (typeof url === 'string' && url.includes('github.com/login/oauth')) {
+        console.log('🔍 GitHub OAuth XHR detected!');
+        const urlObj = new URL(url);
+        console.log('Redirect URI in request:', urlObj.searchParams.get('redirect_uri'));
+      }
+      return originalOpen.apply(this, [method, url, ...rest]);
+    };
+  </script>
 </head>
 <body>
   <div id="nc-root"></div>
