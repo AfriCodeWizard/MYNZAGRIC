@@ -145,65 +145,90 @@ async function handleAuth(request: NextRequest) {
       const provider = 'github'
       const escapedProvider = provider.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"')
       
+      // Create JSON response that Decap CMS can read
+      const authResponse = {
+        token: token,
+        provider: provider
+      }
+      const jsonResponse = JSON.stringify(authResponse)
+      
       const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Authenticating...</title>
+<!-- Decap CMS reads this JSON from the popup -->
 <script type="application/json" id="netlify-cms-auth">
-{"token":"${escapedToken}","provider":"${escapedProvider}"}
+${jsonResponse}
 </script>
 <script>
 (function(){
-  var token = '${escapedToken}';
-  var provider = '${escapedProvider}';
+  var authData = ${jsonResponse};
+  var token = authData.token;
+  var provider = authData.provider;
   
   console.log('OAuth callback page loaded');
-  console.log('Token length:', token.length);
+  console.log('Token length:', token ? token.length : 'missing');
+  console.log('Provider:', provider);
+  console.log('Full auth data:', authData);
   
   // Make token available in multiple ways for Decap CMS to read
-  window.netlifyAuth = {
-    token: token,
-    provider: provider
-  };
+  window.netlifyAuth = authData;
+  window.decapAuth = authData;
   
-  // Also set in window for direct access
+  // Also set individual properties
   window.decapAuthToken = token;
   window.decapAuthProvider = provider;
   
-  // If we're in a popup (opened by Decap CMS), send token to parent
+  // If we're in a popup (opened by Decap CMS), try multiple methods to send token
   if (window.opener && !window.opener.closed) {
-    console.log('Sending token to parent window via postMessage...');
+    console.log('In popup, sending token to parent window...');
+    
+    // Method 1: postMessage with authorization type
     try {
-      // Send token to parent window - Decap CMS listens for this
       window.opener.postMessage({
         type: 'authorization',
         token: token,
         provider: provider
       }, '*');
-      
-      // Also try the format Decap CMS might expect
+      console.log('✓ Sent postMessage with type: authorization');
+    } catch(e) {
+      console.error('Error sending postMessage (method 1):', e);
+    }
+    
+    // Method 2: postMessage with just token and provider
+    try {
       window.opener.postMessage({
         token: token,
         provider: provider
       }, '*');
-      
-      // Also try setting it in parent's window object (if same origin)
-      try {
-        window.opener.netlifyAuth = {
-          token: token,
-          provider: provider
-        };
-        window.opener.decapAuthToken = token;
-        window.opener.decapAuthProvider = provider;
-      } catch(e) {
-        console.log('Could not set token in parent window (CORS):', e.message);
-      }
-      
-      console.log('Token sent, closing popup...');
-      setTimeout(function() {
-        window.close();
-      }, 500);
+      console.log('✓ Sent postMessage with token and provider');
     } catch(e) {
-      console.error('Error sending token:', e);
-      window.close();
+      console.error('Error sending postMessage (method 2):', e);
     }
+    
+    // Method 3: Try to set in parent window directly (same origin only)
+    try {
+      window.opener.netlifyAuth = authData;
+      window.opener.decapAuth = authData;
+      window.opener.decapAuthToken = token;
+      window.opener.decapAuthProvider = provider;
+      console.log('✓ Set token in parent window object');
+    } catch(e) {
+      console.log('Could not set token in parent window (CORS):', e.message);
+    }
+    
+    // Method 4: Try to trigger a custom event in parent
+    try {
+      if (window.opener.dispatchEvent) {
+        window.opener.dispatchEvent(new CustomEvent('netlify-auth', { detail: authData }));
+        window.opener.dispatchEvent(new CustomEvent('decap-auth', { detail: authData }));
+        console.log('✓ Dispatched custom events in parent');
+      }
+    } catch(e) {
+      console.log('Could not dispatch events in parent:', e.message);
+    }
+    
+    console.log('All methods attempted, closing popup in 1 second...');
+    setTimeout(function() {
+      window.close();
+    }, 1000);
   } else {
     // Not in popup - redirect to admin with token in hash
     console.log('Not in popup - redirecting to admin page with token');

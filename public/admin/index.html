@@ -163,33 +163,49 @@
                   // Try multiple ways to access the backend
                   let backend = null;
                   
-                  // Method 1: window.CMS.getBackend()
+                  // Method 1: window.CMS.getBackend() - wait for it to be ready
                   try {
-                    backend = window.CMS.getBackend && window.CMS.getBackend();
-                  } catch(e) {}
-                  
-                  // Method 2: window.CMS.backend
-                  if (!backend) {
-                    try {
-                      backend = window.CMS.backend;
-                    } catch(e) {}
+                    if (window.CMS.getBackend) {
+                      backend = window.CMS.getBackend();
+                      if (!backend) {
+                        // Backend might not be initialized yet, try waiting
+                        console.log('→ getBackend() returned null/undefined - backend may not be initialized yet');
+                      }
+                    }
+                  } catch(e) {
+                    console.log('→ getBackend() error:', e.message);
                   }
                   
-                  // Method 3: Access through registry
+                  // Method 2: Try to get backend from registry
                   if (!backend && window.CMS.getRegistry) {
                     try {
                       const registry = window.CMS.getRegistry();
-                      backend = registry.get('backend');
+                      if (registry && registry.getBackend) {
+                        backend = registry.getBackend();
+                      }
+                      // Also try registry.get('backend')
+                      if (!backend && registry.get) {
+                        backend = registry.get('backend');
+                      }
+                    } catch(e) {
+                      console.log('→ Registry access error:', e.message);
+                    }
+                  }
+                  
+                  // Method 3: Access through CMS instance properties
+                  if (!backend) {
+                    try {
+                      if (window.CMS.backend) {
+                        backend = window.CMS.backend;
+                      }
                     } catch(e) {}
                   }
                   
-                  // Method 4: Access through CMS instance
-                  if (!backend && window.CMS.init) {
+                  // Method 4: Try to access through window.netlifyCMS (alternative name)
+                  if (!backend && window.netlifyCMS) {
                     try {
-                      // Try to get backend from initialized CMS
-                      const cmsInstance = window.CMS;
-                      if (cmsInstance.backend) {
-                        backend = cmsInstance.backend;
+                      if (window.netlifyCMS.getBackend) {
+                        backend = window.netlifyCMS.getBackend();
                       }
                     } catch(e) {}
                   }
@@ -280,9 +296,45 @@
                       }
                     }
                   } else {
-                    // Backend not found - log what we can access
+                    // Backend not found - try to manually trigger authentication with token in hash
+                    console.log('→ Backend not accessible, but token is in hash');
+                    console.log('→ Attempting to trigger Decap CMS authentication manually...');
+                    
+                    // Try to access the CMS registry and manually set the token
+                    try {
+                      if (window.CMS.getRegistry) {
+                        const registry = window.CMS.getRegistry();
+                        console.log('→ Registry available, trying to access backend through registry...');
+                        
+                        // Try to get the backend implementation
+                        if (registry.getBackend) {
+                          const regBackend = registry.getBackend();
+                          if (regBackend) {
+                            console.log('→ Found backend through registry.getBackend()');
+                            // Try to authenticate
+                            if (regBackend.authenticate) {
+                              regBackend.authenticate({
+                                token: token,
+                                token_type: tokenType || 'bearer',
+                                provider: 'github'
+                              }).then(function() {
+                                console.log('✓ Authentication successful via registry backend');
+                                window.location.reload();
+                              }).catch(function(err) {
+                                console.log('✗ Registry backend authentication failed:', err);
+                              });
+                            }
+                          }
+                        }
+                      }
+                    } catch(e) {
+                      console.log('→ Could not access registry:', e.message);
+                    }
+                    
+                    // Log what we can access for debugging
                     if (window.CMS) {
-                      console.log('→ Backend not available yet, CMS object keys:', Object.keys(window.CMS));
+                      console.log('→ CMS object keys:', Object.keys(window.CMS));
+                      console.log('→ Note: Backend may initialize later, token is in hash for when it does');
                     }
                   }
                 } catch(e) {
