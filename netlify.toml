@@ -1,10 +1,10 @@
 # Netlify configuration for Identity/Git Gateway only
 # This site is hosted on Vercel, but uses Netlify for Identity/Git Gateway services
-#
-# IMPORTANT: After creating the Netlify site, you MUST remove the Next.js plugin
-# from the Netlify UI (Site settings → Build & deploy → Plugins → Remove @netlify/plugin-nextjs)
-# The plugin cannot be disabled via this config file - it must be removed manually from the UI.
 
 [build]
   publish = "public/admin"
   command = "echo 'Identity/Git Gateway only - site hosted on Vercel'"
+
+# Skip the Next.js plugin - prevents auto-detection and plugin errors
+[build.environment]
+  NETLIFY_NEXT_PLUGIN_SKIP = "true"

@@ -24,16 +24,17 @@ Your site is hosted on Vercel, but you'll use Netlify's free Identity and Git Ga
    - **Build command**: `echo "Identity/Git Gateway only - site hosted on Vercel"`
    - **Publish directory**: `public/admin` (this directory exists and contains static files)
 6. Click **"Deploy site"**
-7. **CRITICAL - Remove the Next.js plugin immediately after first deploy:**
-   - The deployment will likely fail with a Next.js plugin error - this is expected
-   - Go to **"Site settings"** → **"Build & deploy"** → **"Plugins"** (or **"Installed plugins"**)
-   - Find **"@netlify/plugin-nextjs"** in the list
-   - Click on it, then click **"Remove"** or **"Uninstall"**
-   - This is REQUIRED - the plugin cannot be disabled via config file, it must be removed from the UI
-8. **After removing the plugin, trigger a new deploy:**
+7. **CRITICAL - Set environment variable to skip Next.js plugin:**
+   - Go to **"Site settings"** → **"Build & deploy"** → **"Environment"**
+   - Click **"Add variable"**
+   - **Key**: `NETLIFY_NEXT_PLUGIN_SKIP`
+   - **Value**: `true`
+   - Click **"Save"**
+   - This prevents the Next.js plugin from running (it's auto-installed but hidden)
+8. **Trigger a new deploy:**
    - Go to **"Deploys"** tab
    - Click **"Trigger deploy"** → **"Deploy site"**
-   - The build should now succeed (or at least not fail due to the plugin)
+   - The build should now succeed (the plugin will be skipped)
 
 > **Note**: This Netlify site doesn't need to actually serve your site - it's just for Identity/Git Gateway. You can keep using Vercel for hosting. Even if the deployment fails, you can still enable Identity and Git Gateway - they work independently of the build.
 
@@ -43,13 +44,15 @@ Your site is hosted on Vercel, but you'll use Netlify's free Identity and Git Ga
 
 The error message will say: *"Plugin @netlify/plugin-nextjs failed - Your publish directory does not contain expected Next.js build output"*
 
-**Fix it immediately:**
+**Fix it by setting an environment variable (EASIEST METHOD):**
 
-1. **Remove the Next.js plugin (REQUIRED):**
-   - In your Netlify site dashboard, go to **"Site settings"** → **"Build & deploy"** → **"Plugins"** (or **"Installed plugins"**)
-   - Find **"@netlify/plugin-nextjs"** in the list
-   - Click on it, then click **"Remove"** or **"Uninstall"**
-   - **This is the ONLY way to disable it** - it cannot be disabled via config file
+1. **Set environment variable to skip the plugin:**
+   - In your Netlify site dashboard, go to **"Site settings"** → **"Build & deploy"** → **"Environment"**
+   - Click **"Add variable"**
+   - **Key**: `NETLIFY_NEXT_PLUGIN_SKIP`
+   - **Value**: `true`
+   - Click **"Save"**
+   - This tells Netlify to skip the auto-installed Next.js plugin
 
 2. **Verify build settings are correct:**
    - Go to **"Site settings"** → **"Build & deploy"** → **"Build & deploy"**
@@ -61,9 +64,9 @@ The error message will say: *"Plugin @netlify/plugin-nextjs failed - Your publis
 3. **Trigger a new deploy:**
    - Go to **"Deploys"** tab
    - Click **"Trigger deploy"** → **"Deploy site"**
-   - The build should now succeed (or at least not fail due to the plugin)
+   - The build should now succeed (the plugin will be skipped)
 
-> **Important**: The plugin is auto-installed by Netlify when it detects a Next.js project. You MUST remove it manually from the UI - there's no way to prevent it via config file. After removing it, future deployments should work fine.
+> **Note**: The `netlify.toml` file also includes this environment variable, but setting it in the UI ensures it works. The plugin is auto-installed by Netlify when it detects a Next.js project, but this environment variable prevents it from running.
 
 ### Step 3: Enable Netlify Identity
 
@@ -148,23 +151,26 @@ If you're using Next.js, add it to your root layout or `_document.tsx`:
 
 ### "Plugin @netlify/plugin-nextjs failed" or "publish directory does not contain expected Next.js build output"
 
-This happens because Netlify auto-detects Next.js projects. To fix:
+This happens because Netlify auto-detects Next.js projects and auto-installs the plugin. To fix:
 
-1. **Disable the Next.js plugin:**
-   - Go to **"Site settings"** → **"Build & deploy"** → **"Build plugins"**
-   - Find **"@netlify/plugin-nextjs"** and click **"Remove plugin"**
+1. **Set environment variable to skip the plugin (RECOMMENDED):**
+   - Go to **"Site settings"** → **"Build & deploy"** → **"Environment"**
+   - Click **"Add variable"**
+   - **Key**: `NETLIFY_NEXT_PLUGIN_SKIP`
+   - **Value**: `true`
+   - Click **"Save"**
+   - This prevents the plugin from running even though it's auto-installed
 
 2. **Update build settings:**
    - Go to **"Site settings"** → **"Build & deploy"** → **"Build & deploy"**
    - Under **"Build settings"**, click **"Edit settings"**
-   - Set **Build command** to: `echo "Identity/Git Gateway only"`
-   - Set **Publish directory** to: `public/admin` or `public`
+   - Set **Build command** to: `echo "Identity/Git Gateway only - site hosted on Vercel"`
+   - Set **Publish directory** to: `public/admin`
    - Click **"Save"**
 
 3. **The netlify.toml file** (already in your repo):
-   - The `netlify.toml` file sets minimal build settings
-   - The Next.js plugin should be disabled through the Netlify UI (see Step 2.5 above)
-   - The config file just ensures build settings are correct
+   - The `netlify.toml` file includes the `NETLIFY_NEXT_PLUGIN_SKIP` environment variable
+   - Setting it in the UI as well ensures it works reliably
 
 4. **Alternative: Disable auto-deployments:**
    - Go to **"Site settings"** → **"Build & deploy"** → **"Continuous Deployment"**
