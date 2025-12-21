@@ -15,6 +15,17 @@
       min-height: 100vh;
     }
   </style>
+  <script>
+    // Listen for token from popup (when Decap CMS uses proxy_url with popup)
+    window.addEventListener('message', function(event) {
+      if (event.data && event.data.token) {
+        console.log('Token received from popup');
+        // Decap CMS will handle this automatically
+        // But we can also set it in hash as fallback
+        window.location.hash = '#/token=' + encodeURIComponent(event.data.token);
+      }
+    });
+  </script>
 </head>
 <body>
   <div id="nc-root"></div>

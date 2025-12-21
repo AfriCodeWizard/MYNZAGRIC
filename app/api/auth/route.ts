@@ -119,21 +119,30 @@ async function handleAuth(request: NextRequest) {
       console.log('→ Target URL:', targetUrl)
       
       const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Authenticating...</title><script>
-console.log('=== OAuth Redirect Page Loaded ===');
-console.log('Token length:', ${token.length});
-var t='${escapedToken}';
-var u='${targetUrl}';
-console.log('Target URL:', u);
-try{
-  localStorage.setItem('github_token',t);
-  sessionStorage.setItem('github_token',t);
-  console.log('✓ Token stored in localStorage and sessionStorage');
-}catch(e){
-  console.error('✗ Failed to store token:', e);
-}
-console.log('→ Redirecting to admin page...');
-window.location.replace(u);
-</script><noscript><meta http-equiv="refresh" content="0;url=${targetUrl}"></noscript></head><body><p>Authenticating...</p><script>console.log('If you see this, JavaScript is disabled');</script></body></html>`
+(function(){
+  var t='${escapedToken}';
+  var u='${targetUrl}';
+  
+  // Check if we're in a popup (Decap CMS opens OAuth in popup when using proxy_url)
+  if (window.opener) {
+    // We're in a popup - send token to parent window
+    console.log('In popup, sending token to parent...');
+    try {
+      window.opener.postMessage({ token: t, provider: 'github' }, '*');
+      window.close();
+    } catch(e) {
+      console.error('Error posting message:', e);
+      // Fallback: redirect parent
+      window.opener.location.href = u;
+      window.close();
+    }
+  } else {
+    // We're in main window - redirect with token in hash
+    console.log('In main window, redirecting with token in hash...');
+    window.location.replace(u);
+  }
+})();
+</script><noscript><meta http-equiv="refresh" content="0;url=${targetUrl}"></noscript></head><body><p>Authenticating...</p></body></html>`
       
       console.log('→ Returning HTML redirect page')
       return new NextResponse(html, {
