@@ -1,35 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="manifest" href="/site.webmanifest" />
-  <title>Content Manager</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    }
-    #nc-root {
-      min-height: 100vh;
-    }
-  </style>
-  <script>
-    // Listen for token from popup (when Decap CMS uses proxy_url with popup)
-    // CRITICAL: Decap CMS requires BOTH access_token AND token_type=bearer
-    window.addEventListener('message', function(event) {
-      if (event.data && event.data.access_token) {
-        console.log('Token received from popup, setting in hash with access_token and token_type=bearer');
-        const tokenType = event.data.token_type || 'bearer';
-        // Set token in hash in Decap CMS expected format: #/access_token=XXX&token_type=bearer
-        window.location.hash = '#/access_token=' + encodeURIComponent(event.data.access_token) + '&token_type=' + encodeURIComponent(tokenType);
-      }
-    });
-  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin</title>
+  <!-- Load Decap CMS -->
+  <script src="https://unpkg.com/decap-cms@3.9.0/dist/decap-cms.js"></script>
 </head>
 <body>
   <div id="nc-root"></div>
-  <script src="https://unpkg.com/decap-cms@3.9.0/dist/decap-cms.js"></script>
+  <!-- CMS will mount automatically -->
 </body>
 </html>
