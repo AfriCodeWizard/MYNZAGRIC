@@ -82,23 +82,56 @@ async function handleAuth(request: NextRequest) {
       )
     }
 
-    // Return exactly what Decap CMS expects
-    return NextResponse.json(
-      {
-        token: tokenData.access_token,
-        provider: 'github',
-      },
-      {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache',
-          'Expires': '0',
-        },
+    // Return HTML that sends the exact postMessage Decap CMS expects
+    const token = tokenData.access_token
+    const escapedToken = token
+      .replace(/\\/g, '\\\\')
+      .replace(/'/g, "\\'")
+      .replace(/"/g, '\\"')
+      .replace(/\n/g, '\\n')
+      .replace(/\r/g, '\\r')
+      .replace(/\t/g, '\\t')
+    
+    const html = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Authenticating...</title>
+</head>
+<body>
+  <script>
+    (function() {
+      var token = '${escapedToken}';
+      var origin = window.location.origin;
+      
+      if (window.opener && !window.opener.closed) {
+        window.opener.postMessage(
+          {
+            type: "authorization:github",
+            token: token
+          },
+          origin
+        );
+        window.close();
+      } else {
+        // Fallback if opener is not available
+        window.location.href = origin + '/admin';
       }
-    )
+    })();
+  </script>
+  <p>Authenticating...</p>
+</body>
+</html>`
+
+    return new NextResponse(html, {
+      status: 200,
+      headers: {
+        'Content-Type': 'text/html; charset=utf-8',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+      },
+    })
   } catch (error) {
     return NextResponse.json(
       { error: 'Authentication failed', details: error instanceof Error ? error.message : 'Unknown error' },
