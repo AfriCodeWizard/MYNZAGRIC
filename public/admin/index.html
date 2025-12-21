@@ -5,6 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Content Manager</title>
   <script>
+    // Monitor hash changes to detect if Decap CMS clears the token
+    window.addEventListener('hashchange', function() {
+      console.log('=== Hash changed ===');
+      console.log('New hash:', window.location.hash);
+      if (!window.location.hash.includes('access_token')) {
+        console.log('⚠️ Hash changed and token is missing!');
+        // Try to restore from sessionStorage
+        const storedToken = sessionStorage.getItem('decap_oauth_token');
+        const storedTokenType = sessionStorage.getItem('decap_oauth_token_type');
+        if (storedToken) {
+          console.log('→ Attempting to restore token from sessionStorage...');
+          const hash = '#/access_token=' + encodeURIComponent(storedToken) + '&token_type=' + encodeURIComponent(storedTokenType || 'bearer');
+          window.location.hash = hash;
+          console.log('✓ Token restored');
+        }
+      }
+    });
+    
     // Listen for token from popup (when OAuth completes)
     window.addEventListener('message', function(event) {
       console.log('=== Message received ===');
@@ -32,22 +50,63 @@
         console.log('✓ Token set in hash:', hash);
         console.log('✓ Reloading page with token in hash so Decap CMS reads it on initialization...');
         
-        // Reload the page with the hash - this ensures Decap CMS reads the token on initialization
-        // Use replace to avoid adding to history
-        const newUrl = window.location.origin + window.location.pathname + hash;
-        window.location.replace(newUrl);
+        // Store token in sessionStorage as backup before reload
+        sessionStorage.setItem('decap_oauth_token', token);
+        sessionStorage.setItem('decap_oauth_token_type', tokenType);
+        console.log('✓ Token stored in sessionStorage as backup');
+        
+        // Set hash first
+        window.location.hash = hash;
+        
+        // Force a full page reload to ensure Decap CMS reads the hash on initialization
+        // Use reload() after setting hash, or navigate to full URL
+        const currentUrl = window.location.href;
+        const baseUrl = window.location.origin + window.location.pathname;
+        const newUrl = baseUrl + hash;
+        
+        console.log('→ Current URL:', currentUrl);
+        console.log('→ New URL:', newUrl);
+        
+        // If URL is different, navigate. Otherwise force reload
+        if (currentUrl !== newUrl) {
+          window.location.href = newUrl;
+        } else {
+          // Force reload with hash
+          window.location.reload();
+        }
       } else {
         console.log('⚠️ Message received but no access_token in data');
       }
     });
     
-    // Log current URL info before Decap CMS loads
+    // Check for token in hash or sessionStorage on page load
     console.log('=== Current Page Info ===');
     console.log('Full URL:', window.location.href);
     console.log('Origin:', window.location.origin);
     console.log('Pathname:', window.location.pathname);
     console.log('Hash:', window.location.hash);
     console.log('Search:', window.location.search);
+    
+    // If no token in hash but we have one in sessionStorage, restore it
+    if (!window.location.hash.includes('access_token')) {
+      const storedToken = sessionStorage.getItem('decap_oauth_token');
+      const storedTokenType = sessionStorage.getItem('decap_oauth_token_type');
+      if (storedToken) {
+        console.log('⚠️ No token in hash, but found in sessionStorage');
+        console.log('→ Restoring token from sessionStorage...');
+        const hash = '#/access_token=' + encodeURIComponent(storedToken) + '&token_type=' + encodeURIComponent(storedTokenType || 'bearer');
+        window.location.hash = hash;
+        console.log('✓ Token restored in hash:', hash);
+        // Clear sessionStorage after restoring
+        sessionStorage.removeItem('decap_oauth_token');
+        sessionStorage.removeItem('decap_oauth_token_type');
+      }
+    } else {
+      console.log('✓ Token found in hash');
+      // Clear sessionStorage if we have token in hash
+      sessionStorage.removeItem('decap_oauth_token');
+      sessionStorage.removeItem('decap_oauth_token_type');
+    }
     
     // Intercept fetch/XHR to see what Decap CMS is sending
     const originalFetch = window.fetch;
@@ -227,7 +286,37 @@
 </head>
 <body>
   <div id="nc-root"></div>
-  <!-- Load Decap CMS after DOM is ready -->
-  <script src="https://unpkg.com/decap-cms@3.9.0/dist/decap-cms.js"></script>
+  <!-- Load Decap CMS after ensuring hash is set -->
+  <script>
+    // Wait a moment to ensure hash is set before loading Decap CMS
+    setTimeout(function() {
+      console.log('=== Loading Decap CMS ===');
+      console.log('Current hash:', window.location.hash);
+      
+      // Verify hash is still present
+      if (window.location.hash.includes('access_token')) {
+        console.log('✓ Token confirmed in hash before Decap CMS load');
+      } else {
+        console.log('⚠️ No token in hash - Decap CMS will show login page');
+      }
+      
+      // Load Decap CMS
+      const script = document.createElement('script');
+      script.src = 'https://unpkg.com/decap-cms@3.9.0/dist/decap-cms.js';
+      script.onload = function() {
+        console.log('✓ Decap CMS loaded');
+        // Check hash again after load
+        setTimeout(function() {
+          console.log('Hash after Decap CMS load:', window.location.hash);
+          if (window.location.hash.includes('access_token')) {
+            console.log('✓ Token still in hash - Decap CMS should authenticate');
+          } else {
+            console.log('⚠️ Token missing from hash - Decap CMS may not authenticate');
+          }
+        }, 1000);
+      };
+      document.body.appendChild(script);
+    }, 100);
+  </script>
 </body>
 </html>
