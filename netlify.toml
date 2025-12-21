@@ -1,0 +1,13 @@
+# Netlify configuration for Identity/Git Gateway only
+# This site is hosted on Vercel, but uses Netlify for Identity/Git Gateway services
+
+[build]
+  # Minimal build - just for Identity/Git Gateway, not for hosting
+  publish = "public/admin"
+  command = "echo 'Identity/Git Gateway only - site hosted on Vercel'"
+
+# Disable Next.js plugin - we don't need it for Identity/Git Gateway
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+  enabled = false
+

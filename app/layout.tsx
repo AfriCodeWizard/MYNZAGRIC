@@ -2,6 +2,7 @@ import type React from "react"
 import type { Metadata, Viewport } from "next"
 import { Geist, Geist_Mono, Acme, Satisfy } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
+import Script from "next/script"
 import CartProviderWrapper from "@/components/cart-provider-wrapper"
 import "./globals.css"
 
@@ -107,6 +108,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geist.variable} ${geistMono.variable} ${acme.variable} ${satisfy.variable}`}>
       <body className={`${geist.className} antialiased`} suppressHydrationWarning>
+        <Script src="https://identity.netlify.com/v1/netlify-identity-widget.js" strategy="afterInteractive" />
         <CartProviderWrapper>
           {children}
           <Analytics />

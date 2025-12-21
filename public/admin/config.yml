@@ -1,8 +1,6 @@
 backend:
-  name: github
-  repo: AfriCodeWizard/MYNZAGRIC
+  name: git-gateway
   branch: main
-  auth_endpoint: https://mynzagric.com/auth
 
 media_folder: public/blog-images # Media files will be stored in the repo under public/blog-images
 public_folder: /blog-images # The src attribute for uploaded media will begin with /blog-images
@@ -31,4 +29,3 @@ collections:
       - { label: "SEO Description", name: "seoDescription", widget: "text", required: false, hint: "Custom SEO description (optional)" }
       - { label: "SEO Keywords", name: "seoKeywords", widget: "list", required: false, hint: "SEO keywords" }
       - { label: "Body", name: "body", widget: "markdown", required: true, hint: "Main content of the blog post (Markdown supported)" }
-
