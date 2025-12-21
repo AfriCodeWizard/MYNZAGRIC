@@ -10,12 +10,49 @@
     console.log('Current URL:', window.location.href);
     console.log('Hash:', window.location.hash);
     
-    // Check for stored token on page load (from previous OAuth)
-    const storedToken = sessionStorage.getItem('decap_oauth_token');
-    const storedProvider = sessionStorage.getItem('decap_oauth_provider');
-    if (storedToken && !window.location.hash.includes('access_token')) {
-      console.log('→ Found stored token, setting in hash...');
-      window.location.hash = '#/access_token=' + encodeURIComponent(storedToken) + '&token_type=bearer';
+    // Check for token in various places on page load
+    let tokenToUse = null;
+    let providerToUse = 'github';
+    
+    // Check 1: URL hash
+    if (window.location.hash.includes('access_token')) {
+      try {
+        const hashParams = new URLSearchParams(window.location.hash.substring(2));
+        tokenToUse = hashParams.get('access_token');
+        providerToUse = hashParams.get('provider') || 'github';
+        console.log('→ Token found in URL hash');
+      } catch(e) {}
+    }
+    
+    // Check 2: window.netlifyAuth (from popup)
+    if (!tokenToUse && window.netlifyAuth && window.netlifyAuth.token) {
+      tokenToUse = window.netlifyAuth.token;
+      providerToUse = window.netlifyAuth.provider || 'github';
+      console.log('→ Token found in window.netlifyAuth');
+    }
+    
+    // Check 3: window.decapAuthToken (from popup)
+    if (!tokenToUse && window.decapAuthToken) {
+      tokenToUse = window.decapAuthToken;
+      providerToUse = window.decapAuthProvider || 'github';
+      console.log('→ Token found in window.decapAuthToken');
+    }
+    
+    // Check 4: sessionStorage
+    if (!tokenToUse) {
+      const storedToken = sessionStorage.getItem('decap_oauth_token');
+      const storedProvider = sessionStorage.getItem('decap_oauth_provider');
+      if (storedToken) {
+        tokenToUse = storedToken;
+        providerToUse = storedProvider || 'github';
+        console.log('→ Token found in sessionStorage');
+      }
+    }
+    
+    // If we found a token and it's not in hash, set it
+    if (tokenToUse && !window.location.hash.includes('access_token')) {
+      console.log('→ Setting token in hash...');
+      window.location.hash = '#/access_token=' + encodeURIComponent(tokenToUse) + '&token_type=bearer';
       // Clear stored token
       sessionStorage.removeItem('decap_oauth_token');
       sessionStorage.removeItem('decap_oauth_provider');
@@ -119,76 +156,149 @@
             console.log('→ Extracted token from hash, length:', token.length);
             console.log('→ Waiting for Decap CMS to initialize...');
             
-            // Wait for Decap CMS to fully initialize
+            // Wait for Decap CMS to fully initialize and try different access methods
             let checkInterval = setInterval(function() {
               if (window.CMS) {
                 try {
-                  // Try to access the backend
-                  const backend = window.CMS.getBackend();
+                  // Try multiple ways to access the backend
+                  let backend = null;
+                  
+                  // Method 1: window.CMS.getBackend()
+                  try {
+                    backend = window.CMS.getBackend && window.CMS.getBackend();
+                  } catch(e) {}
+                  
+                  // Method 2: window.CMS.backend
+                  if (!backend) {
+                    try {
+                      backend = window.CMS.backend;
+                    } catch(e) {}
+                  }
+                  
+                  // Method 3: Access through registry
+                  if (!backend && window.CMS.getRegistry) {
+                    try {
+                      const registry = window.CMS.getRegistry();
+                      backend = registry.get('backend');
+                    } catch(e) {}
+                  }
+                  
+                  // Method 4: Access through CMS instance
+                  if (!backend && window.CMS.init) {
+                    try {
+                      // Try to get backend from initialized CMS
+                      const cmsInstance = window.CMS;
+                      if (cmsInstance.backend) {
+                        backend = cmsInstance.backend;
+                      }
+                    } catch(e) {}
+                  }
+                  
                   if (backend) {
                     console.log('✓ Decap CMS backend found');
                     clearInterval(checkInterval);
                     
                     // Try to manually authenticate
                     console.log('→ Attempting to authenticate with token from hash...');
+                    console.log('→ Backend type:', typeof backend);
+                    console.log('→ Backend keys:', backend ? Object.keys(backend) : 'none');
                     
-                    // Method 1: Try to set token in backend
-                    if (backend.implementation && backend.implementation.authenticate) {
-                      backend.implementation.authenticate({
+                    // Try different authentication methods
+                    let authAttempted = false;
+                    
+                    // Method 1: backend.authenticate()
+                    if (backend.authenticate && typeof backend.authenticate === 'function') {
+                      console.log('→ Trying backend.authenticate()...');
+                      authAttempted = true;
+                      backend.authenticate({
                         token: token,
-                        token_type: tokenType || 'bearer'
+                        token_type: tokenType || 'bearer',
+                        provider: 'github'
                       }).then(function() {
-                        console.log('✓ Authentication successful via backend.implementation.authenticate()');
-                        window.location.reload();
-                      }).catch(function(err) {
-                        console.log('✗ Method 1 failed:', err);
-                        // Try method 2
-                        tryMethod2();
-                      });
-                    } else {
-                      tryMethod2();
-                    }
-                    
-                    function tryMethod2() {
-                      // Method 2: Try to access the auth module directly
-                      if (window.CMS && window.CMS.auth) {
-                        console.log('→ Trying window.CMS.auth...');
-                        window.CMS.auth.authenticate({
-                          token: token,
-                          provider: 'github'
-                        });
+                        console.log('✓ Authentication successful via backend.authenticate()');
                         setTimeout(function() {
                           window.location.reload();
-                        }, 1000);
+                        }, 500);
+                      }).catch(function(err) {
+                        console.log('✗ backend.authenticate() failed:', err);
+                        tryAlternativeAuth();
+                      });
+                    } else {
+                      tryAlternativeAuth();
+                    }
+                    
+                    function tryAlternativeAuth() {
+                      // Method 2: backend.implementation
+                      if (backend.implementation) {
+                        console.log('→ Trying backend.implementation...');
+                        if (backend.implementation.authenticate) {
+                          backend.implementation.authenticate({
+                            token: token,
+                            token_type: tokenType || 'bearer'
+                          }).then(function() {
+                            console.log('✓ Authentication successful via backend.implementation.authenticate()');
+                            setTimeout(function() {
+                              window.location.reload();
+                            }, 500);
+                          }).catch(function(err) {
+                            console.log('✗ backend.implementation.authenticate() failed:', err);
+                            trySetToken();
+                          });
+                        } else {
+                          trySetToken();
+                        }
                       } else {
-                        // Method 3: Trigger a hashchange event to make Decap CMS re-read the hash
-                        console.log('→ Triggering hashchange event...');
+                        trySetToken();
+                      }
+                    }
+                    
+                    function trySetToken() {
+                      // Method 3: Set token directly
+                      console.log('→ Trying to set token directly in backend...');
+                      try {
+                        if (backend.tokenPromise) {
+                          backend.tokenPromise = Promise.resolve(token);
+                        }
+                        if (backend.implementation) {
+                          backend.implementation.token = token;
+                        }
+                        if (backend.token) {
+                          backend.token = token;
+                        }
+                        console.log('→ Token set, reloading...');
+                        setTimeout(function() {
+                          window.location.reload();
+                        }, 500);
+                      } catch(e) {
+                        console.log('✗ Could not set token directly:', e);
+                        // Last resort: trigger hashchange
+                        console.log('→ Last resort: Triggering hashchange event...');
                         window.dispatchEvent(new HashChangeEvent('hashchange', {
                           oldURL: window.location.href,
                           newURL: window.location.href
                         }));
-                        setTimeout(function() {
-                          if (document.querySelector('button[class*="login"]')) {
-                            console.log('⚠️ Still showing login - token may not be in correct format');
-                            console.log('→ Current hash format:', hash);
-                            console.log('→ Decap CMS with auth_endpoint may require token from endpoint, not hash');
-                          }
-                        }, 2000);
                       }
                     }
                   } else {
-                    console.log('→ Backend not available yet, waiting...');
+                    // Backend not found - log what we can access
+                    if (window.CMS) {
+                      console.log('→ Backend not available yet, CMS object keys:', Object.keys(window.CMS));
+                    }
                   }
                 } catch(e) {
                   console.log('→ Error accessing backend:', e.message);
+                  console.log('→ Error stack:', e.stack);
                 }
               }
-            }, 500);
+            }, 1000);
             
-            // Stop checking after 10 seconds
+            // Stop checking after 15 seconds
             setTimeout(function() {
               clearInterval(checkInterval);
-            }, 10000);
+              console.log('⚠️ Stopped checking for backend after 15 seconds');
+              console.log('→ Token is in hash but Decap CMS may not be reading it');
+              console.log('→ With auth_endpoint, Decap CMS expects token from endpoint response, not hash');
+            }, 15000);
           }
         } catch(e) {
           console.error('Error parsing hash:', e);

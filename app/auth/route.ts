@@ -140,13 +140,27 @@ async function handleAuth(request: NextRequest) {
         .replace(/\r/g, '\\r')
         .replace(/\t/g, '\\t')
       
-      const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Authenticating...</title><script>
+      const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Authenticating...</title>
+<script type="application/json" id="netlify-cms-auth">
+{"token":"${escapedToken}","provider":"${provider}"}
+</script>
+<script>
 (function(){
   var token = '${escapedToken}';
-  var provider = 'github';
+  var provider = '${provider}';
   
   console.log('OAuth callback page loaded');
   console.log('Token length:', token.length);
+  
+  // Make token available in multiple ways for Decap CMS to read
+  window.netlifyAuth = {
+    token: token,
+    provider: provider
+  };
+  
+  // Also set in window for direct access
+  window.decapAuthToken = token;
+  window.decapAuthProvider = provider;
   
   // If we're in a popup (opened by Decap CMS), send token to parent
   if (window.opener && !window.opener.closed) {
@@ -165,24 +179,30 @@ async function handleAuth(request: NextRequest) {
         provider: provider
       }, '*');
       
+      // Also try setting it in parent's window object (if same origin)
+      try {
+        window.opener.netlifyAuth = {
+          token: token,
+          provider: provider
+        };
+        window.opener.decapAuthToken = token;
+        window.opener.decapAuthProvider = provider;
+      } catch(e) {
+        console.log('Could not set token in parent window (CORS):', e.message);
+      }
+      
       console.log('Token sent, closing popup...');
       setTimeout(function() {
         window.close();
-      }, 100);
+      }, 500);
     } catch(e) {
       console.error('Error sending token:', e);
-      // Fallback: try to redirect parent (may not work due to CORS)
-      try {
-        window.opener.location.href = window.opener.location.href;
-      } catch(e2) {
-        console.error('Could not redirect parent:', e2);
-      }
       window.close();
     }
   } else {
-    // Not in popup - this shouldn't happen with auth_endpoint
-    console.log('Not in popup - redirecting to admin page');
-    window.location.href = '/admin';
+    // Not in popup - redirect to admin with token in hash
+    console.log('Not in popup - redirecting to admin page with token');
+    window.location.href = '/admin#/access_token=' + encodeURIComponent(token) + '&token_type=bearer';
   }
 })();
 </script></head><body><p>Authenticating... Please wait.</p></body></html>`
