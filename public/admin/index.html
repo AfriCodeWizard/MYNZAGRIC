@@ -37,7 +37,7 @@
       }
       
       if (event.data && event.data.access_token) {
-        console.log('✓ Token received from popup!');
+        console.log('✓ Token received from popup via postMessage (fallback)!');
         console.log('Token length:', event.data.access_token.length);
         console.log('Token type:', event.data.token_type);
         
@@ -48,32 +48,12 @@
         const hash = '#/access_token=' + encodeURIComponent(token) + '&token_type=' + encodeURIComponent(tokenType);
         
         console.log('✓ Token set in hash:', hash);
-        console.log('✓ Reloading page with token in hash so Decap CMS reads it on initialization...');
+        console.log('✓ Navigating to URL with token in hash...');
         
-        // Store token in sessionStorage as backup before reload
-        sessionStorage.setItem('decap_oauth_token', token);
-        sessionStorage.setItem('decap_oauth_token_type', tokenType);
-        console.log('✓ Token stored in sessionStorage as backup');
-        
-        // Set hash first
-        window.location.hash = hash;
-        
-        // Force a full page reload to ensure Decap CMS reads the hash on initialization
-        // Use reload() after setting hash, or navigate to full URL
-        const currentUrl = window.location.href;
+        // Navigate to the admin page with token in hash
         const baseUrl = window.location.origin + window.location.pathname;
         const newUrl = baseUrl + hash;
-        
-        console.log('→ Current URL:', currentUrl);
-        console.log('→ New URL:', newUrl);
-        
-        // If URL is different, navigate. Otherwise force reload
-        if (currentUrl !== newUrl) {
-          window.location.href = newUrl;
-        } else {
-          // Force reload with hash
-          window.location.reload();
-        }
+        window.location.href = newUrl;
       } else {
         console.log('⚠️ Message received but no access_token in data');
       }
@@ -310,6 +290,45 @@
           console.log('Hash after Decap CMS load:', window.location.hash);
           if (window.location.hash.includes('access_token')) {
             console.log('✓ Token still in hash - Decap CMS should authenticate');
+            
+            // Try to manually trigger authentication if Decap CMS hasn't done it
+            setTimeout(function() {
+              // Check if Decap CMS is still showing login page
+              const loginButton = document.querySelector('button[class*="login"], a[class*="login"]');
+              if (loginButton) {
+                console.log('⚠️ Login button still visible - Decap CMS may not have read the token');
+                console.log('→ Attempting to trigger hashchange event to force Decap CMS to re-check...');
+                
+                // Trigger hashchange event
+                const hashChangeEvent = new HashChangeEvent('hashchange', {
+                  oldURL: window.location.href,
+                  newURL: window.location.href
+                });
+                window.dispatchEvent(hashChangeEvent);
+                
+                // Also try to access Decap CMS API if available
+                if (window.CMS && window.CMS.getBackend) {
+                  try {
+                    const backend = window.CMS.getBackend();
+                    console.log('Backend:', backend);
+                    // Try to manually authenticate
+                    if (backend && backend.authenticate) {
+                      console.log('→ Attempting manual authentication...');
+                      // Parse token from hash
+                      const hashParams = new URLSearchParams(window.location.hash.substring(2));
+                      const token = hashParams.get('access_token');
+                      if (token) {
+                        console.log('Token found in hash, attempting to use it...');
+                      }
+                    }
+                  } catch(e) {
+                    console.log('Could not access backend:', e);
+                  }
+                }
+              } else {
+                console.log('✓ Login button not found - Decap CMS may have authenticated');
+              }
+            }, 2000);
           } else {
             console.log('⚠️ Token missing from hash - Decap CMS may not authenticate');
           }

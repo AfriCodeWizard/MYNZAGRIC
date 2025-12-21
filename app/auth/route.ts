@@ -121,17 +121,28 @@ async function handleAuth(request: NextRequest) {
   var u='${targetUrl}';
   
   // Check if we're in a popup (Decap CMS opens OAuth in popup)
-  if (window.opener) {
-    // We're in a popup - send token to parent window
-    console.log('In popup, sending token to parent...');
+  if (window.opener && !window.opener.closed) {
+    // We're in a popup - redirect parent window directly with token in hash
+    console.log('In popup, redirecting parent window with token in hash...');
     try {
-      window.opener.postMessage({ access_token: t, token_type: 'bearer', provider: 'github' }, '*');
-      window.close();
-    } catch(e) {
-      console.error('Error posting message:', e);
-      // Fallback: redirect parent
+      // Redirect parent window to admin page with token in hash
       window.opener.location.href = u;
-      window.close();
+      // Give it a moment to navigate, then close popup
+      setTimeout(function() {
+        window.close();
+      }, 100);
+    } catch(e) {
+      console.error('Error redirecting parent:', e);
+      // Fallback: try postMessage
+      try {
+        window.opener.postMessage({ access_token: t, token_type: 'bearer', provider: 'github' }, '*');
+        setTimeout(function() {
+          window.close();
+        }, 100);
+      } catch(e2) {
+        console.error('Error with postMessage fallback:', e2);
+        window.close();
+      }
     }
   } else {
     // We're in main window - redirect with token in hash
