@@ -32,6 +32,52 @@ async function handleAuth(request: NextRequest) {
   console.log('Method:', request.method)
   console.log('Code:', code ? 'present' : 'missing')
   console.log('State:', state)
+  console.log('Accept header:', request.headers.get('accept'))
+  console.log('Referer:', request.headers.get('referer'))
+  
+  // Check if this is a follow-up request from Decap CMS after popup closes
+  // Decap CMS might make an AJAX request to get the token after the popup redirects
+  const acceptHeader = request.headers.get('accept') || ''
+  const isFollowUpRequest = !code && acceptHeader.includes('application/json')
+  
+  // Check for stored token in cookie (from previous OAuth callback)
+  const storedTokenCookie = request.cookies.get('decap_oauth_token')
+  
+  if (isFollowUpRequest && storedTokenCookie) {
+    console.log('→ Follow-up request detected with stored token (Decap CMS checking for token)')
+    const token = storedTokenCookie.value
+    // Clear the cookie after reading
+    const response = NextResponse.json({
+      token: token,
+      provider: 'github',
+    }, {
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      },
+    })
+    // Clear the cookie
+    response.cookies.delete('decap_oauth_token')
+    return response
+  }
+  
+  if (isFollowUpRequest) {
+    console.log('→ Follow-up request detected but no stored token (Decap CMS checking for token)')
+    // Decap CMS is checking if authentication completed
+    // Return empty response - token should have been sent via postMessage from the popup
+    return NextResponse.json({
+      error: 'No authorization code provided. Please complete OAuth flow.',
+    }, {
+      status: 400,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/json',
+      },
+    })
+  }
   
   // If no code, redirect to GitHub OAuth (initial auth request)
   if (!code) {
@@ -102,6 +148,18 @@ async function handleAuth(request: NextRequest) {
     const token = tokenData.access_token
     console.log('✓ Token received from GitHub, length:', token.length)
     
+    // Helper function to set cookie on response
+    const setTokenCookie = (response: NextResponse) => {
+      response.cookies.set('decap_oauth_token', token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'lax',
+        maxAge: 300, // 5 minutes
+        path: '/',
+      })
+      return response
+    }
+    
     // Check if this is a browser redirect (from GitHub callback) or AJAX request
     const acceptHeader = request.headers.get('accept') || ''
     const isAjaxRequest = acceptHeader.includes('application/json') || 
@@ -110,6 +168,7 @@ async function handleAuth(request: NextRequest) {
     console.log('→ Request type detection:')
     console.log('  - Accept header:', acceptHeader)
     console.log('  - Is AJAX:', isAjaxRequest)
+    console.log('  - Token stored in cookie for follow-up requests')
     
     if (isAjaxRequest) {
       // AJAX request from Decap CMS - return JSON
@@ -119,7 +178,9 @@ async function handleAuth(request: NextRequest) {
         provider: 'github',
       }
       console.log('→ Response data:', JSON.stringify(responseData))
-      return NextResponse.json(responseData, {
+      
+      // Use the response with cookie
+      const jsonResponse = NextResponse.json(responseData, {
         headers: {
           'Cache-Control': 'no-cache, no-store, must-revalidate',
           'Pragma': 'no-cache',
@@ -130,6 +191,11 @@ async function handleAuth(request: NextRequest) {
           'Access-Control-Allow-Headers': 'Content-Type',
         },
       })
+      
+      // Set cookie on response
+      setTokenCookie(jsonResponse)
+      
+      return jsonResponse
     } else {
       // Browser redirect from GitHub - return HTML that posts message to opener
       // Decap CMS opens auth_endpoint in a popup, so we need to send token to parent
@@ -237,13 +303,19 @@ ${jsonResponse}
 })();
 </script></head><body><p>Authenticating... Please wait.</p></body></html>`
       
-      return new NextResponse(html, {
+      // Return HTML response with cookie set
+      const htmlResponse = new NextResponse(html, {
         status: 200,
         headers: {
           'Content-Type': 'text/html; charset=utf-8',
           'Cache-Control': 'no-cache, no-store, must-revalidate',
         },
       })
+      
+      // Set cookie for follow-up requests
+      setTokenCookie(htmlResponse)
+      
+      return htmlResponse
     }
   } catch (error) {
     console.error('OAuth error:', error)

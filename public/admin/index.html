@@ -156,24 +156,33 @@
             console.log('→ Extracted token from hash, length:', token.length);
             console.log('→ Waiting for Decap CMS to initialize...');
             
-            // Wait for Decap CMS to fully initialize and try different access methods
+            // Wait for Decap CMS backend to be fully initialized
+            // With auth_endpoint, backend might initialize after receiving token from endpoint
+            let checkCount = 0;
             let checkInterval = setInterval(function() {
+              checkCount++;
               if (window.CMS) {
                 try {
                   // Try multiple ways to access the backend
                   let backend = null;
+                  let backendReady = false;
                   
                   // Method 1: window.CMS.getBackend() - wait for it to be ready
                   try {
                     if (window.CMS.getBackend) {
                       backend = window.CMS.getBackend();
-                      if (!backend) {
-                        // Backend might not be initialized yet, try waiting
-                        console.log('→ getBackend() returned null/undefined - backend may not be initialized yet');
+                      if (backend && backend !== null && backend !== undefined) {
+                        backendReady = true;
+                        console.log('✓ Backend found via getBackend() on attempt', checkCount);
+                      } else if (checkCount % 10 === 0) {
+                        // Log every 10th attempt to avoid spam
+                        console.log('→ getBackend() still returning null/undefined (attempt', checkCount + ')');
                       }
                     }
                   } catch(e) {
-                    console.log('→ getBackend() error:', e.message);
+                    if (checkCount % 10 === 0) {
+                      console.log('→ getBackend() error:', e.message);
+                    }
                   }
                   
                   // Method 2: Try to get backend from registry
@@ -210,8 +219,8 @@
                     } catch(e) {}
                   }
                   
-                  if (backend) {
-                    console.log('✓ Decap CMS backend found');
+                  if (backend && backendReady) {
+                    console.log('✓ Decap CMS backend found and ready');
                     clearInterval(checkInterval);
                     
                     // Try to manually authenticate
@@ -226,19 +235,33 @@
                     if (backend.authenticate && typeof backend.authenticate === 'function') {
                       console.log('→ Trying backend.authenticate()...');
                       authAttempted = true;
-                      backend.authenticate({
-                        token: token,
-                        token_type: tokenType || 'bearer',
-                        provider: 'github'
-                      }).then(function() {
-                        console.log('✓ Authentication successful via backend.authenticate()');
-                        setTimeout(function() {
-                          window.location.reload();
-                        }, 500);
-                      }).catch(function(err) {
-                        console.log('✗ backend.authenticate() failed:', err);
+                      try {
+                        const authResult = backend.authenticate({
+                          token: token,
+                          token_type: tokenType || 'bearer',
+                          provider: 'github'
+                        });
+                        
+                        if (authResult && typeof authResult.then === 'function') {
+                          // It's a promise
+                          authResult.then(function() {
+                            console.log('✓ Authentication successful via backend.authenticate()');
+                            setTimeout(function() {
+                              window.location.reload();
+                            }, 500);
+                          }).catch(function(err) {
+                            console.log('✗ backend.authenticate() failed:', err);
+                            tryAlternativeAuth();
+                          });
+                        } else {
+                          // Not a promise, try alternative
+                          console.log('→ authenticate() did not return a promise');
+                          tryAlternativeAuth();
+                        }
+                      } catch(e) {
+                        console.log('✗ Error calling backend.authenticate():', e);
                         tryAlternativeAuth();
-                      });
+                      }
                     } else {
                       tryAlternativeAuth();
                     }
@@ -344,13 +367,34 @@
               }
             }, 1000);
             
-            // Stop checking after 15 seconds
+            // Also try to wait for backend to be registered/initialized
+            // Decap CMS might register the backend asynchronously
+            let backendCheckCount = 0;
+            const maxBackendChecks = 30; // Check for 30 seconds
+            
+            // Stop checking after max time (60 seconds to give backend time to initialize)
             setTimeout(function() {
               clearInterval(checkInterval);
-              console.log('⚠️ Stopped checking for backend after 15 seconds');
-              console.log('→ Token is in hash but Decap CMS may not be reading it');
-              console.log('→ With auth_endpoint, Decap CMS expects token from endpoint response, not hash');
-            }, 15000);
+              console.log('⚠️ Stopped checking for backend after 60 seconds');
+              console.log('→ Total attempts:', checkCount);
+              console.log('→ Token is in hash:', window.location.hash);
+              console.log('→ Decap CMS backend may not be accessible via getBackend()');
+              console.log('→ With auth_endpoint, Decap CMS expects token from endpoint response');
+              console.log('→ The token is available in hash, but Decap CMS may need it from the endpoint');
+              
+              // Last resort: try to trigger a hashchange or reload to see if Decap CMS picks it up
+              console.log('→ Attempting final authentication trigger...');
+              window.dispatchEvent(new HashChangeEvent('hashchange', {
+                oldURL: window.location.href,
+                newURL: window.location.href
+              }));
+              
+              // Also try to manually trigger Decap CMS initialization if possible
+              if (window.CMS && window.CMS.init) {
+                console.log('→ Attempting to re-initialize Decap CMS with token in hash...');
+                // This might not work, but worth trying
+              }
+            }, 60000);
           }
         } catch(e) {
           console.error('Error parsing hash:', e);
