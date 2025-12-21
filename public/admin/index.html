@@ -101,8 +101,103 @@
       }
     });
     
-    // Monitor when Decap CMS loads
+    // Monitor when Decap CMS loads and check for token in hash
     window.addEventListener('load', function() {
+      // Check if token is in hash
+      const hash = window.location.hash;
+      if (hash.includes('access_token')) {
+        console.log('✓ Token found in URL hash on page load');
+        console.log('Hash:', hash);
+        
+        // Extract token from hash
+        try {
+          const hashParams = new URLSearchParams(hash.substring(2)); // Remove #/
+          const token = hashParams.get('access_token');
+          const tokenType = hashParams.get('token_type');
+          
+          if (token) {
+            console.log('→ Extracted token from hash, length:', token.length);
+            console.log('→ Waiting for Decap CMS to initialize...');
+            
+            // Wait for Decap CMS to fully initialize
+            let checkInterval = setInterval(function() {
+              if (window.CMS) {
+                try {
+                  // Try to access the backend
+                  const backend = window.CMS.getBackend();
+                  if (backend) {
+                    console.log('✓ Decap CMS backend found');
+                    clearInterval(checkInterval);
+                    
+                    // Try to manually authenticate
+                    console.log('→ Attempting to authenticate with token from hash...');
+                    
+                    // Method 1: Try to set token in backend
+                    if (backend.implementation && backend.implementation.authenticate) {
+                      backend.implementation.authenticate({
+                        token: token,
+                        token_type: tokenType || 'bearer'
+                      }).then(function() {
+                        console.log('✓ Authentication successful via backend.implementation.authenticate()');
+                        window.location.reload();
+                      }).catch(function(err) {
+                        console.log('✗ Method 1 failed:', err);
+                        // Try method 2
+                        tryMethod2();
+                      });
+                    } else {
+                      tryMethod2();
+                    }
+                    
+                    function tryMethod2() {
+                      // Method 2: Try to access the auth module directly
+                      if (window.CMS && window.CMS.auth) {
+                        console.log('→ Trying window.CMS.auth...');
+                        window.CMS.auth.authenticate({
+                          token: token,
+                          provider: 'github'
+                        });
+                        setTimeout(function() {
+                          window.location.reload();
+                        }, 1000);
+                      } else {
+                        // Method 3: Trigger a hashchange event to make Decap CMS re-read the hash
+                        console.log('→ Triggering hashchange event...');
+                        window.dispatchEvent(new HashChangeEvent('hashchange', {
+                          oldURL: window.location.href,
+                          newURL: window.location.href
+                        }));
+                        setTimeout(function() {
+                          if (document.querySelector('button[class*="login"]')) {
+                            console.log('⚠️ Still showing login - token may not be in correct format');
+                            console.log('→ Current hash format:', hash);
+                            console.log('→ Decap CMS with auth_endpoint may require token from endpoint, not hash');
+                          }
+                        }, 2000);
+                      }
+                    }
+                  } else {
+                    console.log('→ Backend not available yet, waiting...');
+                  }
+                } catch(e) {
+                  console.log('→ Error accessing backend:', e.message);
+                }
+              }
+            }, 500);
+            
+            // Stop checking after 10 seconds
+            setTimeout(function() {
+              clearInterval(checkInterval);
+            }, 10000);
+          }
+        } catch(e) {
+          console.error('Error parsing hash:', e);
+        }
+      } else {
+        console.log('→ No token in hash on page load');
+      }
+      
+      // Also check Decap CMS config
       setTimeout(function() {
         if (window.CMS) {
           console.log('✓ Decap CMS loaded successfully');
@@ -113,17 +208,19 @@
               console.log('Auth endpoint:', config.backend.auth_endpoint || 'not set');
               if (config.backend.auth_endpoint) {
                 console.log('✓ Using auth_endpoint - OAuth proxy mode');
+                console.log('⚠️ Note: With auth_endpoint, Decap CMS expects token from endpoint response, not hash');
               } else {
                 console.log('⚠️ No auth_endpoint - may use direct OAuth');
               }
             }
           } catch(e) {
-            console.log('Could not access Decap CMS config');
+            console.log('Could not access Decap CMS config:', e.message);
+            console.log('→ This may be normal - Decap CMS API may not be fully initialized yet');
           }
         } else {
           console.log('⚠️ Decap CMS not found');
         }
-      }, 1000);
+      }, 2000);
     });
     
     // Monitor authentication state changes
