@@ -197,9 +197,25 @@ async function handleAuth(request: NextRequest) {
       
       return jsonResponse
     } else {
-      // Browser redirect from GitHub - return HTML that posts message to opener
-      // Decap CMS opens auth_endpoint in a popup, so we need to send token to parent
-      console.log('→ Browser redirect detected - returning HTML with postMessage')
+      // Browser redirect from GitHub - return JSON that Decap CMS can read from popup
+      // Decap CMS with auth_endpoint reads the popup's response body as JSON
+      console.log('→ Browser redirect detected - returning JSON for Decap CMS to read')
+      
+      const jsonResponse = {
+        token: token,
+        provider: 'github',
+      }
+      
+      // Return JSON - Decap CMS reads this from the popup's response
+      const response = NextResponse.json(jsonResponse, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Access-Control-Allow-Origin': '*',
+        },
+      })
+      setTokenCookie(response)
+      return response
       const escapedToken = token
         .replace(/\\/g, '\\\\')
         .replace(/'/g, "\\'")
