@@ -10,6 +10,30 @@
     console.log('Current URL:', window.location.href);
     console.log('Hash:', window.location.hash);
     
+    // Listen for token from OAuth popup (when using auth_endpoint)
+    window.addEventListener('message', function(event) {
+      // Only accept messages from same origin
+      if (event.origin !== window.location.origin) {
+        return;
+      }
+      
+      console.log('=== Message received from popup ===');
+      console.log('Data:', event.data);
+      
+      // Check for token in message (from OAuth callback popup)
+      if (event.data && (event.data.token || event.data.type === 'authorization')) {
+        const token = event.data.token;
+        const provider = event.data.provider || 'github';
+        
+        console.log('✓ Token received from OAuth popup!');
+        console.log('Token length:', token ? token.length : 'missing');
+        console.log('Provider:', provider);
+        
+        // Decap CMS should handle this automatically, but log for debugging
+        console.log('→ Decap CMS should process this token automatically');
+      }
+    });
+    
     // Monitor when Decap CMS loads
     window.addEventListener('load', function() {
       setTimeout(function() {
