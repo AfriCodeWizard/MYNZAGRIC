@@ -100,26 +100,25 @@ async function handleAuth(request: NextRequest) {
 </head>
 <body>
   <script>
-    (function() {
-      var token = '${escapedToken}';
-      var origin = window.location.origin;
-      
-      if (window.opener && !window.opener.closed) {
-        window.opener.postMessage(
-          {
-            type: "authorization:github",
-            token: token
-          },
-          origin
-        );
-        window.close();
-      } else {
-        // Fallback if opener is not available
-        window.location.href = origin + '/admin';
+    (function () {
+      if (!window.opener) {
+        console.error("No opener window");
+        return;
       }
+
+      const token = "${escapedToken}";
+
+      window.opener.postMessage(
+        {
+          type: "authorization:github",
+          token: token,
+        },
+        window.location.origin
+      );
+
+      window.close();
     })();
   </script>
-  <p>Authenticating...</p>
 </body>
 </html>`
 

@@ -2,8 +2,6 @@ backend:
   name: github
   repo: AfriCodeWizard/MYNZAGRIC
   branch: main
-  base_url: https://mynzagric.com
-  auth_scope: repo
   auth_endpoint: https://mynzagric.com/auth
 
 media_folder: public/blog-images # Media files will be stored in the repo under public/blog-images
