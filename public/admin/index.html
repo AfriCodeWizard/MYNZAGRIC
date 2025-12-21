@@ -97,6 +97,60 @@
       }
     }, true);
     
+    // Monitor for popup windows (Decap CMS might open OAuth in popup)
+    let popupCheckInterval;
+    const checkForPopups = function() {
+      // This won't work due to same-origin policy, but we can log attempts
+      console.log('Checking for popup windows...');
+    };
+    
+    // Intercept window.open() to see if Decap CMS opens a popup
+    const originalWindowOpen = window.open;
+    window.open = function(url, target, features) {
+      console.log('=== window.open() called ===');
+      console.log('URL:', url);
+      console.log('Target:', target);
+      if (typeof url === 'string' && url.includes('github.com/login/oauth')) {
+        console.log('🔍🔍🔍 GitHub OAuth popup detected!');
+        try {
+          const urlObj = new URL(url);
+          const redirectUri = urlObj.searchParams.get('redirect_uri');
+          console.log('🔍 Redirect URI in popup:', redirectUri);
+          console.log('⚠️ ADD THIS EXACT URL TO GITHUB OAUTH APP CALLBACK URL!');
+        } catch(e) {
+          console.log('Could not parse URL:', e);
+        }
+      }
+      const popup = originalWindowOpen.call(this, url, target, features);
+      if (popup) {
+        console.log('Popup window opened, monitoring...');
+        // Try to monitor popup location (may fail due to CORS)
+        try {
+          const checkPopup = setInterval(function() {
+            try {
+              if (popup.closed) {
+                clearInterval(checkPopup);
+                console.log('Popup closed');
+                return;
+              }
+              if (popup.location) {
+                console.log('Popup location:', popup.location.href);
+                if (popup.location.href.includes('error')) {
+                  console.log('⚠️ Popup shows error - check the error message!');
+                }
+              }
+            } catch(e) {
+              // Cross-origin - can't access
+            }
+          }, 500);
+          setTimeout(function() { clearInterval(checkPopup); }, 30000);
+        } catch(e) {
+          console.log('Cannot monitor popup (cross-origin):', e.message);
+        }
+      }
+      return popup;
+    };
+    
     // Wait for Decap CMS to load and check its config
     setTimeout(function() {
       console.log('=== Decap CMS Config Check ===');
@@ -125,6 +179,12 @@
         console.log('  2. ' + baseUrl + '/admin/');
         console.log('  3. ' + baseUrl + '/admin/index.html');
         console.log('⚠️ Try adding ALL THREE to GitHub OAuth App callback URLs');
+        console.log('');
+        console.log('🔍 IMPORTANT: When you click "Login with GitHub", check:');
+        console.log('   1. Does it open a popup window?');
+        console.log('   2. What is the EXACT error message from GitHub?');
+        console.log('   3. The error message should show the URL GitHub received');
+        console.log('   4. Copy that exact URL and add it to GitHub OAuth App');
       }
     }, 3000);
   </script>
