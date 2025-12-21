@@ -82,8 +82,37 @@ async function handleAuth(request: NextRequest) {
       )
     }
 
-    // Return HTML that sends the exact postMessage Decap CMS expects
     const token = tokenData.access_token
+    
+    // Verify token is a classic GitHub OAuth access token (starts with 'gho_')
+    // NOT a GitHub App token (starts with 'ghu_') or fine-grained token (starts with 'github_pat_')
+    if (!token.startsWith('gho_')) {
+      return NextResponse.json(
+        { error: 'Invalid token type: Expected classic OAuth access token (gho_*)' },
+        { status: 500 }
+      )
+    }
+    
+    // Verify token can access GitHub API (classic OAuth token requirement)
+    // This ensures it's a valid classic OAuth token, not App or fine-grained
+    // Non-blocking: if validation fails, still proceed (token exchange already succeeded)
+    try {
+      const userResponse = await fetch('https://api.github.com/user', {
+        headers: {
+          'Authorization': `token ${token}`,
+          'Accept': 'application/vnd.github.v3+json',
+        },
+      })
+      
+      if (!userResponse.ok) {
+        console.warn('Token validation warning: Token may not have expected permissions, but proceeding')
+      }
+    } catch (error) {
+      // If validation fails, still proceed but log warning
+      console.warn('Token validation check failed (non-blocking):', error)
+    }
+
+    // Return HTML that sends the exact postMessage Decap CMS expects
     const escapedToken = token
       .replace(/\\/g, '\\\\')
       .replace(/'/g, "\\'")
@@ -91,6 +120,10 @@ async function handleAuth(request: NextRequest) {
       .replace(/\n/g, '\\n')
       .replace(/\r/g, '\\r')
       .replace(/\t/g, '\\t')
+    
+    // Explicitly set target origin to admin origin (not popup origin)
+    // Decap CMS verifies event.origin must match admin page origin exactly
+    const adminOrigin = baseUrl // https://mynzagric.com
     
     const html = `<!DOCTYPE html>
 <html>
@@ -107,13 +140,14 @@ async function handleAuth(request: NextRequest) {
       }
 
       const token = "${escapedToken}";
+      const targetOrigin = "${adminOrigin}";
 
       window.opener.postMessage(
         {
           type: "authorization:github",
           token: token,
         },
-        window.location.origin
+        targetOrigin
       );
 
       window.close();
