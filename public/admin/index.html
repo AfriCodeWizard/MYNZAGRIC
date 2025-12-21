@@ -10,6 +10,17 @@
     console.log('Current URL:', window.location.href);
     console.log('Hash:', window.location.hash);
     
+    // Check for stored token on page load (from previous OAuth)
+    const storedToken = sessionStorage.getItem('decap_oauth_token');
+    const storedProvider = sessionStorage.getItem('decap_oauth_provider');
+    if (storedToken && !window.location.hash.includes('access_token')) {
+      console.log('→ Found stored token, setting in hash...');
+      window.location.hash = '#/access_token=' + encodeURIComponent(storedToken) + '&token_type=bearer';
+      // Clear stored token
+      sessionStorage.removeItem('decap_oauth_token');
+      sessionStorage.removeItem('decap_oauth_provider');
+    }
+    
     // Listen for token from OAuth popup (when using auth_endpoint)
     window.addEventListener('message', function(event) {
       // Only accept messages from same origin
@@ -29,8 +40,64 @@
         console.log('Token length:', token ? token.length : 'missing');
         console.log('Provider:', provider);
         
-        // Decap CMS should handle this automatically, but log for debugging
-        console.log('→ Decap CMS should process this token automatically');
+        // Manually authenticate Decap CMS with the token
+        if (token && window.CMS) {
+          console.log('→ Attempting to authenticate Decap CMS with received token...');
+          try {
+            // Try to get the backend and authenticate
+            const backend = window.CMS.getBackend();
+            if (backend && backend.authenticate) {
+              console.log('→ Calling backend.authenticate()...');
+              backend.authenticate({
+                token: token,
+                provider: provider
+              }).then(function() {
+                console.log('✓ Authentication successful!');
+                // Reload to show dashboard
+                window.location.reload();
+              }).catch(function(error) {
+                console.error('✗ Authentication failed:', error);
+                // Try alternative method - set token in backend state
+                if (backend.tokenPromise) {
+                  backend.tokenPromise = Promise.resolve(token);
+                  console.log('→ Set tokenPromise, reloading...');
+                  window.location.reload();
+                }
+              });
+            } else {
+              console.log('→ Backend.authenticate not available, trying alternative...');
+              // Alternative: Set token directly in backend
+              if (backend && backend.implementation) {
+                backend.implementation.token = token;
+                console.log('→ Set token in backend implementation, reloading...');
+                window.location.reload();
+              } else {
+                // Last resort: Set token in URL hash and reload
+                console.log('→ Setting token in URL hash and reloading...');
+                window.location.hash = '#/access_token=' + encodeURIComponent(token) + '&token_type=bearer';
+                setTimeout(function() {
+                  window.location.reload();
+                }, 100);
+              }
+            }
+          } catch(e) {
+            console.error('✗ Error authenticating:', e);
+            // Fallback: Set token in hash and reload
+            console.log('→ Fallback: Setting token in hash and reloading...');
+            window.location.hash = '#/access_token=' + encodeURIComponent(token) + '&token_type=bearer';
+            setTimeout(function() {
+              window.location.reload();
+            }, 100);
+          }
+        } else if (token) {
+          // Decap CMS not loaded yet, store token and set in hash
+          console.log('→ Decap CMS not loaded yet, storing token and setting in hash...');
+          sessionStorage.setItem('decap_oauth_token', token);
+          sessionStorage.setItem('decap_oauth_provider', provider);
+          // Set token in hash immediately - Decap CMS will read it on load
+          window.location.hash = '#/access_token=' + encodeURIComponent(token) + '&token_type=bearer';
+          console.log('✓ Token set in hash, Decap CMS should read it on initialization');
+        }
       }
     });
     
