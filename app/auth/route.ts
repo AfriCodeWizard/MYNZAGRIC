@@ -114,10 +114,12 @@ async function handleAuth(request: NextRequest) {
     if (isAjaxRequest) {
       // AJAX request from Decap CMS - return JSON
       console.log('→ Returning JSON token for Decap CMS (AJAX)')
-      return NextResponse.json({
+      const responseData = {
         token: token,
         provider: 'github',
-      }, {
+      }
+      console.log('→ Response data:', JSON.stringify(responseData))
+      return NextResponse.json(responseData, {
         headers: {
           'Cache-Control': 'no-cache, no-store, must-revalidate',
           'Pragma': 'no-cache',
@@ -140,14 +142,17 @@ async function handleAuth(request: NextRequest) {
         .replace(/\r/g, '\\r')
         .replace(/\t/g, '\\t')
       
+      const provider = 'github'
+      const escapedProvider = provider.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"')
+      
       const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Authenticating...</title>
 <script type="application/json" id="netlify-cms-auth">
-{"token":"${escapedToken}","provider":"${provider}"}
+{"token":"${escapedToken}","provider":"${escapedProvider}"}
 </script>
 <script>
 (function(){
   var token = '${escapedToken}';
-  var provider = '${provider}';
+  var provider = '${escapedProvider}';
   
   console.log('OAuth callback page loaded');
   console.log('Token length:', token.length);
