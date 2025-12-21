@@ -40,6 +40,67 @@
       }
       return originalOpen.apply(this, [method, url, ...rest]);
     };
+    
+    // Intercept window.location changes (Decap CMS uses browser redirect for OAuth)
+    let locationHrefDescriptor = Object.getOwnPropertyDescriptor(window, 'location') || 
+                                 Object.getOwnPropertyDescriptor(Object.getPrototypeOf(window), 'location');
+    
+    Object.defineProperty(window, 'location', {
+      get: function() {
+        return locationHrefDescriptor.get.call(window);
+      },
+      set: function(value) {
+        console.log('=== Window.location change detected ===');
+        console.log('New location:', value);
+        if (typeof value === 'string' && value.includes('github.com/login/oauth')) {
+          console.log('🔍🔍🔍 GitHub OAuth redirect detected!');
+          try {
+            const url = new URL(value);
+            const redirectUri = url.searchParams.get('redirect_uri');
+            console.log('🔍 Redirect URI that Decap CMS is sending:', redirectUri);
+            console.log('⚠️ ADD THIS EXACT URL TO GITHUB OAUTH APP CALLBACK URL!');
+          } catch(e) {
+            console.log('Could not parse URL:', e);
+          }
+        }
+        return locationHrefDescriptor.set.call(window, value);
+      },
+      configurable: true
+    });
+    
+    // Also intercept window.location.href directly
+    const originalLocationReplace = window.location.replace;
+    window.location.replace = function(url) {
+      console.log('=== location.replace() called ===');
+      console.log('URL:', url);
+      if (typeof url === 'string' && url.includes('github.com/login/oauth')) {
+        console.log('🔍🔍🔍 GitHub OAuth redirect via replace()!');
+        try {
+          const urlObj = new URL(url);
+          const redirectUri = urlObj.searchParams.get('redirect_uri');
+          console.log('🔍 Redirect URI:', redirectUri);
+          console.log('⚠️ ADD THIS EXACT URL TO GITHUB OAUTH APP CALLBACK URL!');
+        } catch(e) {
+          console.log('Could not parse URL:', e);
+        }
+      }
+      return originalLocationReplace.call(this, url);
+    };
+    
+    // Wait for Decap CMS to load and check its config
+    setTimeout(function() {
+      if (window.CMS) {
+        console.log('=== Decap CMS Config Check ===');
+        const config = window.CMS.getConfig();
+        if (config && config.backend) {
+          console.log('Backend config:', config.backend);
+          console.log('Base URL:', config.backend.base_url);
+          console.log('Expected redirect_uri would be:', config.backend.base_url + '/admin');
+          console.log('Or possibly:', config.backend.base_url + '/admin/');
+          console.log('Or possibly:', config.backend.base_url + '/admin/index.html');
+        }
+      }
+    }, 2000);
   </script>
 </head>
 <body>
