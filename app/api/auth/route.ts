@@ -114,8 +114,8 @@ async function handleAuth(request: NextRequest) {
         .replace(/\r/g, '\\r')
         .replace(/\t/g, '\\t')
       
-      // CRITICAL: Decap CMS expects #/access_token= (NOT #/token=)
-      const targetUrl = `${baseUrl}/admin#/access_token=${encodeURIComponent(token)}`
+      // CRITICAL: Decap CMS requires BOTH access_token AND token_type=bearer
+      const targetUrl = `${baseUrl}/admin#/access_token=${encodeURIComponent(token)}&token_type=bearer`
       console.log('→ Target URL:', targetUrl)
       
       const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Authenticating...</title><script>
@@ -128,7 +128,7 @@ async function handleAuth(request: NextRequest) {
     // We're in a popup - send token to parent window
     console.log('In popup, sending token to parent...');
     try {
-      window.opener.postMessage({ access_token: t, provider: 'github' }, '*');
+      window.opener.postMessage({ access_token: t, token_type: 'bearer', provider: 'github' }, '*');
       window.close();
     } catch(e) {
       console.error('Error posting message:', e);

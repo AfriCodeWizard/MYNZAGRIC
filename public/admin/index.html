@@ -17,12 +17,13 @@
   </style>
   <script>
     // Listen for token from popup (when Decap CMS uses proxy_url with popup)
-    // CRITICAL: Decap CMS expects #/access_token= (NOT #/token=)
+    // CRITICAL: Decap CMS requires BOTH access_token AND token_type=bearer
     window.addEventListener('message', function(event) {
       if (event.data && event.data.access_token) {
-        console.log('Token received from popup, setting in hash as #/access_token=');
-        // Set token in hash in Decap CMS expected format
-        window.location.hash = '#/access_token=' + encodeURIComponent(event.data.access_token);
+        console.log('Token received from popup, setting in hash with access_token and token_type=bearer');
+        const tokenType = event.data.token_type || 'bearer';
+        // Set token in hash in Decap CMS expected format: #/access_token=XXX&token_type=bearer
+        window.location.hash = '#/access_token=' + encodeURIComponent(event.data.access_token) + '&token_type=' + encodeURIComponent(tokenType);
       }
     });
   </script>
