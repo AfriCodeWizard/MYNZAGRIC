@@ -141,16 +141,41 @@ async function handleAuth(request: NextRequest) {
 
       const token = "${escapedToken}";
       const targetOrigin = "${adminOrigin}";
+      const maxWaitTime = 10000; // 10 seconds max wait
+      const checkInterval = 100; // Check every 100ms
+      const startTime = Date.now();
 
-      window.opener.postMessage(
-        {
-          type: "authorization:github",
-          token: token,
-        },
-        targetOrigin
-      );
+      function waitForCMS() {
+        if (window.opener && window.opener.CMS) {
+          // CMS is ready, send the message
+          console.log("CMS is ready, sending authorization token");
+          window.opener.postMessage(
+            {
+              type: "authorization:github",
+              token: token,
+            },
+            targetOrigin
+          );
+          window.close();
+        } else if (Date.now() - startTime < maxWaitTime) {
+          // CMS not ready yet, check again
+          setTimeout(waitForCMS, checkInterval);
+        } else {
+          // Timeout reached, try sending anyway
+          console.warn("CMS not detected after timeout, attempting to send message");
+          window.opener.postMessage(
+            {
+              type: "authorization:github",
+              token: token,
+            },
+            targetOrigin
+          );
+          window.close();
+        }
+      }
 
-      window.close();
+      // Start waiting for CMS
+      waitForCMS();
     })();
   </script>
 </body>
