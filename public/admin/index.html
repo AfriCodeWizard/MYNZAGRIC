@@ -5,6 +5,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Content Manager</title>
   <script>
+    // Listen for token from popup (when OAuth completes)
+    window.addEventListener('message', function(event) {
+      console.log('=== Message received ===');
+      console.log('Origin:', event.origin);
+      console.log('Expected origin:', window.location.origin);
+      console.log('Data:', event.data);
+      
+      // Accept messages from same origin
+      if (event.origin !== window.location.origin) {
+        console.log('⚠️ Message origin mismatch, ignoring');
+        return;
+      }
+      
+      if (event.data && event.data.access_token) {
+        console.log('✓ Token received from popup!');
+        console.log('Token length:', event.data.access_token.length);
+        console.log('Token type:', event.data.token_type);
+        
+        // Set token in hash for Decap CMS
+        // CRITICAL: Decap CMS requires #/access_token= and token_type=bearer
+        const token = event.data.access_token;
+        const tokenType = event.data.token_type || 'bearer';
+        const hash = '#/access_token=' + encodeURIComponent(token) + '&token_type=' + encodeURIComponent(tokenType);
+        window.location.hash = hash;
+        
+        console.log('✓ Token set in hash:', hash);
+        console.log('✓ Decap CMS should authenticate now');
+      } else {
+        console.log('⚠️ Message received but no access_token in data');
+      }
+    });
+    
     // Log current URL info before Decap CMS loads
     console.log('=== Current Page Info ===');
     console.log('Full URL:', window.location.href);
