@@ -41,34 +41,7 @@
       return originalOpen.apply(this, [method, url, ...rest]);
     };
     
-    // Intercept window.location changes (Decap CMS uses browser redirect for OAuth)
-    let locationHrefDescriptor = Object.getOwnPropertyDescriptor(window, 'location') || 
-                                 Object.getOwnPropertyDescriptor(Object.getPrototypeOf(window), 'location');
-    
-    Object.defineProperty(window, 'location', {
-      get: function() {
-        return locationHrefDescriptor.get.call(window);
-      },
-      set: function(value) {
-        console.log('=== Window.location change detected ===');
-        console.log('New location:', value);
-        if (typeof value === 'string' && value.includes('github.com/login/oauth')) {
-          console.log('🔍🔍🔍 GitHub OAuth redirect detected!');
-          try {
-            const url = new URL(value);
-            const redirectUri = url.searchParams.get('redirect_uri');
-            console.log('🔍 Redirect URI that Decap CMS is sending:', redirectUri);
-            console.log('⚠️ ADD THIS EXACT URL TO GITHUB OAUTH APP CALLBACK URL!');
-          } catch(e) {
-            console.log('Could not parse URL:', e);
-          }
-        }
-        return locationHrefDescriptor.set.call(window, value);
-      },
-      configurable: true
-    });
-    
-    // Also intercept window.location.href directly
+    // Intercept location.replace() (safer than redefining location)
     const originalLocationReplace = window.location.replace;
     window.location.replace = function(url) {
       console.log('=== location.replace() called ===');
@@ -87,20 +60,73 @@
       return originalLocationReplace.call(this, url);
     };
     
-    // Wait for Decap CMS to load and check its config
-    setTimeout(function() {
-      if (window.CMS) {
-        console.log('=== Decap CMS Config Check ===');
-        const config = window.CMS.getConfig();
-        if (config && config.backend) {
-          console.log('Backend config:', config.backend);
-          console.log('Base URL:', config.backend.base_url);
-          console.log('Expected redirect_uri would be:', config.backend.base_url + '/admin');
-          console.log('Or possibly:', config.backend.base_url + '/admin/');
-          console.log('Or possibly:', config.backend.base_url + '/admin/index.html');
+    // Intercept location.assign()
+    const originalLocationAssign = window.location.assign;
+    window.location.assign = function(url) {
+      console.log('=== location.assign() called ===');
+      console.log('URL:', url);
+      if (typeof url === 'string' && url.includes('github.com/login/oauth')) {
+        console.log('🔍🔍🔍 GitHub OAuth redirect via assign()!');
+        try {
+          const urlObj = new URL(url);
+          const redirectUri = urlObj.searchParams.get('redirect_uri');
+          console.log('🔍 Redirect URI:', redirectUri);
+          console.log('⚠️ ADD THIS EXACT URL TO GITHUB OAUTH APP CALLBACK URL!');
+        } catch(e) {
+          console.log('Could not parse URL:', e);
         }
       }
-    }, 2000);
+      return originalLocationAssign.call(this, url);
+    };
+    
+    // Intercept all link clicks (Decap CMS might use anchor tags)
+    document.addEventListener('click', function(e) {
+      const target = e.target;
+      const link = target.closest('a');
+      if (link && link.href && link.href.includes('github.com/login/oauth')) {
+        console.log('🔍🔍🔍 GitHub OAuth link click detected!');
+        console.log('Link href:', link.href);
+        try {
+          const urlObj = new URL(link.href);
+          const redirectUri = urlObj.searchParams.get('redirect_uri');
+          console.log('🔍 Redirect URI:', redirectUri);
+          console.log('⚠️ ADD THIS EXACT URL TO GITHUB OAUTH APP CALLBACK URL!');
+        } catch(e) {
+          console.log('Could not parse URL:', e);
+        }
+      }
+    }, true);
+    
+    // Wait for Decap CMS to load and check its config
+    setTimeout(function() {
+      console.log('=== Decap CMS Config Check ===');
+      // Try to access Decap CMS config
+      if (window.CMS && window.CMS.getConfig) {
+        try {
+          const config = window.CMS.getConfig();
+          if (config && config.backend) {
+            console.log('Backend config:', config.backend);
+            console.log('Base URL:', config.backend.base_url);
+            const baseUrl = config.backend.base_url || window.location.origin;
+            console.log('📋 Possible redirect_uri values:');
+            console.log('  1. ' + baseUrl + '/admin');
+            console.log('  2. ' + baseUrl + '/admin/');
+            console.log('  3. ' + baseUrl + '/admin/index.html');
+            console.log('⚠️ Try adding ALL THREE to GitHub OAuth App callback URLs (if supported)');
+          }
+        } catch(e) {
+          console.log('Could not access Decap CMS config:', e);
+        }
+      } else {
+        // Fallback: show expected values based on current URL
+        const baseUrl = window.location.origin;
+        console.log('📋 Based on current URL, possible redirect_uri values:');
+        console.log('  1. ' + baseUrl + '/admin');
+        console.log('  2. ' + baseUrl + '/admin/');
+        console.log('  3. ' + baseUrl + '/admin/index.html');
+        console.log('⚠️ Try adding ALL THREE to GitHub OAuth App callback URLs');
+      }
+    }, 3000);
   </script>
 </head>
 <body>
