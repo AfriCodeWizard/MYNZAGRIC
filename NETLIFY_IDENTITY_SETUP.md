@@ -150,18 +150,10 @@ This happens because Netlify auto-detects Next.js projects. To fix:
    - Set **Publish directory** to: `public/admin` or `public`
    - Click **"Save"**
 
-3. **Create a netlify.toml file** (optional, but recommended):
-   - Create a file named `netlify.toml` in your repo root with:
-   ```toml
-   [build]
-     publish = "public/admin"
-     command = "echo 'Identity/Git Gateway only'"
-   
-   [[plugins]]
-     package = "@netlify/plugin-nextjs"
-     enabled = false
-   ```
-   - Commit and push this file to disable the plugin permanently
+3. **The netlify.toml file** (already in your repo):
+   - The `netlify.toml` file sets minimal build settings
+   - The Next.js plugin should be disabled through the Netlify UI (see Step 2.5 above)
+   - The config file just ensures build settings are correct
 
 4. **Alternative: Disable auto-deployments:**
    - Go to **"Site settings"** → **"Build & deploy"** → **"Continuous Deployment"**
