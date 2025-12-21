@@ -19,40 +19,51 @@ Your site is hosted on Vercel, but you'll use Netlify's free Identity and Git Ga
 2. Choose **"Deploy with GitHub"**
 3. Authorize Netlify to access your GitHub account if prompted
 4. Select the repository: **`AfriCodeWizard/MYNZAGRIC`**
-5. **IMPORTANT - Configure build settings to avoid Next.js plugin:**
+5. **IMPORTANT - Configure build settings:**
    - Click **"Show advanced"** to expand build settings
-   - **Build command**: `echo "Static site for Identity/Git Gateway only"`
+   - **Build command**: `echo "Identity/Git Gateway only - site hosted on Vercel"`
    - **Publish directory**: `public/admin` (this directory exists and contains static files)
-   - **OR** if that doesn't work, use:
-     - **Build command**: Leave empty
-     - **Publish directory**: `public`
 6. Click **"Deploy site"**
-7. **After deployment, disable the Next.js plugin:**
-   - Go to **"Site settings"** → **"Build & deploy"** → **"Build plugins"**
-   - If you see **"@netlify/plugin-nextjs"**, click on it and **"Remove plugin"**
-   - This prevents Netlify from trying to build your Next.js app
+7. **CRITICAL - Remove the Next.js plugin immediately after first deploy:**
+   - The deployment will likely fail with a Next.js plugin error - this is expected
+   - Go to **"Site settings"** → **"Build & deploy"** → **"Plugins"** (or **"Installed plugins"**)
+   - Find **"@netlify/plugin-nextjs"** in the list
+   - Click on it, then click **"Remove"** or **"Uninstall"**
+   - This is REQUIRED - the plugin cannot be disabled via config file, it must be removed from the UI
+8. **After removing the plugin, trigger a new deploy:**
+   - Go to **"Deploys"** tab
+   - Click **"Trigger deploy"** → **"Deploy site"**
+   - The build should now succeed (or at least not fail due to the plugin)
 
-> **Note**: This Netlify site doesn't need to actually serve your site - it's just for Identity/Git Gateway. You can keep using Vercel for hosting. If the deployment fails, that's okay - you can still enable Identity and Git Gateway.
+> **Note**: This Netlify site doesn't need to actually serve your site - it's just for Identity/Git Gateway. You can keep using Vercel for hosting. Even if the deployment fails, you can still enable Identity and Git Gateway - they work independently of the build.
 
-### Step 2.5: Fix Next.js Plugin Error (if you see it)
+### Step 2.5: Fix Next.js Plugin Error (REQUIRED - You will see this error)
 
-If you get an error about `@netlify/plugin-nextjs` or "publish directory does not contain expected Next.js build output":
+**You WILL get an error about `@netlify/plugin-nextjs` - this is expected and must be fixed:**
 
-1. **Quick Fix - Remove the plugin:**
-   - In your Netlify site dashboard, go to **"Site settings"** → **"Build & deploy"** → **"Build plugins"**
-   - Find **"@netlify/plugin-nextjs"** and click **"Remove plugin"**
-   - The `netlify.toml` file in your repo will prevent it from being added again
+The error message will say: *"Plugin @netlify/plugin-nextjs failed - Your publish directory does not contain expected Next.js build output"*
 
-2. **Update build settings:**
+**Fix it immediately:**
+
+1. **Remove the Next.js plugin (REQUIRED):**
+   - In your Netlify site dashboard, go to **"Site settings"** → **"Build & deploy"** → **"Plugins"** (or **"Installed plugins"**)
+   - Find **"@netlify/plugin-nextjs"** in the list
+   - Click on it, then click **"Remove"** or **"Uninstall"**
+   - **This is the ONLY way to disable it** - it cannot be disabled via config file
+
+2. **Verify build settings are correct:**
    - Go to **"Site settings"** → **"Build & deploy"** → **"Build & deploy"**
    - Click **"Edit settings"**
-   - Set **Publish directory** to: `public/admin`
-   - Set **Build command** to: `echo "Identity/Git Gateway only"`
-   - Click **"Save"**
+   - Verify **Publish directory** is: `public/admin`
+   - Verify **Build command** is: `echo "Identity/Git Gateway only - site hosted on Vercel"`
+   - Click **"Save"** if you made changes
 
-3. **Redeploy or trigger a new build** (optional - Identity/Git Gateway works even if build fails)
+3. **Trigger a new deploy:**
+   - Go to **"Deploys"** tab
+   - Click **"Trigger deploy"** → **"Deploy site"**
+   - The build should now succeed (or at least not fail due to the plugin)
 
-> **Note**: The `netlify.toml` file in your repository root will prevent this error in future deployments.
+> **Important**: The plugin is auto-installed by Netlify when it detects a Next.js project. You MUST remove it manually from the UI - there's no way to prevent it via config file. After removing it, future deployments should work fine.
 
 ### Step 3: Enable Netlify Identity
 
