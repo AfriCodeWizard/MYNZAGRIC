@@ -4,7 +4,7 @@ backend:
   branch: main
   base_url: https://mynzagric.com
   auth_scope: repo
-  app_id: Ov23liMog49BcJaN6uzJ
+  auth_endpoint: https://mynzagric.com/auth
 
 media_folder: public/blog-images # Media files will be stored in the repo under public/blog-images
 public_folder: /blog-images # The src attribute for uploaded media will begin with /blog-images

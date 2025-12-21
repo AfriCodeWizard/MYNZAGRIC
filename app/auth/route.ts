@@ -9,6 +9,18 @@ export async function POST(request: NextRequest) {
   return handleAuth(request)
 }
 
+export async function OPTIONS(request: NextRequest) {
+  // Handle CORS preflight
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    },
+  })
+}
+
 async function handleAuth(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams
   const code = searchParams.get('code')
@@ -90,80 +102,9 @@ async function handleAuth(request: NextRequest) {
     const token = tokenData.access_token
     console.log('✓ Token received from GitHub, length:', token.length)
     
-    // Check if this is a browser redirect (not AJAX)
-    const acceptHeader = request.headers.get('accept') || ''
-    const xRequestedWith = request.headers.get('x-requested-with')
-    const isBrowserRedirect = !acceptHeader.includes('application/json') && !xRequestedWith
-    
-    console.log('→ Request type detection:')
-    console.log('  - Accept header:', acceptHeader)
-    console.log('  - X-Requested-With:', xRequestedWith)
-    console.log('  - Is browser redirect:', isBrowserRedirect)
-    
-    if (isBrowserRedirect) {
-      console.log('→ Detected browser redirect - returning HTML redirect page')
-      // Browser was redirected from GitHub - return HTML that redirects to admin with token
-      const escapedToken = token
-        .replace(/\\/g, '\\\\')
-        .replace(/'/g, "\\'")
-        .replace(/"/g, '\\"')
-        .replace(/\n/g, '\\n')
-        .replace(/\r/g, '\\r')
-        .replace(/\t/g, '\\t')
-      
-      // CRITICAL: Decap CMS requires BOTH access_token AND token_type=bearer
-      const targetUrl = `${baseUrl}/admin#/access_token=${encodeURIComponent(token)}&token_type=bearer`
-      console.log('→ Target URL:', targetUrl)
-      
-      const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Authenticating...</title><script>
-(function(){
-  var t='${escapedToken}';
-  var u='${targetUrl}';
-  
-  // Check if we're in a popup (Decap CMS opens OAuth in popup)
-  if (window.opener && !window.opener.closed) {
-    // We're in a popup - redirect parent window directly with token in hash
-    console.log('In popup, redirecting parent window with token in hash...');
-    try {
-      // Redirect parent window to admin page with token in hash
-      window.opener.location.href = u;
-      // Give it a moment to navigate, then close popup
-      setTimeout(function() {
-        window.close();
-      }, 100);
-    } catch(e) {
-      console.error('Error redirecting parent:', e);
-      // Fallback: try postMessage
-      try {
-        window.opener.postMessage({ access_token: t, token_type: 'bearer', provider: 'github' }, '*');
-        setTimeout(function() {
-          window.close();
-        }, 100);
-      } catch(e2) {
-        console.error('Error with postMessage fallback:', e2);
-        window.close();
-      }
-    }
-  } else {
-    // We're in main window - redirect with token in hash
-    console.log('In main window, redirecting with token in hash...');
-    window.location.replace(u);
-  }
-})();
-</script><noscript><meta http-equiv="refresh" content="0;url=${targetUrl}"></noscript></head><body><p>Authenticating...</p></body></html>`
-      
-      console.log('→ Returning HTML redirect page')
-      return new NextResponse(html, {
-        status: 200,
-        headers: {
-          'Content-Type': 'text/html; charset=utf-8',
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-        },
-      })
-    }
-    
-    console.log('→ Detected AJAX request - returning JSON')
-    // AJAX request from Decap CMS - return JSON
+    // When using auth_endpoint, Decap CMS makes AJAX requests
+    // It expects JSON response with token, NOT HTML redirects
+    console.log('→ Returning JSON token for Decap CMS')
     return NextResponse.json({
       token: token,
       provider: 'github',
@@ -173,6 +114,9 @@ async function handleAuth(request: NextRequest) {
         'Pragma': 'no-cache',
         'Expires': '0',
         'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
       },
     })
   } catch (error) {

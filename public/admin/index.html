@@ -5,337 +5,57 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Content Manager</title>
   <script>
-    // Monitor hash changes to detect if Decap CMS clears the token
-    window.addEventListener('hashchange', function() {
-      console.log('=== Hash changed ===');
-      console.log('New hash:', window.location.hash);
-      if (!window.location.hash.includes('access_token')) {
-        console.log('⚠️ Hash changed and token is missing!');
-        // Try to restore from sessionStorage
-        const storedToken = sessionStorage.getItem('decap_oauth_token');
-        const storedTokenType = sessionStorage.getItem('decap_oauth_token_type');
-        if (storedToken) {
-          console.log('→ Attempting to restore token from sessionStorage...');
-          const hash = '#/access_token=' + encodeURIComponent(storedToken) + '&token_type=' + encodeURIComponent(storedTokenType || 'bearer');
-          window.location.hash = hash;
-          console.log('✓ Token restored');
-        }
-      }
-    });
-    
-    // Listen for token from popup (when OAuth completes)
-    window.addEventListener('message', function(event) {
-      console.log('=== Message received ===');
-      console.log('Origin:', event.origin);
-      console.log('Expected origin:', window.location.origin);
-      console.log('Data:', event.data);
-      
-      // Accept messages from same origin
-      if (event.origin !== window.location.origin) {
-        console.log('⚠️ Message origin mismatch, ignoring');
-        return;
-      }
-      
-      if (event.data && event.data.access_token) {
-        console.log('✓ Token received from popup via postMessage (fallback)!');
-        console.log('Token length:', event.data.access_token.length);
-        console.log('Token type:', event.data.token_type);
-        
-        // Set token in hash for Decap CMS
-        // CRITICAL: Decap CMS requires #/access_token= and token_type=bearer
-        const token = event.data.access_token;
-        const tokenType = event.data.token_type || 'bearer';
-        const hash = '#/access_token=' + encodeURIComponent(token) + '&token_type=' + encodeURIComponent(tokenType);
-        
-        console.log('✓ Token set in hash:', hash);
-        console.log('✓ Navigating to URL with token in hash...');
-        
-        // Navigate to the admin page with token in hash
-        const baseUrl = window.location.origin + window.location.pathname;
-        const newUrl = baseUrl + hash;
-        window.location.href = newUrl;
-      } else {
-        console.log('⚠️ Message received but no access_token in data');
-      }
-    });
-    
-    // Check for token in hash or sessionStorage on page load
-    console.log('=== Current Page Info ===');
-    console.log('Full URL:', window.location.href);
-    console.log('Origin:', window.location.origin);
-    console.log('Pathname:', window.location.pathname);
+    // Minimal logging to verify OAuth flow with auth_endpoint
+    console.log('=== Decap CMS Loading ===');
+    console.log('Current URL:', window.location.href);
     console.log('Hash:', window.location.hash);
-    console.log('Search:', window.location.search);
     
-    // If no token in hash but we have one in sessionStorage, restore it
-    if (!window.location.hash.includes('access_token')) {
-      const storedToken = sessionStorage.getItem('decap_oauth_token');
-      const storedTokenType = sessionStorage.getItem('decap_oauth_token_type');
-      if (storedToken) {
-        console.log('⚠️ No token in hash, but found in sessionStorage');
-        console.log('→ Restoring token from sessionStorage...');
-        const hash = '#/access_token=' + encodeURIComponent(storedToken) + '&token_type=' + encodeURIComponent(storedTokenType || 'bearer');
-        window.location.hash = hash;
-        console.log('✓ Token restored in hash:', hash);
-        // Clear sessionStorage after restoring
-        sessionStorage.removeItem('decap_oauth_token');
-        sessionStorage.removeItem('decap_oauth_token_type');
-      }
-    } else {
-      console.log('✓ Token found in hash');
-      // Clear sessionStorage if we have token in hash
-      sessionStorage.removeItem('decap_oauth_token');
-      sessionStorage.removeItem('decap_oauth_token_type');
-    }
-    
-    // Intercept fetch/XHR to see what Decap CMS is sending
-    const originalFetch = window.fetch;
-    window.fetch = function(...args) {
-      console.log('=== Fetch Request ===');
-      console.log('URL:', args[0]);
-      if (typeof args[0] === 'string' && args[0].includes('github.com/login/oauth')) {
-        console.log('🔍 GitHub OAuth request detected!');
-        console.log('Full URL:', args[0]);
-        const url = new URL(args[0]);
-        console.log('Redirect URI in request:', url.searchParams.get('redirect_uri'));
-      }
-      return originalFetch.apply(this, args);
-    };
-    
-    // Also intercept XMLHttpRequest
-    const originalOpen = XMLHttpRequest.prototype.open;
-    XMLHttpRequest.prototype.open = function(method, url, ...rest) {
-      console.log('=== XHR Request ===');
-      console.log('Method:', method);
-      console.log('URL:', url);
-      if (typeof url === 'string' && url.includes('github.com/login/oauth')) {
-        console.log('🔍 GitHub OAuth XHR detected!');
-        const urlObj = new URL(url);
-        console.log('Redirect URI in request:', urlObj.searchParams.get('redirect_uri'));
-      }
-      return originalOpen.apply(this, [method, url, ...rest]);
-    };
-    
-    // Intercept location.replace() (safer than redefining location)
-    const originalLocationReplace = window.location.replace;
-    window.location.replace = function(url) {
-      console.log('=== location.replace() called ===');
-      console.log('URL:', url);
-      if (typeof url === 'string' && url.includes('github.com/login/oauth')) {
-        console.log('🔍🔍🔍 GitHub OAuth redirect via replace()!');
-        try {
-          const urlObj = new URL(url);
-          const redirectUri = urlObj.searchParams.get('redirect_uri');
-          console.log('🔍 Redirect URI:', redirectUri);
-          console.log('⚠️ ADD THIS EXACT URL TO GITHUB OAUTH APP CALLBACK URL!');
-        } catch(e) {
-          console.log('Could not parse URL:', e);
-        }
-      }
-      return originalLocationReplace.call(this, url);
-    };
-    
-    // Intercept location.assign()
-    const originalLocationAssign = window.location.assign;
-    window.location.assign = function(url) {
-      console.log('=== location.assign() called ===');
-      console.log('URL:', url);
-      if (typeof url === 'string' && url.includes('github.com/login/oauth')) {
-        console.log('🔍🔍🔍 GitHub OAuth redirect via assign()!');
-        try {
-          const urlObj = new URL(url);
-          const redirectUri = urlObj.searchParams.get('redirect_uri');
-          console.log('🔍 Redirect URI:', redirectUri);
-          console.log('⚠️ ADD THIS EXACT URL TO GITHUB OAUTH APP CALLBACK URL!');
-        } catch(e) {
-          console.log('Could not parse URL:', e);
-        }
-      }
-      return originalLocationAssign.call(this, url);
-    };
-    
-    // Intercept all link clicks (Decap CMS might use anchor tags)
-    document.addEventListener('click', function(e) {
-      const target = e.target;
-      const link = target.closest('a');
-      if (link && link.href && link.href.includes('github.com/login/oauth')) {
-        console.log('🔍🔍🔍 GitHub OAuth link click detected!');
-        console.log('Link href:', link.href);
-        try {
-          const urlObj = new URL(link.href);
-          const redirectUri = urlObj.searchParams.get('redirect_uri');
-          console.log('🔍 Redirect URI:', redirectUri);
-          console.log('⚠️ ADD THIS EXACT URL TO GITHUB OAUTH APP CALLBACK URL!');
-        } catch(e) {
-          console.log('Could not parse URL:', e);
-        }
-      }
-    }, true);
-    
-    // Monitor for popup windows (Decap CMS might open OAuth in popup)
-    let popupCheckInterval;
-    const checkForPopups = function() {
-      // This won't work due to same-origin policy, but we can log attempts
-      console.log('Checking for popup windows...');
-    };
-    
-    // Intercept window.open() to see if Decap CMS opens a popup
-    const originalWindowOpen = window.open;
-    window.open = function(url, target, features) {
-      console.log('=== window.open() called ===');
-      console.log('URL:', url);
-      console.log('Target:', target);
-      if (typeof url === 'string' && url.includes('github.com/login/oauth')) {
-        console.log('🔍🔍🔍 GitHub OAuth popup detected!');
-        try {
-          const urlObj = new URL(url);
-          const redirectUri = urlObj.searchParams.get('redirect_uri');
-          console.log('🔍 Redirect URI in popup:', redirectUri);
-          console.log('⚠️ ADD THIS EXACT URL TO GITHUB OAUTH APP CALLBACK URL!');
-        } catch(e) {
-          console.log('Could not parse URL:', e);
-        }
-      }
-      const popup = originalWindowOpen.call(this, url, target, features);
-      if (popup) {
-        console.log('Popup window opened, monitoring...');
-        // Try to monitor popup location (may fail due to CORS)
-        try {
-          const checkPopup = setInterval(function() {
-            try {
-              if (popup.closed) {
-                clearInterval(checkPopup);
-                console.log('Popup closed');
-                return;
+    // Monitor when Decap CMS loads
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        if (window.CMS) {
+          console.log('✓ Decap CMS loaded successfully');
+          try {
+            const config = window.CMS.getConfig();
+            if (config && config.backend) {
+              console.log('Backend:', config.backend.name);
+              console.log('Auth endpoint:', config.backend.auth_endpoint || 'not set');
+              if (config.backend.auth_endpoint) {
+                console.log('✓ Using auth_endpoint - OAuth proxy mode');
+              } else {
+                console.log('⚠️ No auth_endpoint - may use direct OAuth');
               }
-              if (popup.location) {
-                console.log('Popup location:', popup.location.href);
-                if (popup.location.href.includes('error')) {
-                  console.log('⚠️ Popup shows error - check the error message!');
-                }
-              }
-            } catch(e) {
-              // Cross-origin - can't access
             }
-          }, 500);
-          setTimeout(function() { clearInterval(checkPopup); }, 30000);
-        } catch(e) {
-          console.log('Cannot monitor popup (cross-origin):', e.message);
-        }
-      }
-      return popup;
-    };
-    
-    // Wait for Decap CMS to load and check its config
-    setTimeout(function() {
-      console.log('=== Decap CMS Config Check ===');
-      // Try to access Decap CMS config
-      if (window.CMS && window.CMS.getConfig) {
-        try {
-          const config = window.CMS.getConfig();
-          if (config && config.backend) {
-            console.log('Backend config:', config.backend);
-            console.log('Base URL:', config.backend.base_url);
-            const baseUrl = config.backend.base_url || window.location.origin;
-            console.log('📋 Possible redirect_uri values:');
-            console.log('  1. ' + baseUrl + '/admin');
-            console.log('  2. ' + baseUrl + '/admin/');
-            console.log('  3. ' + baseUrl + '/admin/index.html');
-            console.log('⚠️ Try adding ALL THREE to GitHub OAuth App callback URLs (if supported)');
+          } catch(e) {
+            console.log('Could not access Decap CMS config');
           }
-        } catch(e) {
-          console.log('Could not access Decap CMS config:', e);
+        } else {
+          console.log('⚠️ Decap CMS not found');
         }
-      } else {
-        // Fallback: show expected values based on current URL
-        const baseUrl = window.location.origin;
-        console.log('📋 Based on current URL, possible redirect_uri values:');
-        console.log('  1. ' + baseUrl + '/admin');
-        console.log('  2. ' + baseUrl + '/admin/');
-        console.log('  3. ' + baseUrl + '/admin/index.html');
-        console.log('⚠️ Try adding ALL THREE to GitHub OAuth App callback URLs');
-        console.log('');
-        console.log('🔍 IMPORTANT: When you click "Login with GitHub", check:');
-        console.log('   1. Does it open a popup window?');
-        console.log('   2. What is the EXACT error message from GitHub?');
-        console.log('   3. The error message should show the URL GitHub received');
-        console.log('   4. Copy that exact URL and add it to GitHub OAuth App');
+      }, 1000);
+    });
+    
+    // Monitor authentication state changes
+    let authCheckInterval = setInterval(function() {
+      const loginButton = document.querySelector('button[class*="login"], a[class*="login"]');
+      const cmsContent = document.querySelector('[class*="nc-root"], [class*="cms"]');
+      
+      if (loginButton && loginButton.offsetParent !== null) {
+        console.log('→ Showing login screen');
+      } else if (cmsContent) {
+        console.log('✓ Decap CMS dashboard loaded - authentication successful!');
+        clearInterval(authCheckInterval);
       }
-    }, 3000);
+    }, 2000);
+    
+    // Stop checking after 30 seconds
+    setTimeout(function() {
+      clearInterval(authCheckInterval);
+    }, 30000);
   </script>
 </head>
 <body>
   <div id="nc-root"></div>
-  <!-- Load Decap CMS after ensuring hash is set -->
-  <script>
-    // Wait a moment to ensure hash is set before loading Decap CMS
-    setTimeout(function() {
-      console.log('=== Loading Decap CMS ===');
-      console.log('Current hash:', window.location.hash);
-      
-      // Verify hash is still present
-      if (window.location.hash.includes('access_token')) {
-        console.log('✓ Token confirmed in hash before Decap CMS load');
-      } else {
-        console.log('⚠️ No token in hash - Decap CMS will show login page');
-      }
-      
-      // Load Decap CMS
-      const script = document.createElement('script');
-      script.src = 'https://unpkg.com/decap-cms@3.9.0/dist/decap-cms.js';
-      script.onload = function() {
-        console.log('✓ Decap CMS loaded');
-        // Check hash again after load
-        setTimeout(function() {
-          console.log('Hash after Decap CMS load:', window.location.hash);
-          if (window.location.hash.includes('access_token')) {
-            console.log('✓ Token still in hash - Decap CMS should authenticate');
-            
-            // Try to manually trigger authentication if Decap CMS hasn't done it
-            setTimeout(function() {
-              // Check if Decap CMS is still showing login page
-              const loginButton = document.querySelector('button[class*="login"], a[class*="login"]');
-              if (loginButton) {
-                console.log('⚠️ Login button still visible - Decap CMS may not have read the token');
-                console.log('→ Attempting to trigger hashchange event to force Decap CMS to re-check...');
-                
-                // Trigger hashchange event
-                const hashChangeEvent = new HashChangeEvent('hashchange', {
-                  oldURL: window.location.href,
-                  newURL: window.location.href
-                });
-                window.dispatchEvent(hashChangeEvent);
-                
-                // Also try to access Decap CMS API if available
-                if (window.CMS && window.CMS.getBackend) {
-                  try {
-                    const backend = window.CMS.getBackend();
-                    console.log('Backend:', backend);
-                    // Try to manually authenticate
-                    if (backend && backend.authenticate) {
-                      console.log('→ Attempting manual authentication...');
-                      // Parse token from hash
-                      const hashParams = new URLSearchParams(window.location.hash.substring(2));
-                      const token = hashParams.get('access_token');
-                      if (token) {
-                        console.log('Token found in hash, attempting to use it...');
-                      }
-                    }
-                  } catch(e) {
-                    console.log('Could not access backend:', e);
-                  }
-                }
-              } else {
-                console.log('✓ Login button not found - Decap CMS may have authenticated');
-              }
-            }, 2000);
-          } else {
-            console.log('⚠️ Token missing from hash - Decap CMS may not authenticate');
-          }
-        }, 1000);
-      };
-      document.body.appendChild(script);
-    }, 100);
-  </script>
+  <script src="https://unpkg.com/decap-cms@3.9.0/dist/decap-cms.js"></script>
 </body>
 </html>
