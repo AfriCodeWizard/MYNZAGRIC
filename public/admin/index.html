@@ -28,10 +28,14 @@
         const token = event.data.access_token;
         const tokenType = event.data.token_type || 'bearer';
         const hash = '#/access_token=' + encodeURIComponent(token) + '&token_type=' + encodeURIComponent(tokenType);
-        window.location.hash = hash;
         
         console.log('✓ Token set in hash:', hash);
-        console.log('✓ Decap CMS should authenticate now');
+        console.log('✓ Reloading page with token in hash so Decap CMS reads it on initialization...');
+        
+        // Reload the page with the hash - this ensures Decap CMS reads the token on initialization
+        // Use replace to avoid adding to history
+        const newUrl = window.location.origin + window.location.pathname + hash;
+        window.location.replace(newUrl);
       } else {
         console.log('⚠️ Message received but no access_token in data');
       }
