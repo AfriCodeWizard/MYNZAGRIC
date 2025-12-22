@@ -7,20 +7,56 @@
 </head>
 <body>
   <script>
-    // Handle OAuth token - Decap CMS router adds #/ so token becomes #/access_token=...
+    // CRITICAL: Prevent Decap CMS from adding #/ to hash
+    // Intercept and fix hash changes in real-time
     (function() {
-      // Function to extract token from hash (handles #/access_token format)
-      function getTokenFromHash() {
-        const hash = window.location.hash;
-        if (!hash || !hash.includes('access_token=')) {
-          return null;
+      // Store original hashchange handler
+      let originalHash = window.location.hash;
+      
+      // Function to fix hash format - removes / after # if it's just #/ or #/access_token
+      function fixHashFormat() {
+        const currentHash = window.location.hash;
+        
+        // If hash is just #/ (Decap CMS default), remove it
+        if (currentHash === '#/' || currentHash === '#') {
+          window.history.replaceState(null, null, window.location.pathname);
+          return;
         }
         
-        // Handle both #/access_token=... and #access_token=...
-        // Decap CMS router adds / after #, so token becomes #/access_token=...
-        const hashStr = hash.substring(1); // Remove #
-        const params = new URLSearchParams(hashStr.replace(/^\/+/, '')); // Remove leading /
-        return params.get('access_token');
+        // If hash starts with #/access_token, fix it to #access_token
+        if (currentHash.startsWith('#/access_token=')) {
+          const fixedHash = currentHash.substring(2); // Remove #/
+          window.history.replaceState(null, null, '#' + fixedHash);
+          return;
+        }
+        
+        // If hash is #/something (but not access_token), preserve it for Decap CMS routing
+        // Only fix access_token format
+      }
+      
+      // Intercept hash changes BEFORE Decap CMS processes them
+      let hashCheckInterval = setInterval(function() {
+        const currentHash = window.location.hash;
+        
+        // If Decap CMS added #/ and there's no access_token, remove it
+        if (currentHash === '#/' && !originalHash.includes('access_token=')) {
+          window.history.replaceState(null, null, window.location.pathname);
+        }
+        
+        // If hash has #/access_token, fix it immediately
+        if (currentHash.startsWith('#/access_token=')) {
+          fixHashFormat();
+        }
+      }, 50); // Check every 50ms
+      
+      // Also listen for hashchange events
+      window.addEventListener('hashchange', function() {
+        fixHashFormat();
+      }, true); // Use capture phase to intercept before Decap CMS
+      
+      // Fix hash on initial load
+      if (window.location.hash === '#/') {
+        window.history.replaceState(null, null, window.location.pathname);
       }
       
       // Listen for postMessage from OAuth popup
@@ -33,56 +69,22 @@
         if (data && (data.token || data.access_token)) {
           const token = data.token || data.access_token;
           
-          // Put token in hash - Decap CMS router will add /, making it #/access_token=...
-          // That's OK, we can read it from that format
+          // Set token in hash with CORRECT format: #access_token=... (NO /)
           window.location.hash = 'access_token=' + encodeURIComponent(token) + '&token_type=bearer';
           
-          // Reload to let Decap CMS read the token
+          // Monitor and fix if Decap CMS tries to change it
           setTimeout(function() {
-            window.location.reload();
+            if (window.location.hash.startsWith('#/access_token=')) {
+              fixHashFormat();
+            }
           }, 100);
         }
       });
       
-      // After Decap CMS loads, check if token is in hash and help it authenticate
-      function checkAndAuthenticate() {
-        const token = getTokenFromHash();
-        if (!token) {
-          return;
-        }
-        
-        // Token is in hash (likely as #/access_token=...)
-        // Wait for Decap CMS to initialize
-        if (window.CMS && window.CMS.getBackend) {
-          try {
-            const backend = window.CMS.getBackend();
-            if (backend) {
-              // Decap CMS should read token from hash automatically
-              // But if it doesn't, try to help
-              console.log('Token found in hash, Decap CMS should authenticate');
-              
-              // Try to trigger authentication if backend has the method
-              if (backend.restoreUser) {
-                backend.restoreUser();
-              }
-            }
-          } catch(e) {
-            console.error('Error checking Decap CMS authentication:', e);
-          }
-        } else {
-          // Decap CMS not ready, try again
-          setTimeout(checkAndAuthenticate, 200);
-        }
-      }
-      
-      // Start checking after page loads
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', function() {
-          setTimeout(checkAndAuthenticate, 1000);
-        });
-      } else {
-        setTimeout(checkAndAuthenticate, 1000);
-      }
+      // Stop monitoring after 10 seconds (Decap CMS should be initialized by then)
+      setTimeout(function() {
+        clearInterval(hashCheckInterval);
+      }, 10000);
     })();
   </script>
   <script src="https://unpkg.com/netlify-cms@^2.10.0/dist/netlify-cms.js"></script>
