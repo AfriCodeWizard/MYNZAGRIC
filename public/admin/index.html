@@ -105,6 +105,115 @@
       });
     })();
   </script>
+  
+  <script>
+    // Extract token from hash and manually authenticate Decap CMS
+    (function() {
+      function getTokenFromHash() {
+        const hash = window.location.hash;
+        if (!hash || !hash.includes('access_token=')) {
+          return null;
+        }
+        
+        // Extract token from hash
+        const hashStr = hash.substring(1); // Remove #
+        const params = new URLSearchParams(hashStr);
+        return params.get('access_token');
+      }
+      
+      function authenticateDecapCMS(token) {
+        if (!window.CMS) {
+          return false;
+        }
+        
+        try {
+          // Get the backend
+          const backend = window.CMS.getBackend();
+          if (!backend) {
+            return false;
+          }
+          
+          // Try different methods to authenticate
+          // Method 1: Set token directly on backend
+          if (backend.token !== undefined) {
+            backend.token = token;
+            console.log('Token set on backend.token');
+          }
+          
+          // Method 2: Use authenticate method if available
+          if (typeof backend.authenticate === 'function') {
+            backend.authenticate({ token: token, provider: 'github' });
+            console.log('Called backend.authenticate');
+          }
+          
+          // Method 3: Use restoreUser to restore session
+          if (typeof backend.restoreUser === 'function') {
+            backend.restoreUser();
+            console.log('Called backend.restoreUser');
+          }
+          
+          // Method 4: Try to access internal auth methods
+          if (backend.implementation && backend.implementation.authToken !== undefined) {
+            backend.implementation.authToken = token;
+            console.log('Token set on backend.implementation.authToken');
+          }
+          
+          // Method 5: Trigger a manual login
+          if (backend.login && typeof backend.login === 'function') {
+            backend.login({ token: token });
+            console.log('Called backend.login');
+          }
+          
+          return true;
+        } catch(e) {
+          console.error('Error authenticating Decap CMS:', e);
+          return false;
+        }
+      }
+      
+      // Check for token and authenticate
+      function checkAndAuthenticate() {
+        const token = getTokenFromHash();
+        if (!token) {
+          return;
+        }
+        
+        console.log('Token found in hash, attempting to authenticate Decap CMS...');
+        
+        // Wait for Decap CMS to initialize
+        if (window.CMS && window.CMS.getBackend) {
+          const authenticated = authenticateDecapCMS(token);
+          if (authenticated) {
+            console.log('Decap CMS authentication attempted');
+            // Clear hash after authentication attempt
+            setTimeout(function() {
+              if (window.location.hash.includes('access_token=')) {
+                history.replaceState(null, '', window.location.pathname + window.location.search);
+              }
+            }, 1000);
+          }
+        } else {
+          // Decap CMS not ready, try again
+          setTimeout(checkAndAuthenticate, 200);
+        }
+      }
+      
+      // Start checking after page loads
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+          setTimeout(checkAndAuthenticate, 1000);
+        });
+      } else {
+        setTimeout(checkAndAuthenticate, 1000);
+      }
+      
+      // Also check when hash changes (in case token is added after page load)
+      window.addEventListener('hashchange', function() {
+        setTimeout(checkAndAuthenticate, 100);
+      });
+    })();
+  </script>
+  
   <script src="https://unpkg.com/netlify-cms@^2.10.0/dist/netlify-cms.js"></script>
 </body>
 </html>
