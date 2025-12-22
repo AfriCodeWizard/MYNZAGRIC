@@ -6,6 +6,46 @@
   <title>Content Manager</title>
 </head>
 <body>
+  <script>
+    // Handle OAuth token from postMessage (popup) or URL hash (direct redirect)
+    (function() {
+      // Listen for postMessage from OAuth popup
+      window.addEventListener('message', function(event) {
+        // Verify origin for security
+        if (event.origin !== window.location.origin) {
+          return;
+        }
+        
+        const data = event.data;
+        
+        // Handle token from popup
+        if (data && (data.token || data.access_token)) {
+          const token = data.token || data.access_token;
+          
+          // Put token in URL hash - Decap CMS reads from window.location.hash
+          const newHash = 'access_token=' + encodeURIComponent(token) + '&token_type=bearer';
+          
+          // Update hash without reload
+          if (window.history && window.history.replaceState) {
+            window.history.replaceState(null, null, '#/' + newHash);
+          } else {
+            window.location.hash = newHash;
+          }
+          
+          // Trigger hashchange event so Decap CMS picks it up
+          window.dispatchEvent(new HashChangeEvent('hashchange'));
+          
+          // Small delay then reload to ensure Decap CMS initializes with token
+          setTimeout(function() {
+            window.location.reload();
+          }, 100);
+        }
+      });
+      
+      // If token is already in hash from direct redirect, ensure it's preserved
+      // Decap CMS will read it when it initializes
+    })();
+  </script>
   <script src="https://unpkg.com/netlify-cms@^2.10.0/dist/netlify-cms.js"></script>
 </body>
 </html>

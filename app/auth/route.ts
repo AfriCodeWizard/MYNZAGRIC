@@ -126,20 +126,46 @@ async function handleAuth(request: NextRequest) {
 <body>
   <script>
     (function() {
+      const token = '${escapedToken}';
+      const baseUrl = '${baseUrl}';
+      
       if (window.opener) {
-        // We're in a popup - send token to parent window
-        window.opener.postMessage(
-          {
-            type: 'authorization:github',
-            token: '${escapedToken}',
-            provider: 'github'
-          },
-          '${baseUrl}'
-        );
-        window.close();
+        // We're in a popup - send token to parent window via postMessage
+        try {
+          // Try multiple message formats that Decap CMS might understand
+          window.opener.postMessage(
+            {
+              type: 'authorization:github',
+              token: token,
+              provider: 'github',
+              access_token: token,
+              token_type: 'bearer'
+            },
+            baseUrl
+          );
+          
+          // Also try the format Decap CMS expects
+          window.opener.postMessage(
+            {
+              access_token: token,
+              token_type: 'bearer',
+              provider: 'github'
+            },
+            baseUrl
+          );
+          
+          setTimeout(function() {
+            window.close();
+          }, 100);
+        } catch(e) {
+          console.error('Error sending message:', e);
+          // Fallback: redirect parent window
+          window.opener.location.href = baseUrl + '/admin#access_token=' + encodeURIComponent(token) + '&token_type=bearer';
+          window.close();
+        }
       } else {
-        // Not in popup - redirect to admin with token
-        window.location.href = '${baseUrl}/admin#access_token=${encodeURIComponent(token)}&token_type=bearer';
+        // Not in popup - redirect to admin with token in hash
+        window.location.href = baseUrl + '/admin#access_token=' + encodeURIComponent(token) + '&token_type=bearer';
       }
     })();
   </script>
