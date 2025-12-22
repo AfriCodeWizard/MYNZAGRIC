@@ -85,6 +85,7 @@
       setTimeout(fixHash, 500);
       
       // Listen for postMessage from OAuth popup
+      let receivedToken = null;
       window.addEventListener('message', function(event) {
         if (event.origin !== window.location.origin) {
           return;
@@ -93,6 +94,12 @@
         const data = event.data;
         if (data && (data.token || data.access_token)) {
           const token = data.token || data.access_token;
+          receivedToken = token;
+          
+          console.log('Token received via postMessage:', token.substring(0, 10) + '...');
+          
+          // Store token for later use
+          sessionStorage.setItem('github_oauth_token', token);
           
           // Set token in hash with CORRECT format: #access_token=... (NO /)
           // Use history.replaceState to bypass normal hash setter
@@ -101,6 +108,13 @@
           // Ensure it stays fixed
           setTimeout(fixHash, 10);
           setTimeout(fixHash, 50);
+          
+          // Try to authenticate immediately if CMS is ready
+          if (window.CMS) {
+            setTimeout(function() {
+              checkAndAuthenticate();
+            }, 100);
+          }
         }
       });
     })();
@@ -130,15 +144,79 @@
         try {
           console.log('Attempting to authenticate with token:', token.substring(0, 10) + '...');
           
-          // Get the backend
-          const backend = window.CMS.getBackend();
+          // Get the backend - try multiple methods
+          let backend = null;
+          try {
+            backend = window.CMS.getBackend();
+          } catch(e) {
+            console.log('Error calling getBackend():', e);
+          }
+          
+          // If backend not available, try alternative methods
           if (!backend) {
-            console.log('Backend not available');
-            return false;
+            console.log('Backend not available via getBackend(), trying alternatives...');
+            
+            // Try accessing through store
+            if (window.CMS.store) {
+              const store = window.CMS.store;
+              if (store.getState) {
+                const state = store.getState();
+                console.log('Store state:', state);
+                
+                // Try to find backend in state
+                if (state.config && state.config.backend) {
+                  console.log('Found backend config in state');
+                }
+                
+                // Try to dispatch authentication action directly
+                if (store.dispatch) {
+                  try {
+                    // Try different action types
+                    store.dispatch({ 
+                      type: 'AUTH_SUCCESS', 
+                      payload: { token: token, provider: 'github' } 
+                    });
+                    console.log('✓ Dispatched AUTH_SUCCESS action');
+                    
+                    store.dispatch({ 
+                      type: 'AUTHENTICATE_SUCCESS', 
+                      payload: { token: token } 
+                    });
+                    console.log('✓ Dispatched AUTHENTICATE_SUCCESS action');
+                    
+                    store.dispatch({ 
+                      type: 'AUTH_USER', 
+                      payload: { token: token } 
+                    });
+                    console.log('✓ Dispatched AUTH_USER action');
+                  } catch(e) {
+                    console.log('Could not dispatch actions:', e);
+                  }
+                }
+              }
+            }
+            
+            // Try accessing backend through registry
+            if (window.CMS.registry) {
+              try {
+                if (window.CMS.registry.getBackend) {
+                  backend = window.CMS.registry.getBackend('github');
+                  console.log('Got backend from registry');
+                }
+              } catch(e) {
+                console.log('Could not get backend from registry:', e);
+              }
+            }
+            
+            // If still no backend, return but keep trying
+            if (!backend) {
+              console.log('Backend still not available, will retry...');
+              return false;
+            }
           }
           
           console.log('Backend found:', backend);
-          console.log('Backend type:', backend.constructor.name);
+          console.log('Backend type:', backend ? backend.constructor.name : 'unknown');
           
           // Try to access the GitHub backend implementation directly
           // Decap CMS GitHub backend stores token in different places
@@ -225,6 +303,49 @@
             console.log('✓ Called backend.init with token');
           }
           
+          // Method 9: Try to access through CMS registry
+          if (window.CMS.registry) {
+            try {
+              const githubBackend = window.CMS.registry.getBackend('github');
+              if (githubBackend) {
+                if (githubBackend.token !== undefined) {
+                  githubBackend.token = token;
+                  console.log('✓ Token set on registry backend');
+                }
+                if (typeof githubBackend.authenticate === 'function') {
+                  githubBackend.authenticate({ token: token });
+                  console.log('✓ Called registry backend.authenticate');
+                }
+              }
+            } catch(e) {
+              console.log('Could not access backend through registry:', e);
+            }
+          }
+          
+          // Method 10: Try to manually set authentication in store
+          if (window.CMS.store && window.CMS.store.dispatch) {
+            try {
+              // Try to set the user/authentication state directly
+              const actions = [
+                { type: 'AUTHENTICATE_USER', payload: { token: token } },
+                { type: 'SET_USER', payload: { token: token } },
+                { type: 'AUTH_SUCCESS', payload: { token: token, provider: 'github' } },
+                { type: 'GITHUB_AUTH_SUCCESS', payload: { token: token } }
+              ];
+              
+              actions.forEach(action => {
+                try {
+                  window.CMS.store.dispatch(action);
+                  console.log('✓ Dispatched', action.type);
+                } catch(e) {
+                  // Ignore errors
+                }
+              });
+            } catch(e) {
+              console.log('Could not dispatch store actions:', e);
+            }
+          }
+          
           return true;
         } catch(e) {
           console.error('Error authenticating Decap CMS:', e);
@@ -235,11 +356,18 @@
       
       // Check for token and authenticate
       let attemptCount = 0;
-      const maxAttempts = 30; // Try for 6 seconds (30 * 200ms)
+      const maxAttempts = 100; // Try for 20 seconds (100 * 200ms)
+      let backendReady = false;
+      let authenticationAttempted = false;
       
       function checkAndAuthenticate() {
         attemptCount++;
-        const token = getTokenFromHash();
+        
+        // Get token from hash or sessionStorage
+        let token = getTokenFromHash();
+        if (!token) {
+          token = sessionStorage.getItem('github_oauth_token');
+        }
         
         if (!token) {
           if (attemptCount < maxAttempts) {
@@ -248,41 +376,112 @@
           return;
         }
         
-        console.log('Token found in hash, attempting to authenticate Decap CMS... (attempt ' + attemptCount + ')');
+        // Wait for Decap CMS to be fully loaded
+        if (!window.CMS) {
+          console.log('Waiting for CMS to load... (attempt ' + attemptCount + ')');
+          if (attemptCount < maxAttempts) {
+            setTimeout(checkAndAuthenticate, 200);
+          }
+          return;
+        }
         
-        // Wait for Decap CMS to initialize
-        if (window.CMS && window.CMS.getBackend) {
+        // Try to get backend - it might not be ready immediately
+        let backend = null;
+        try {
+          backend = window.CMS.getBackend();
+        } catch(e) {
+          console.log('Error getting backend:', e);
+        }
+        
+        if (!backend) {
+          console.log('Waiting for backend to be ready... (attempt ' + attemptCount + ')');
+          
+          // Try alternative ways to access backend
+          if (window.CMS.store) {
+            const store = window.CMS.store;
+            if (store.getState) {
+              const state = store.getState();
+              // Backend might be in the store
+              if (state.config && state.config.backend) {
+                console.log('Found backend in store state');
+                backendReady = true;
+              }
+            }
+          }
+          
+          // Try accessing backend through registry
+          if (window.CMS.registry && window.CMS.registry.getBackend) {
+            try {
+              backend = window.CMS.registry.getBackend('github');
+              console.log('Got backend from registry');
+            } catch(e) {
+              console.log('Could not get backend from registry');
+            }
+          }
+          
+          if (!backend && attemptCount < maxAttempts) {
+            setTimeout(checkAndAuthenticate, 200);
+            return;
+          }
+        } else {
+          backendReady = true;
+          console.log('Backend is ready!');
+        }
+        
+        if (backend || backendReady) {
+          if (!authenticationAttempted) {
+            console.log('Token found, attempting to authenticate Decap CMS... (attempt ' + attemptCount + ')');
+            authenticationAttempted = true;
+          }
+          
           const authenticated = authenticateDecapCMS(token);
           if (authenticated) {
             console.log('Decap CMS authentication attempted');
+            // Don't clear hash yet - let Decap CMS process it
           }
           
-          // Keep trying even after first attempt
+          // Keep trying even after first attempt to ensure it sticks
           if (attemptCount < maxAttempts) {
             setTimeout(checkAndAuthenticate, 500);
           }
         } else {
-          // Decap CMS not ready, try again
+          // Backend not ready yet
           if (attemptCount < maxAttempts) {
             setTimeout(checkAndAuthenticate, 200);
-          } else {
-            console.warn('Decap CMS did not initialize after ' + maxAttempts + ' attempts');
+          } else if (attemptCount >= maxAttempts && !authenticationAttempted) {
+            console.warn('Backend did not become available after ' + maxAttempts + ' attempts');
+            console.warn('CMS object:', window.CMS);
+            console.warn('Available methods:', Object.keys(window.CMS || {}));
+            
+            // Try one more time with a longer delay
+            if (attemptCount < maxAttempts + 10) {
+              setTimeout(checkAndAuthenticate, 1000);
+            }
           }
         }
       }
       
-      // Start checking immediately and multiple times
-      checkAndAuthenticate();
-      setTimeout(checkAndAuthenticate, 500);
-      setTimeout(checkAndAuthenticate, 1000);
-      setTimeout(checkAndAuthenticate, 2000);
+      // Wait longer for Decap CMS to fully initialize
+      // Start checking after a delay to let Decap CMS load
+      setTimeout(checkAndAuthenticate, 2000); // Wait 2 seconds first
       setTimeout(checkAndAuthenticate, 3000);
+      setTimeout(checkAndAuthenticate, 4000);
+      setTimeout(checkAndAuthenticate, 5000);
       
       // Also check when hash changes (in case token is added after page load)
       window.addEventListener('hashchange', function() {
         attemptCount = 0; // Reset counter
-        setTimeout(checkAndAuthenticate, 100);
+        backendReady = false;
+        setTimeout(checkAndAuthenticate, 500);
       });
+      
+      // Listen for CMS ready event if it exists
+      if (window.CMS && window.CMS.events) {
+        window.CMS.events.subscribe('CMS_READY', function() {
+          console.log('CMS_READY event fired');
+          setTimeout(checkAndAuthenticate, 500);
+        });
+      }
     })();
   </script>
   

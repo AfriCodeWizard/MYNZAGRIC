@@ -87,10 +87,14 @@ async function handleAuth(request: NextRequest) {
 
     const token = tokenData.access_token
 
-    // If this is a browser redirect (popup window), return HTML that closes popup and sends token
-    // If this is an AJAX request, return JSON
-    if (isAjaxRequest) {
-      // AJAX request - return JSON
+    // Check if this is a popup (has Referer header pointing to admin page)
+    const referer = request.headers.get('referer') || ''
+    const isPopup = referer.includes('/admin') || request.headers.get('sec-fetch-dest') === 'document'
+    
+    // If this is an AJAX request OR we're in a popup from Decap CMS, return JSON
+    // Decap CMS with auth_endpoint expects JSON response
+    if (isAjaxRequest || isPopup) {
+      // Return JSON - Decap CMS will handle it
       return NextResponse.json(
         {
           token: token,
@@ -108,7 +112,7 @@ async function handleAuth(request: NextRequest) {
         }
       )
     } else {
-      // Browser redirect (popup) - return HTML that sends token via postMessage
+      // Browser redirect (not popup) - return HTML that redirects with token in hash
       const escapedToken = token
         .replace(/\\/g, '\\\\')
         .replace(/'/g, "\\'")
