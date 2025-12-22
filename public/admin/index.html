@@ -7,57 +7,95 @@
 </head>
 <body>
   <script>
-    // CRITICAL: Prevent Decap CMS from adding #/ to hash
-    // Intercept and fix hash changes in real-time
+    // COMPLETELY PREVENT Decap CMS from adding #/ to hash
+    // Override hash routing behavior at the source
     (function() {
-      // Store original hashchange handler
-      let originalHash = window.location.hash;
+      // Store original location.hash setter
+      let hashValue = window.location.hash;
       
-      // Function to fix hash format - removes / after # if it's just #/ or #/access_token
-      function fixHashFormat() {
-        const currentHash = window.location.hash;
-        
-        // If hash is just #/ (Decap CMS default), remove it
-        if (currentHash === '#/' || currentHash === '#') {
-          window.history.replaceState(null, null, window.location.pathname);
-          return;
+      // Override window.location.hash setter to intercept all hash changes
+      Object.defineProperty(window.location, 'hash', {
+        get: function() {
+          return hashValue;
+        },
+        set: function(newHash) {
+          // Remove any leading / after #
+          if (newHash && newHash.startsWith('#')) {
+            // If it's just #/, set to empty (no hash)
+            if (newHash === '#/' || newHash === '#') {
+              hashValue = '';
+              window.history.replaceState(null, null, window.location.pathname + window.location.search);
+              return;
+            }
+            
+            // If it starts with #/, remove the /
+            if (newHash.startsWith('#/')) {
+              newHash = '#' + newHash.substring(2);
+            }
+          }
+          
+          hashValue = newHash;
+          
+          // Update URL without triggering navigation
+          if (newHash && newHash !== '#') {
+            window.history.replaceState(null, null, window.location.pathname + window.location.search + newHash);
+          } else {
+            window.history.replaceState(null, null, window.location.pathname + window.location.search);
+          }
+          
+          // Trigger hashchange event manually so Decap CMS still gets notified
+          window.dispatchEvent(new HashChangeEvent('hashchange', {
+            oldURL: window.location.href,
+            newURL: window.location.href
+          }));
+        },
+        configurable: true
+      });
+      
+      // Also intercept history.pushState and history.replaceState
+      const originalPushState = history.pushState;
+      const originalReplaceState = history.replaceState;
+      
+      function fixHashInState(state, title, url) {
+        if (url && url.includes('#')) {
+          const hashIndex = url.indexOf('#');
+          const hash = url.substring(hashIndex);
+          if (hash.startsWith('#/')) {
+            url = url.substring(0, hashIndex) + '#' + hash.substring(2);
+          } else if (hash === '#/' || hash === '#') {
+            url = url.substring(0, hashIndex);
+          }
         }
-        
-        // If hash starts with #/access_token, fix it to #access_token
-        if (currentHash.startsWith('#/access_token=')) {
-          const fixedHash = currentHash.substring(2); // Remove #/
-          window.history.replaceState(null, null, '#' + fixedHash);
-          return;
-        }
-        
-        // If hash is #/something (but not access_token), preserve it for Decap CMS routing
-        // Only fix access_token format
+        return url;
       }
       
-      // Intercept hash changes BEFORE Decap CMS processes them
-      let hashCheckInterval = setInterval(function() {
+      history.pushState = function(state, title, url) {
+        url = fixHashInState(state, title, url);
+        hashValue = url && url.includes('#') ? url.substring(url.indexOf('#')) : '';
+        return originalPushState.call(this, state, title, url);
+      };
+      
+      history.replaceState = function(state, title, url) {
+        url = fixHashInState(state, title, url);
+        hashValue = url && url.includes('#') ? url.substring(url.indexOf('#')) : '';
+        return originalReplaceState.call(this, state, title, url);
+      };
+      
+      // Continuous monitoring to catch any hash changes we might miss
+      let lastHash = window.location.hash;
+      setInterval(function() {
         const currentHash = window.location.hash;
         
-        // If Decap CMS added #/ and there's no access_token, remove it
-        if (currentHash === '#/' && !originalHash.includes('access_token=')) {
-          window.history.replaceState(null, null, window.location.pathname);
+        // If hash changed and now has #/, fix it immediately
+        if (currentHash !== lastHash) {
+          if (currentHash === '#/' || currentHash === '#') {
+            window.location.hash = '';
+          } else if (currentHash.startsWith('#/')) {
+            window.location.hash = currentHash.substring(2);
+          }
+          lastHash = window.location.hash;
         }
-        
-        // If hash has #/access_token, fix it immediately
-        if (currentHash.startsWith('#/access_token=')) {
-          fixHashFormat();
-        }
-      }, 50); // Check every 50ms
-      
-      // Also listen for hashchange events
-      window.addEventListener('hashchange', function() {
-        fixHashFormat();
-      }, true); // Use capture phase to intercept before Decap CMS
-      
-      // Fix hash on initial load
-      if (window.location.hash === '#/') {
-        window.history.replaceState(null, null, window.location.pathname);
-      }
+      }, 10); // Check every 10ms for maximum responsiveness
       
       // Listen for postMessage from OAuth popup
       window.addEventListener('message', function(event) {
@@ -71,20 +109,15 @@
           
           // Set token in hash with CORRECT format: #access_token=... (NO /)
           window.location.hash = 'access_token=' + encodeURIComponent(token) + '&token_type=bearer';
-          
-          // Monitor and fix if Decap CMS tries to change it
-          setTimeout(function() {
-            if (window.location.hash.startsWith('#/access_token=')) {
-              fixHashFormat();
-            }
-          }, 100);
         }
       });
       
-      // Stop monitoring after 10 seconds (Decap CMS should be initialized by then)
-      setTimeout(function() {
-        clearInterval(hashCheckInterval);
-      }, 10000);
+      // Fix initial hash if it has #/
+      if (window.location.hash === '#/' || window.location.hash === '#') {
+        window.location.hash = '';
+      } else if (window.location.hash.startsWith('#/')) {
+        window.location.hash = window.location.hash.substring(2);
+      }
     })();
   </script>
   <script src="https://unpkg.com/netlify-cms@^2.10.0/dist/netlify-cms.js"></script>
