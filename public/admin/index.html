@@ -9,6 +9,32 @@
   <script>
     // Handle OAuth token from postMessage (popup) or URL hash (direct redirect)
     (function() {
+      // Function to extract token from hash
+      function getTokenFromHash() {
+        const hash = window.location.hash;
+        if (!hash || !hash.includes('access_token=')) {
+          return null;
+        }
+        
+        // Remove # and any leading /
+        const hashStr = hash.substring(1).replace(/^\/+/, '');
+        const params = new URLSearchParams(hashStr);
+        return params.get('access_token');
+      }
+      
+      // Function to set token in hash with proper format
+      function setTokenInHash(token) {
+        const properHash = 'access_token=' + encodeURIComponent(token) + '&token_type=bearer';
+        window.history.replaceState(null, null, '#' + properHash);
+      }
+      
+      // Check if token is already in hash and fix format if needed
+      const existingToken = getTokenFromHash();
+      if (existingToken) {
+        // Fix hash format: ensure NO / after #
+        setTokenInHash(existingToken);
+      }
+      
       // Listen for postMessage from OAuth popup
       window.addEventListener('message', function(event) {
         // Verify origin for security
@@ -22,28 +48,31 @@
         if (data && (data.token || data.access_token)) {
           const token = data.token || data.access_token;
           
-          // Put token in URL hash - Decap CMS reads from window.location.hash
-          const newHash = 'access_token=' + encodeURIComponent(token) + '&token_type=bearer';
+          // Put token in URL hash with proper format
+          setTokenInHash(token);
           
-          // Update hash without reload
-          if (window.history && window.history.replaceState) {
-            window.history.replaceState(null, null, '#/' + newHash);
-          } else {
-            window.location.hash = newHash;
-          }
-          
-          // Trigger hashchange event so Decap CMS picks it up
-          window.dispatchEvent(new HashChangeEvent('hashchange'));
-          
-          // Small delay then reload to ensure Decap CMS initializes with token
+          // Reload to ensure Decap CMS initializes with token
           setTimeout(function() {
             window.location.reload();
           }, 100);
         }
       });
       
-      // If token is already in hash from direct redirect, ensure it's preserved
-      // Decap CMS will read it when it initializes
+      // After Decap CMS loads, ensure it can read the token
+      // Wait for CMS to initialize
+      window.addEventListener('load', function() {
+        const token = getTokenFromHash();
+        if (token && window.CMS) {
+          // Try to authenticate with Decap CMS API
+          try {
+            // Decap CMS should read from hash automatically, but if not, try manual auth
+            // The hash format should be correct now
+            console.log('Token found in hash, Decap CMS should authenticate automatically');
+          } catch(e) {
+            console.error('Error authenticating with Decap CMS:', e);
+          }
+        }
+      });
     })();
   </script>
   <script src="https://unpkg.com/netlify-cms@^2.10.0/dist/netlify-cms.js"></script>

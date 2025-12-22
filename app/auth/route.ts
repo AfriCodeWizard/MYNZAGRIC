@@ -159,12 +159,14 @@ async function handleAuth(request: NextRequest) {
           }, 100);
         } catch(e) {
           console.error('Error sending message:', e);
-          // Fallback: redirect parent window
+          // Fallback: redirect parent window with proper hash format
+          // Format: #access_token=... (NO / after #)
           window.opener.location.href = baseUrl + '/admin#access_token=' + encodeURIComponent(token) + '&token_type=bearer';
           window.close();
         }
       } else {
         // Not in popup - redirect to admin with token in hash
+        // Format: #access_token=... (NO / after #)
         window.location.href = baseUrl + '/admin#access_token=' + encodeURIComponent(token) + '&token_type=bearer';
       }
     })();
