@@ -23,6 +23,9 @@ async function handleAuth(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams
   const code = searchParams.get('code')
   const baseUrl = request.nextUrl.origin
+  const acceptHeader = request.headers.get('accept') || ''
+  const isAjaxRequest = acceptHeader.includes('application/json') || 
+                       request.headers.get('x-requested-with') === 'XMLHttpRequest'
 
   // If no code, redirect to GitHub OAuth
   if (!code) {
@@ -84,24 +87,76 @@ async function handleAuth(request: NextRequest) {
 
     const token = tokenData.access_token
 
-    // Decap CMS with auth_endpoint expects JSON response
-    // Return token in the format Decap CMS expects
-    return NextResponse.json(
-      {
-        token: token,
-        provider: 'github',
-      },
-      {
+    // If this is a browser redirect (popup window), return HTML that closes popup and sends token
+    // If this is an AJAX request, return JSON
+    if (isAjaxRequest) {
+      // AJAX request - return JSON
+      return NextResponse.json(
+        {
+          token: token,
+          provider: 'github',
+        },
+        {
+          status: 200,
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0',
+          },
+        }
+      )
+    } else {
+      // Browser redirect (popup) - return HTML that sends token via postMessage
+      const escapedToken = token
+        .replace(/\\/g, '\\\\')
+        .replace(/'/g, "\\'")
+        .replace(/"/g, '\\"')
+        .replace(/\n/g, '\\n')
+        .replace(/\r/g, '\\r')
+        .replace(/\t/g, '\\t')
+      
+      const html = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Authenticating...</title>
+</head>
+<body>
+  <script>
+    (function() {
+      if (window.opener) {
+        // We're in a popup - send token to parent window
+        window.opener.postMessage(
+          {
+            type: 'authorization:github',
+            token: '${escapedToken}',
+            provider: 'github'
+          },
+          '${baseUrl}'
+        );
+        window.close();
+      } else {
+        // Not in popup - redirect to admin with token
+        window.location.href = '${baseUrl}/admin#access_token=${encodeURIComponent(token)}&token_type=bearer';
+      }
+    })();
+  </script>
+  <p>Authenticating...</p>
+</body>
+</html>`
+
+      return new NextResponse(html, {
         status: 200,
         headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'text/html; charset=utf-8',
           'Cache-Control': 'no-cache, no-store, must-revalidate',
           'Pragma': 'no-cache',
           'Expires': '0',
         },
-      }
-    )
+      })
+    }
   } catch (error) {
     return NextResponse.json(
       { error: 'Authentication failed', details: error instanceof Error ? error.message : 'Unknown error' },
