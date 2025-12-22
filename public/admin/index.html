@@ -7,73 +7,38 @@
 </head>
 <body>
   <script>
-    // Handle OAuth token - Decap CMS should read from hash automatically
+    // CRITICAL: Extract token from hash BEFORE Decap CMS loads
+    // Decap CMS router will add #/ which overwrites the token
     (function() {
-      // Function to extract token from hash (handles both #/access_token and #access_token)
-      function getTokenFromHash() {
+      // Extract token from hash immediately (before Decap CMS loads)
+      function extractTokenFromHash() {
         const hash = window.location.hash;
         if (!hash || !hash.includes('access_token=')) {
           return null;
         }
         
         // Remove # and any leading / - handle both #/access_token and #access_token
-        // Decap CMS router adds / after #, so we need to handle that
         const hashStr = hash.substring(1).replace(/^\/+/, '');
         const params = new URLSearchParams(hashStr);
         return params.get('access_token');
       }
       
-      // Check if token exists in hash
-      const token = getTokenFromHash();
+      // Extract and store token BEFORE Decap CMS loads
+      const token = extractTokenFromHash();
       if (token) {
-        // Token is in hash - Decap CMS should read it automatically
-        // But if it doesn't, we'll try to help it along
-        console.log('Token found in hash, waiting for Decap CMS to authenticate...');
+        console.log('Token extracted from hash before Decap CMS loads');
+        // Store in sessionStorage so we can use it after Decap CMS initializes
+        sessionStorage.setItem('github_oauth_token', token);
+        // Also store the full token data
+        sessionStorage.setItem('github_token_data', JSON.stringify({
+          access_token: token,
+          token_type: 'bearer',
+          provider: 'github'
+        }));
         
-        // Store token in case Decap CMS needs it
-        sessionStorage.setItem('github_token', token);
-        
-        // Wait for Decap CMS to load and check if it authenticated
-        let checkCount = 0;
-        const maxChecks = 50; // Check for 5 seconds
-        
-        function checkAuthentication() {
-          checkCount++;
-          
-          // Check if Decap CMS is loaded
-          if (window.CMS) {
-            try {
-              const backend = window.CMS.getBackend();
-              if (backend) {
-                // Check if backend has a token
-                if (backend.token) {
-                  console.log('Decap CMS authenticated successfully');
-                  return;
-                }
-                
-                // If no token after a few seconds, try to set it
-                if (checkCount > 10 && !backend.token) {
-                  console.log('Attempting to set token manually...');
-                  // Try to access the backend's internal auth
-                  if (backend.authToken !== token) {
-                    backend.authToken = token;
-                  }
-                }
-              }
-            } catch(e) {
-              // Decap CMS API might not be accessible, that's OK
-            }
-          }
-          
-          if (checkCount < maxChecks) {
-            setTimeout(checkAuthentication, 100);
-          } else {
-            console.warn('Decap CMS did not authenticate automatically. Token is in hash:', token.substring(0, 10) + '...');
-          }
-        }
-        
-        // Start checking after a short delay to let Decap CMS initialize
-        setTimeout(checkAuthentication, 500);
+        // Clear the hash so Decap CMS doesn't interfere with it
+        // We'll inject the token manually after Decap CMS loads
+        window.history.replaceState(null, null, window.location.pathname);
       }
       
       // Listen for postMessage from OAuth popup
@@ -85,20 +50,91 @@
         const data = event.data;
         if (data && (data.token || data.access_token)) {
           const token = data.token || data.access_token;
-          sessionStorage.setItem('github_token', token);
           
-          // Put token in hash - Decap CMS will read it
-          // Note: Decap CMS router may add / after #, that's fine
-          window.location.hash = 'access_token=' + encodeURIComponent(token) + '&token_type=bearer';
+          // Store token before reload
+          sessionStorage.setItem('github_oauth_token', token);
+          sessionStorage.setItem('github_token_data', JSON.stringify({
+            access_token: token,
+            token_type: 'bearer',
+            provider: 'github'
+          }));
           
-          // Reload to let Decap CMS read the token
-          setTimeout(function() {
-            window.location.reload();
-          }, 100);
+          // Reload - token will be extracted on next load
+          window.location.reload();
         }
       });
     })();
   </script>
+  
+  <script>
+    // After Decap CMS loads, inject the token
+    (function() {
+      // Wait for Decap CMS to initialize
+      function injectToken() {
+        const tokenData = sessionStorage.getItem('github_token_data');
+        if (!tokenData) {
+          return;
+        }
+        
+        try {
+          const tokenObj = JSON.parse(tokenData);
+          const token = tokenObj.access_token;
+          
+          // Check if Decap CMS is loaded
+          if (window.CMS && window.CMS.getBackend) {
+            try {
+              const backend = window.CMS.getBackend();
+              if (backend) {
+                // Try to authenticate with the token
+                // Decap CMS GitHub backend expects token in specific format
+                if (backend.authenticate) {
+                  console.log('Attempting to authenticate Decap CMS with stored token...');
+                  backend.authenticate({ 
+                    token: token,
+                    provider: 'github'
+                  });
+                } else if (backend.authToken !== undefined) {
+                  // Try setting authToken directly
+                  backend.authToken = token;
+                  console.log('Token set directly on backend');
+                } else if (backend.token !== undefined) {
+                  // Try setting token directly
+                  backend.token = token;
+                  console.log('Token set on backend.token');
+                }
+                
+                // Trigger a refresh/re-authentication
+                if (backend.restoreUser) {
+                  backend.restoreUser();
+                }
+                
+                // Clear stored token after use
+                sessionStorage.removeItem('github_oauth_token');
+                sessionStorage.removeItem('github_token_data');
+              }
+            } catch(e) {
+              console.error('Error injecting token into Decap CMS:', e);
+            }
+          } else {
+            // Decap CMS not ready yet, try again
+            setTimeout(injectToken, 200);
+          }
+        } catch(e) {
+          console.error('Error parsing token data:', e);
+        }
+      }
+      
+      // Start trying to inject token after page loads
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+          setTimeout(injectToken, 1000); // Wait 1 second for Decap CMS to initialize
+        });
+      } else {
+        setTimeout(injectToken, 1000);
+      }
+    })();
+  </script>
+  
   <script src="https://unpkg.com/netlify-cms@^2.10.0/dist/netlify-cms.js"></script>
 </body>
 </html>
