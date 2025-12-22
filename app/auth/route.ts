@@ -108,16 +108,9 @@ async function handleAuth(request: NextRequest) {
       )
     }
     
-    // Browser redirect - store token in session and return HTML that fetches it via AJAX
-    // This allows Decap CMS to get JSON even after browser redirect
-    const tokenId = Math.random().toString(36).substring(7)
-    
-    // Store token temporarily (in a real app, use Redis or similar)
-    // For now, we'll encode it in the response and have the popup fetch it
-    else {
-      // Browser redirect - return HTML that makes AJAX request to get token as JSON
-      // This allows Decap CMS to receive JSON even after browser redirect
-      const escapedToken = token
+    // Browser redirect - return HTML that sends token via postMessage
+    // Decap CMS with auth_endpoint expects {token: "...", provider: "github"} format
+    const escapedToken = token
         .replace(/\\/g, '\\\\')
         .replace(/'/g, "\\'")
         .replace(/"/g, '\\"')
@@ -175,7 +168,6 @@ async function handleAuth(request: NextRequest) {
           'Expires': '0',
         },
       })
-    }
   } catch (error) {
     return NextResponse.json(
       { error: 'Authentication failed', details: error instanceof Error ? error.message : 'Unknown error' },
