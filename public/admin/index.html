@@ -7,17 +7,37 @@
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
 <body>
-  <script src="https://unpkg.com/netlify-cms@^2.10.0/dist/netlify-cms.js"></script>
   <script>
+    // Initialize Netlify Identity widget
     if (window.netlifyIdentity) {
       window.netlifyIdentity.on("init", user => {
         if (!user) {
           window.netlifyIdentity.on("login", () => {
-            document.location.href = "/admin/";
+            window.netlifyIdentity.close();
+            window.location.reload();
           });
         }
       });
+      
+      // Handle OAuth callback - Netlify redirects back with token in URL
+      // Check both hash and query parameters
+      const hash = window.location.hash;
+      const search = window.location.search;
+      
+      if (hash.includes('token=') || search.includes('token=')) {
+        // OAuth callback - let the widget handle it, then reload
+        window.netlifyIdentity.on("login", () => {
+          window.netlifyIdentity.close();
+          // Clean URL and reload
+          window.history.replaceState({}, document.title, '/admin/');
+          window.location.reload();
+        });
+      }
+      
+      // Initialize the widget
+      window.netlifyIdentity.init();
     }
   </script>
+  <script src="https://unpkg.com/netlify-cms@^2.10.0/dist/netlify-cms.js"></script>
 </body>
 </html>

@@ -70,9 +70,31 @@ The error message will say: *"Plugin @netlify/plugin-nextjs failed - Your publis
 
 ### Step 3: Enable Netlify Identity
 
-1. In your Netlify site dashboard, go to **"Identity"** in the left sidebar
-2. Click **"Enable Identity"**
-3. Wait a few seconds for Identity to initialize
+**Finding the Identity feature (if it's NOT in your left sidebar):**
+
+If your left sidebar shows: **Project overview**, **Project configuration**, **Deploys**, etc. (but no Identity):
+
+1. **BEST METHOD - Use Direct URL:**
+   - Find your site name (it's in your Netlify dashboard URL, like `https://app.netlify.com/sites/amazing-site-12345`)
+   - Go directly to: `https://app.netlify.com/sites/[YOUR-SITE-NAME]/identity`
+   - Replace `[YOUR-SITE-NAME]` with your actual site name
+   - Example: If your site is `mynzagric`, go to: `https://app.netlify.com/sites/mynzagric/identity`
+
+2. **Alternative - Check Project Configuration:**
+   - Click **"Project configuration"** in the left sidebar
+   - Look for **"Identity"**, **"Add-ons"**, or **"Integrations"** section
+   - Identity might be listed there as an add-on to enable
+
+3. **Alternative - Check Site Settings:**
+   - Look for a **"Site settings"** or gear icon (might be in top right or bottom of sidebar)
+   - Click it, then look for **"Identity"** in the settings menu
+
+4. **Once you're in the Identity section:**
+   - You should see a button that says **"Enable Identity"** or **"Enable Netlify Identity"**
+   - Click it
+   - Wait a few seconds for Identity to initialize
+
+> **Note**: If you can't find Identity anywhere, try the direct URL method - it's the most reliable way to access it.
 
 ### Step 4: Configure Identity Settings
 
@@ -90,11 +112,17 @@ The error message will say: *"Plugin @netlify/plugin-nextjs failed - Your publis
 
 ### Step 5: Enable Git Gateway
 
-1. In the Identity section, click **"Services"** tab
-2. Find **"Git Gateway"** and click **"Enable Git Gateway"**
-3. You'll be prompted to authorize Netlify to access your GitHub repository
-4. Click **"Authorize"** and grant the necessary permissions
-5. Wait for Git Gateway to initialize (may take 30-60 seconds)
+1. **Make sure you're still in the Identity section** (left sidebar → Identity)
+2. **Find the Services section:**
+   - Look for tabs at the top: **"Overview"**, **"Users"**, **"Services"**, **"Settings and usage"**
+   - Click on the **"Services"** tab
+   - OR scroll down if you see a **"Services"** section on the same page
+3. **Enable Git Gateway:**
+   - You should see **"Git Gateway"** listed in the Services section
+   - Click **"Enable Git Gateway"** button
+   - You'll be prompted to authorize Netlify to access your GitHub repository
+   - Click **"Authorize"** and grant the necessary permissions
+   - Wait for Git Gateway to initialize (may take 30-60 seconds)
 
 ### Step 6: Configure Git Gateway Repository
 
@@ -190,6 +218,35 @@ This happens because Netlify auto-detects Next.js projects and auto-installs the
 - Verify the Site URL in Netlify Identity settings is set to `https://mynzagric.com`
 - Make sure the Identity widget script is loaded on your main site pages
 - Check browser console for errors
+
+### GitHub OAuth completes but doesn't log in / Stuck at admin page
+
+If GitHub OAuth goes through but you're stuck at `https://mynzagric.com/admin#/`:
+
+1. **Verify Site URL in Netlify Identity:**
+   - Go to Netlify dashboard → Your site → Identity → Settings and usage
+   - Scroll to **"Site URL"**
+   - Make sure it's set to: `https://mynzagric.com` (your Vercel domain, not the Netlify domain)
+   - Click **"Save"**
+
+2. **Check OAuth Callback URL:**
+   - In Netlify Identity → Settings → External providers → GitHub
+   - Verify the callback URL is: `https://mynzagric.com/admin/`
+   - If it shows a Netlify domain, update it to your Vercel domain
+
+3. **Clear browser cache and cookies:**
+   - Clear cookies for `mynzagric.com`
+   - Try in an incognito/private window
+
+4. **Verify Identity widget initialization:**
+   - The `public/admin/index.html` file should have proper OAuth callback handling
+   - Check browser console (F12) for any JavaScript errors
+
+5. **Check if email login is visible:**
+   - If you only see GitHub login, email/password might be disabled
+   - Go to Netlify Identity → Settings → Registration preferences
+   - Make sure email/password authentication is enabled
+   - If using "Invite only", make sure you've invited your email address
 
 ### "Repository not found" or permission errors
 
