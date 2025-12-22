@@ -83,113 +83,25 @@ async function handleAuth(request: NextRequest) {
     }
 
     const token = tokenData.access_token
-    
-    // Verify token is a classic GitHub OAuth access token (starts with 'gho_')
-    // NOT a GitHub App token (starts with 'ghu_') or fine-grained token (starts with 'github_pat_')
-    if (!token.startsWith('gho_')) {
-      return NextResponse.json(
-        { error: 'Invalid token type: Expected classic OAuth access token (gho_*)' },
-        { status: 500 }
-      )
-    }
-    
-    // Verify token can access GitHub API (classic OAuth token requirement)
-    // This ensures it's a valid classic OAuth token, not App or fine-grained
-    // Non-blocking: if validation fails, still proceed (token exchange already succeeded)
-    try {
-      const userResponse = await fetch('https://api.github.com/user', {
-        headers: {
-          'Authorization': `token ${token}`,
-          'Accept': 'application/vnd.github.v3+json',
-        },
-      })
-      
-      if (!userResponse.ok) {
-        console.warn('Token validation warning: Token may not have expected permissions, but proceeding')
-      }
-    } catch (error) {
-      // If validation fails, still proceed but log warning
-      console.warn('Token validation check failed (non-blocking):', error)
-    }
 
-    // Return HTML that sends the exact postMessage Decap CMS expects
-    const escapedToken = token
-      .replace(/\\/g, '\\\\')
-      .replace(/'/g, "\\'")
-      .replace(/"/g, '\\"')
-      .replace(/\n/g, '\\n')
-      .replace(/\r/g, '\\r')
-      .replace(/\t/g, '\\t')
-    
-    // Explicitly set target origin to admin origin (not popup origin)
-    // Decap CMS verifies event.origin must match admin page origin exactly
-    const adminOrigin = baseUrl // https://mynzagric.com
-    
-    const html = `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>Authenticating...</title>
-</head>
-<body>
-  <script>
-    (function () {
-      if (!window.opener) {
-        console.error("No opener window");
-        return;
-      }
-
-      const token = "${escapedToken}";
-      const targetOrigin = "${adminOrigin}";
-      const maxWaitTime = 10000; // 10 seconds max wait
-      const checkInterval = 100; // Check every 100ms
-      const startTime = Date.now();
-
-      function waitForCMS() {
-        if (window.opener && window.opener.CMS) {
-          // CMS is ready, send the message
-          console.log("CMS is ready, sending authorization token");
-          window.opener.postMessage(
-            {
-              type: "authorization:github",
-              token: token,
-            },
-            targetOrigin
-          );
-          window.close();
-        } else if (Date.now() - startTime < maxWaitTime) {
-          // CMS not ready yet, check again
-          setTimeout(waitForCMS, checkInterval);
-        } else {
-          // Timeout reached, try sending anyway
-          console.warn("CMS not detected after timeout, attempting to send message");
-          window.opener.postMessage(
-            {
-              type: "authorization:github",
-              token: token,
-            },
-            targetOrigin
-          );
-          window.close();
-        }
-      }
-
-      // Start waiting for CMS
-      waitForCMS();
-    })();
-  </script>
-</body>
-</html>`
-
-    return new NextResponse(html, {
-      status: 200,
-      headers: {
-        'Content-Type': 'text/html; charset=utf-8',
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0',
+    // Decap CMS with auth_endpoint expects JSON response
+    // Return token in the format Decap CMS expects
+    return NextResponse.json(
+      {
+        token: token,
+        provider: 'github',
       },
-    })
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+        },
+      }
+    )
   } catch (error) {
     return NextResponse.json(
       { error: 'Authentication failed', details: error instanceof Error ? error.message : 'Unknown error' },
