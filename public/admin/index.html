@@ -85,6 +85,7 @@
       setTimeout(fixHash, 500);
       
       // Listen for postMessage from OAuth popup
+      // Decap CMS with auth_endpoint expects {token: "...", provider: "github"} format
       let receivedToken = null;
       window.addEventListener('message', function(event) {
         if (event.origin !== window.location.origin) {
@@ -92,29 +93,120 @@
         }
         
         const data = event.data;
-        if (data && (data.token || data.access_token)) {
+        console.log('Received postMessage:', data);
+        
+        // Handle Decap CMS expected format: {token: "...", provider: "github"}
+        if (data && data.token && data.provider === 'github') {
+          const token = data.token;
+          receivedToken = token;
+          
+          console.log('Token received via postMessage in Decap CMS format:', token.substring(0, 10) + '...');
+          
+          // Store token
+          sessionStorage.setItem('github_oauth_token', token);
+          sessionStorage.setItem('github_token_data', JSON.stringify(data));
+          
+          // Decap CMS with auth_endpoint might not listen for postMessage
+          // We need to manually inject the token into Decap CMS
+          // Wait for Decap CMS to be ready, then inject token
+          let injectAttempts = 0;
+          const maxInjectAttempts = 50;
+          
+          function injectTokenIntoDecapCMS() {
+            injectAttempts++;
+            
+            if (!window.CMS) {
+              if (injectAttempts < maxInjectAttempts) {
+                setTimeout(injectTokenIntoDecapCMS, 200);
+              }
+              return;
+            }
+            
+            try {
+              // Try to get backend
+              const backend = window.CMS.getBackend();
+              
+              if (backend) {
+                console.log('Backend found, injecting token...');
+                
+                // Try to set token on backend
+                if (backend.token !== undefined) {
+                  backend.token = token;
+                  console.log('✓ Token set on backend.token');
+                }
+                
+                // Try authenticate method
+                if (typeof backend.authenticate === 'function') {
+                  backend.authenticate(data);
+                  console.log('✓ Called backend.authenticate with token data');
+                }
+                
+                // Try restoreUser
+                if (typeof backend.restoreUser === 'function') {
+                  backend.restoreUser();
+                  console.log('✓ Called backend.restoreUser');
+                }
+                
+                // Try to access implementation
+                if (backend.implementation) {
+                  if (backend.implementation.token !== undefined) {
+                    backend.implementation.token = token;
+                    console.log('✓ Token set on implementation.token');
+                  }
+                  if (typeof backend.implementation.authenticate === 'function') {
+                    backend.implementation.authenticate(data);
+                    console.log('✓ Called implementation.authenticate');
+                  }
+                }
+                
+                // Try store dispatch
+                if (window.CMS.store && window.CMS.store.dispatch) {
+                  window.CMS.store.dispatch({
+                    type: 'AUTH_SUCCESS',
+                    payload: data
+                  });
+                  console.log('✓ Dispatched AUTH_SUCCESS action');
+                }
+              } else {
+                console.log('Backend not available, will retry...');
+                if (injectAttempts < maxInjectAttempts) {
+                  setTimeout(injectTokenIntoDecapCMS, 200);
+                }
+              }
+            } catch(e) {
+              console.error('Error injecting token:', e);
+              if (injectAttempts < maxInjectAttempts) {
+                setTimeout(injectTokenIntoDecapCMS, 200);
+              }
+            }
+          }
+          
+          // Start trying to inject token
+          setTimeout(injectTokenIntoDecapCMS, 500);
+          setTimeout(injectTokenIntoDecapCMS, 1000);
+          setTimeout(injectTokenIntoDecapCMS, 2000);
+          setTimeout(injectTokenIntoDecapCMS, 3000);
+          
+          // Also set in hash as fallback
+          history.replaceState(null, '', window.location.pathname + window.location.search + '#access_token=' + encodeURIComponent(token) + '&token_type=bearer');
+          setTimeout(fixHash, 10);
+          setTimeout(fixHash, 50);
+        }
+        // Also handle alternative format
+        else if (data && (data.token || data.access_token)) {
           const token = data.token || data.access_token;
           receivedToken = token;
           
-          console.log('Token received via postMessage:', token.substring(0, 10) + '...');
+          console.log('Token received via postMessage (alternative format):', token.substring(0, 10) + '...');
           
-          // Store token for later use
           sessionStorage.setItem('github_oauth_token', token);
-          
-          // Set token in hash with CORRECT format: #access_token=... (NO /)
-          // Use history.replaceState to bypass normal hash setter
           history.replaceState(null, '', window.location.pathname + window.location.search + '#access_token=' + encodeURIComponent(token) + '&token_type=bearer');
           
-          // Ensure it stays fixed
           setTimeout(fixHash, 10);
           setTimeout(fixHash, 50);
-          
-          // Try to authenticate immediately if CMS is ready
-          if (window.CMS) {
-            setTimeout(function() {
-              checkAndAuthenticate();
-            }, 100);
-          }
+          setTimeout(function() {
+            checkAndAuthenticate();
+          }, 500);
         }
       });
     })();
@@ -124,7 +216,7 @@
     // Extract token from hash and manually authenticate Decap CMS
     (function() {
       function getTokenFromHash() {
-        const hash = window.location.hash;
+      const hash = window.location.hash;
         if (!hash || !hash.includes('access_token=')) {
           return null;
         }

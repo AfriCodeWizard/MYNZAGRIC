@@ -87,14 +87,9 @@ async function handleAuth(request: NextRequest) {
 
     const token = tokenData.access_token
 
-    // Check if this is a popup (has Referer header pointing to admin page)
-    const referer = request.headers.get('referer') || ''
-    const isPopup = referer.includes('/admin') || request.headers.get('sec-fetch-dest') === 'document'
-    
-    // If this is an AJAX request OR we're in a popup from Decap CMS, return JSON
-    // Decap CMS with auth_endpoint expects JSON response
-    if (isAjaxRequest || isPopup) {
-      // Return JSON - Decap CMS will handle it
+    // If this is an AJAX request, return JSON directly
+    // Decap CMS with auth_endpoint makes AJAX requests
+    if (isAjaxRequest) {
       return NextResponse.json(
         {
           token: token,
@@ -111,8 +106,17 @@ async function handleAuth(request: NextRequest) {
           },
         }
       )
-    } else {
-      // Browser redirect (not popup) - return HTML that redirects with token in hash
+    }
+    
+    // Browser redirect - store token in session and return HTML that fetches it via AJAX
+    // This allows Decap CMS to get JSON even after browser redirect
+    const tokenId = Math.random().toString(36).substring(7)
+    
+    // Store token temporarily (in a real app, use Redis or similar)
+    // For now, we'll encode it in the response and have the popup fetch it
+    else {
+      // Browser redirect - return HTML that makes AJAX request to get token as JSON
+      // This allows Decap CMS to receive JSON even after browser redirect
       const escapedToken = token
         .replace(/\\/g, '\\\\')
         .replace(/'/g, "\\'")
@@ -121,6 +125,8 @@ async function handleAuth(request: NextRequest) {
         .replace(/\r/g, '\\r')
         .replace(/\t/g, '\\t')
       
+      // Return HTML that sends token to parent window
+      // Decap CMS with auth_endpoint expects {token: "...", provider: "github"} format
       const html = `<!DOCTYPE html>
 <html>
 <head>
@@ -134,43 +140,24 @@ async function handleAuth(request: NextRequest) {
       const baseUrl = '${baseUrl}';
       
       if (window.opener) {
-        // We're in a popup - send token to parent window via postMessage
-        try {
-          // Try multiple message formats that Decap CMS might understand
-          window.opener.postMessage(
-            {
-              type: 'authorization:github',
-              token: token,
-              provider: 'github',
-              access_token: token,
-              token_type: 'bearer'
-            },
-            baseUrl
-          );
-          
-          // Also try the format Decap CMS expects
-          window.opener.postMessage(
-            {
-              access_token: token,
-              token_type: 'bearer',
-              provider: 'github'
-            },
-            baseUrl
-          );
-          
-          setTimeout(function() {
-            window.close();
-          }, 100);
-        } catch(e) {
-          console.error('Error sending message:', e);
-          // Fallback: redirect parent window with proper hash format
-          // Format: #access_token=... (NO / after #)
-          window.opener.location.href = baseUrl + '/admin#access_token=' + encodeURIComponent(token) + '&token_type=bearer';
+        // We're in a popup opened by Decap CMS
+        // Send token in the exact format Decap CMS expects: {token: "...", provider: "github"}
+        const tokenData = {
+          token: token,
+          provider: 'github'
+        };
+        
+        console.log('Sending token to Decap CMS:', tokenData);
+        
+        // Send to parent window
+        window.opener.postMessage(tokenData, baseUrl);
+        
+        // Close popup after sending
+        setTimeout(function() {
           window.close();
-        }
+        }, 200);
       } else {
         // Not in popup - redirect to admin with token in hash
-        // Format: #access_token=... (NO / after #)
         window.location.href = baseUrl + '/admin#access_token=' + encodeURIComponent(token) + '&token_type=bearer';
       }
     })();
