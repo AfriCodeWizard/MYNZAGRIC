@@ -8,94 +8,81 @@
 <body>
   <script>
     // COMPLETELY PREVENT Decap CMS from adding #/ to hash
-    // Override hash routing behavior at the source
+    // Intercept history API and continuously monitor hash
     (function() {
-      // Store original location.hash setter
-      let hashValue = window.location.hash;
-      
-      // Override window.location.hash setter to intercept all hash changes
-      Object.defineProperty(window.location, 'hash', {
-        get: function() {
-          return hashValue;
-        },
-        set: function(newHash) {
-          // Remove any leading / after #
-          if (newHash && newHash.startsWith('#')) {
-            // If it's just #/, set to empty (no hash)
-            if (newHash === '#/' || newHash === '#') {
-              hashValue = '';
-              window.history.replaceState(null, null, window.location.pathname + window.location.search);
-              return;
-            }
-            
-            // If it starts with #/, remove the /
-            if (newHash.startsWith('#/')) {
-              newHash = '#' + newHash.substring(2);
-            }
-          }
-          
-          hashValue = newHash;
-          
-          // Update URL without triggering navigation
-          if (newHash && newHash !== '#') {
-            window.history.replaceState(null, null, window.location.pathname + window.location.search + newHash);
-          } else {
-            window.history.replaceState(null, null, window.location.pathname + window.location.search);
-          }
-          
-          // Trigger hashchange event manually so Decap CMS still gets notified
-          window.dispatchEvent(new HashChangeEvent('hashchange', {
-            oldURL: window.location.href,
-            newURL: window.location.href
-          }));
-        },
-        configurable: true
-      });
-      
-      // Also intercept history.pushState and history.replaceState
+      // Intercept history.pushState and history.replaceState
       const originalPushState = history.pushState;
       const originalReplaceState = history.replaceState;
       
-      function fixHashInState(state, title, url) {
-        if (url && url.includes('#')) {
-          const hashIndex = url.indexOf('#');
+      function fixHashInURL(url) {
+        if (!url) return url;
+        
+        // If URL has a hash, fix it
+        const hashIndex = url.indexOf('#');
+        if (hashIndex !== -1) {
           const hash = url.substring(hashIndex);
-          if (hash.startsWith('#/')) {
-            url = url.substring(0, hashIndex) + '#' + hash.substring(2);
-          } else if (hash === '#/' || hash === '#') {
-            url = url.substring(0, hashIndex);
+          let fixedHash = hash;
+          
+          // Remove / after # if present
+          if (hash === '#/' || hash === '#') {
+            // Remove hash completely
+            return url.substring(0, hashIndex);
+          } else if (hash.startsWith('#/')) {
+            // Remove the / after #
+            fixedHash = '#' + hash.substring(2);
+            return url.substring(0, hashIndex) + fixedHash;
           }
         }
         return url;
       }
       
       history.pushState = function(state, title, url) {
-        url = fixHashInState(state, title, url);
-        hashValue = url && url.includes('#') ? url.substring(url.indexOf('#')) : '';
+        url = fixHashInURL(url);
         return originalPushState.call(this, state, title, url);
       };
       
       history.replaceState = function(state, title, url) {
-        url = fixHashInState(state, title, url);
-        hashValue = url && url.includes('#') ? url.substring(url.indexOf('#')) : '';
+        url = fixHashInURL(url);
         return originalReplaceState.call(this, state, title, url);
       };
       
-      // Continuous monitoring to catch any hash changes we might miss
+      // Aggressive continuous monitoring to catch and fix hash changes immediately
       let lastHash = window.location.hash;
-      setInterval(function() {
+      let fixingHash = false;
+      
+      function fixHash() {
+        if (fixingHash) return; // Prevent infinite loops
+        fixingHash = true;
+        
         const currentHash = window.location.hash;
         
-        // If hash changed and now has #/, fix it immediately
-        if (currentHash !== lastHash) {
-          if (currentHash === '#/' || currentHash === '#') {
-            window.location.hash = '';
-          } else if (currentHash.startsWith('#/')) {
-            window.location.hash = currentHash.substring(2);
-          }
-          lastHash = window.location.hash;
+        // If hash is #/ or #, remove it completely
+        if (currentHash === '#/' || currentHash === '#') {
+          history.replaceState(null, '', window.location.pathname + window.location.search);
         }
-      }, 10); // Check every 10ms for maximum responsiveness
+        // If hash starts with #/, remove the /
+        else if (currentHash.startsWith('#/')) {
+          const fixedHash = currentHash.substring(2); // Remove #/
+          history.replaceState(null, '', window.location.pathname + window.location.search + '#' + fixedHash);
+        }
+        
+        fixingHash = false;
+        lastHash = window.location.hash;
+      }
+      
+      // Monitor hash changes very frequently
+      setInterval(fixHash, 5); // Check every 5ms
+      
+      // Also listen for hashchange events
+      window.addEventListener('hashchange', fixHash, true); // Capture phase
+      
+      // Fix hash immediately on load
+      setTimeout(fixHash, 0);
+      setTimeout(fixHash, 10);
+      setTimeout(fixHash, 50);
+      setTimeout(fixHash, 100);
+      setTimeout(fixHash, 200);
+      setTimeout(fixHash, 500);
       
       // Listen for postMessage from OAuth popup
       window.addEventListener('message', function(event) {
@@ -108,16 +95,14 @@
           const token = data.token || data.access_token;
           
           // Set token in hash with CORRECT format: #access_token=... (NO /)
-          window.location.hash = 'access_token=' + encodeURIComponent(token) + '&token_type=bearer';
+          // Use history.replaceState to bypass normal hash setter
+          history.replaceState(null, '', window.location.pathname + window.location.search + '#access_token=' + encodeURIComponent(token) + '&token_type=bearer');
+          
+          // Ensure it stays fixed
+          setTimeout(fixHash, 10);
+          setTimeout(fixHash, 50);
         }
       });
-      
-      // Fix initial hash if it has #/
-      if (window.location.hash === '#/' || window.location.hash === '#') {
-        window.location.hash = '';
-      } else if (window.location.hash.startsWith('#/')) {
-        window.location.hash = window.location.hash.substring(2);
-      }
     })();
   </script>
   <script src="https://unpkg.com/netlify-cms@^2.10.0/dist/netlify-cms.js"></script>
