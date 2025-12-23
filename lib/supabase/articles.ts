@@ -1,4 +1,4 @@
-import { createClient } from './server'
+import { createClient, createStaticClient } from './server'
 import { BlogPost } from '../blog-data'
 import { calculateReadingTime } from '../blog-data'
 
@@ -52,8 +52,11 @@ export function articleToBlogPost(article: Article): BlogPost {
   }
 }
 
-export async function getAllArticles(publishedOnly: boolean = true) {
-  const supabase = await createClient()
+export async function getAllArticles(publishedOnly: boolean = true, useStaticClient: boolean = false) {
+  // Use static client for build-time data fetching (e.g., generateStaticParams)
+  const supabase = useStaticClient 
+    ? createStaticClient()
+    : await createClient()
   
   let query = supabase
     .from('articles')
@@ -184,4 +187,6 @@ export async function deleteArticle(id: string) {
   
   return true
 }
+
+
 

@@ -3,7 +3,8 @@ import { getAllArticles, getArticleBySlug, articleToBlogPost } from './supabase/
 
 export async function getAllPostSlugs(): Promise<string[]> {
   try {
-    const articles = await getAllArticles(true)
+    // Use static client for build-time generation (generateStaticParams)
+    const articles = await getAllArticles(true, true)
     return articles.map(article => article.slug)
   } catch (error) {
     console.error('Error loading post slugs:', error)
