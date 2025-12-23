@@ -1,91 +1,33 @@
-import fs from 'fs'
-import path from 'path'
-import matter from 'gray-matter'
 import { BlogPost } from './blog-data'
-import { calculateReadingTime } from './blog-data'
+import { getAllArticles, getArticleBySlug, articleToBlogPost } from './supabase/articles'
 
-const postsDirectory = path.join(process.cwd(), 'content/blog')
-
-export function getAllPostSlugs(): string[] {
-  if (!fs.existsSync(postsDirectory)) {
+export async function getAllPostSlugs(): Promise<string[]> {
+  try {
+    const articles = await getAllArticles(true)
+    return articles.map(article => article.slug)
+  } catch (error) {
+    console.error('Error loading post slugs:', error)
     return []
   }
-  
-  const fileNames = fs.readdirSync(postsDirectory)
-  return fileNames
-    .filter(name => name.endsWith('.md'))
-    .map(name => name.replace(/\.md$/, ''))
 }
 
-export function getPostBySlug(slug: string): BlogPost | null {
+export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
   try {
-    const fullPath = path.join(postsDirectory, `${slug}.md`)
-    
-    if (!fs.existsSync(fullPath)) {
+    const article = await getArticleBySlug(slug, true)
+    if (!article) {
       return null
     }
-    
-    const fileContents = fs.readFileSync(fullPath, 'utf8')
-    const { data, content } = matter(fileContents)
-    
-    // Calculate reading time
-    const readingTime = calculateReadingTime(content)
-    
-    // Parse tags (handle both array and comma-separated string)
-    let tags: string[] = []
-    if (data.tags) {
-      if (Array.isArray(data.tags)) {
-        tags = data.tags
-      } else if (typeof data.tags === 'string') {
-        tags = data.tags.split(',').map(t => t.trim()).filter(Boolean)
-      }
-    }
-    
-    const post: BlogPost = {
-      id: data.slug || slug,
-      slug: data.slug || slug,
-      title: data.title || '',
-      excerpt: data.excerpt || '',
-      content: content,
-      featuredImage: data.featuredImage || '',
-      author: {
-        name: data.authorName || 'Mynzagric Team',
-        avatar: data.authorAvatar || undefined,
-        bio: data.authorBio || undefined,
-      },
-      publishedAt: data.publishedAt || new Date().toISOString(),
-      updatedAt: data.updatedAt || undefined,
-      category: data.category || 'Uncategorized',
-      tags: tags,
-      readingTime: readingTime,
-      featured: data.featured || false,
-      draft: data.draft || false,
-      seo: {
-        title: data.seoTitle || undefined,
-        description: data.seoDescription || undefined,
-        keywords: data.seoKeywords || tags,
-      },
-    }
-    
-    return post
+    return articleToBlogPost(article)
   } catch (error) {
     console.error(`Error loading post ${slug}:`, error)
     return null
   }
 }
 
-export function getAllPosts(): BlogPost[] {
+export async function getAllPosts(): Promise<BlogPost[]> {
   try {
-    if (!fs.existsSync(postsDirectory)) {
-      return []
-    }
-    
-    const slugs = getAllPostSlugs()
-    const posts = slugs
-      .map(slug => getPostBySlug(slug))
-      .filter((post): post is BlogPost => post !== null)
-    
-    return posts
+    const articles = await getAllArticles(true)
+    return articles.map(article => articleToBlogPost(article))
   } catch (error) {
     console.error('Error loading blog posts:', error)
     return []

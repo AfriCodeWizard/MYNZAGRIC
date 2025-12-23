@@ -161,13 +161,13 @@ function RelatedPosts({ currentPost, allPosts }: { currentPost: BlogPost; allPos
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params
-  const post = getPostBySlug(slug)
+  const post = await getPostBySlug(slug)
 
   if (!post || post.draft) {
     notFound()
   }
 
-  const allPosts = getAllPosts()
+  const allPosts = await getAllPosts()
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">

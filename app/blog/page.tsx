@@ -162,8 +162,8 @@ function BlogCard({ post, featured = false }: { post: BlogPost; featured?: boole
   )
 }
 
-export default function BlogPage() {
-  const allPosts = getAllPosts()
+export default async function BlogPage() {
+  const allPosts = await getAllPosts()
   const publishedPosts = allPosts.filter((post) => !post.draft)
   const featuredPosts = publishedPosts.filter((post) => post.featured)
   const regularPosts = publishedPosts.filter((post) => !post.featured)
