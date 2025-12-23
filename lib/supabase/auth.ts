@@ -2,24 +2,36 @@ import { createClient } from './server'
 import { redirect } from 'next/navigation'
 
 export async function getCurrentUser() {
-  const supabase = await createClient()
-  const { data: { user }, error } = await supabase.auth.getUser()
-  
-  if (error || !user) {
+  try {
+    const supabase = await createClient()
+    const { data: { user }, error } = await supabase.auth.getUser()
+    
+    if (error || !user) {
+      return null
+    }
+    
+    return user
+  } catch (error) {
+    // If Supabase client creation fails (e.g., env vars not set), return null
+    console.error('Error getting current user:', error)
     return null
   }
-  
-  return user
 }
 
 export async function requireAuth() {
-  const user = await getCurrentUser()
-  
-  if (!user) {
+  try {
+    const user = await getCurrentUser()
+    
+    if (!user) {
+      redirect('/admin/login')
+    }
+    
+    return user
+  } catch (error) {
+    // If there's an error, redirect to login
+    console.error('Error in requireAuth:', error)
     redirect('/admin/login')
   }
-  
-  return user
 }
 
 export async function signIn(email: string, password: string) {
