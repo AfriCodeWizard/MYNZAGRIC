@@ -58,6 +58,12 @@ export async function getAllArticles(publishedOnly: boolean = true, useStaticCli
     ? createStaticClient()
     : await createClient()
   
+  // If static client is null (env vars not available), return empty array
+  if (!supabase) {
+    console.warn('Supabase client not available. Returning empty articles array.')
+    return []
+  }
+  
   let query = supabase
     .from('articles')
     .select('*')
@@ -77,8 +83,16 @@ export async function getAllArticles(publishedOnly: boolean = true, useStaticCli
   return (data || []) as Article[]
 }
 
-export async function getArticleBySlug(slug: string, publishedOnly: boolean = true) {
-  const supabase = await createClient()
+export async function getArticleBySlug(slug: string, publishedOnly: boolean = true, useStaticClient: boolean = false) {
+  const supabase = useStaticClient 
+    ? createStaticClient()
+    : await createClient()
+  
+  // If static client is null (env vars not available), return null
+  if (!supabase) {
+    console.warn('Supabase client not available. Returning null.')
+    return null
+  }
   
   let query = supabase
     .from('articles')

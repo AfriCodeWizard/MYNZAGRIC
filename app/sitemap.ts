@@ -5,7 +5,7 @@ import { getAllPostSlugs } from '@/lib/blog-loader'
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://mynzagric.com'
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Static pages
   const staticPages = [
     {
@@ -89,7 +89,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }))
 
   // Blog pages
-  const blogSlugs = getAllPostSlugs()
+  const blogSlugs = await getAllPostSlugs()
   const blogPages = blogSlugs.map((slug) => ({
     url: `${baseUrl}/blog/${slug}`,
     lastModified: new Date(),

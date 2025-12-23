@@ -20,7 +20,8 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
   const { slug } = await params
-  const post = await getPostBySlug(slug)
+  // Use static client for static generation
+  const post = await getPostBySlug(slug, true)
 
   if (!post) {
     return {
@@ -161,13 +162,14 @@ function RelatedPosts({ currentPost, allPosts }: { currentPost: BlogPost; allPos
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params
-  const post = await getPostBySlug(slug)
+  // Use static client for static generation
+  const post = await getPostBySlug(slug, true)
 
   if (!post || post.draft) {
     notFound()
   }
 
-  const allPosts = await getAllPosts()
+  const allPosts = await getAllPosts(true)
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">

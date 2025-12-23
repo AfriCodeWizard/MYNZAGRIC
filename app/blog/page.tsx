@@ -163,7 +163,8 @@ function BlogCard({ post, featured = false }: { post: BlogPost; featured?: boole
 }
 
 export default async function BlogPage() {
-  const allPosts = await getAllPosts()
+  // Use static client for static generation
+  const allPosts = await getAllPosts(true)
   const publishedPosts = allPosts.filter((post) => !post.draft)
   const featuredPosts = publishedPosts.filter((post) => post.featured)
   const regularPosts = publishedPosts.filter((post) => !post.featured)

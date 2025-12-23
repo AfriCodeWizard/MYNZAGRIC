@@ -32,12 +32,18 @@ export async function createClient() {
 /**
  * Creates a static Supabase client for use during build time (e.g., in generateStaticParams).
  * This client doesn't use cookies and is safe to use in static generation contexts.
+ * Returns null if environment variables are not available (e.g., during build without env vars).
  */
 export function createStaticClient() {
-  return createSupabaseClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  
+  if (!url || !key) {
+    console.warn('Supabase environment variables not available. Static generation will be skipped.')
+    return null
+  }
+  
+  return createSupabaseClient(url, key)
 }
 
 
