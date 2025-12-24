@@ -8,6 +8,10 @@ export async function middleware(request: NextRequest) {
     },
   })
 
+  // Add the pathname as a header so layouts can access it
+  const pathname = request.nextUrl.pathname
+  response.headers.set('x-pathname', pathname)
+
   // Check if Supabase environment variables are available
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
