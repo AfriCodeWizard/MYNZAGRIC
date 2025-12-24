@@ -9,7 +9,8 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
-import { Loader2, Upload, X } from 'lucide-react'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Loader2, Upload, X, AlertCircle } from 'lucide-react'
 import type { Article } from '@/lib/supabase/articles'
 
 interface ArticleFormProps {
@@ -20,6 +21,7 @@ export function ArticleForm({ article }: ArticleFormProps) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [uploading, setUploading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     title: article?.title || '',
     slug: article?.slug || '',
@@ -97,33 +99,57 @@ export function ArticleForm({ article }: ArticleFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setError(null)
     setLoading(true)
 
     try {
+      // Validate required fields
+      if (!formData.title.trim()) {
+        throw new Error('Title is required')
+      }
+
+      if (!formData.slug.trim()) {
+        throw new Error('Slug is required')
+      }
+
+      // Validate slug format
+      if (!/^[a-z0-9-]+$/.test(formData.slug)) {
+        throw new Error('Slug can only contain lowercase letters, numbers, and hyphens')
+      }
+
+      if (!formData.content.trim()) {
+        throw new Error('Content is required')
+      }
+
+      // CRITICAL: Cover image is required
+      if (!formData.cover_image || !formData.cover_image.trim()) {
+        throw new Error('Cover image is required. Please upload an image before saving.')
+      }
+
       const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
 
       if (!user) {
-        throw new Error('Unauthorized')
+        throw new Error('You are not authorized. Please log in again.')
       }
 
       const articleData = {
-        title: formData.title,
-        slug: formData.slug,
-        content: formData.content,
-        cover_image: formData.cover_image || null,
+        title: formData.title.trim(),
+        slug: formData.slug.trim(),
+        content: formData.content.trim(),
+        cover_image: formData.cover_image.trim(),
         published: formData.published,
-        excerpt: formData.excerpt || null,
-        category: formData.category || 'Uncategorized',
+        excerpt: formData.excerpt?.trim() || null,
+        category: formData.category?.trim() || 'Uncategorized',
         tags: formData.tags
           ? formData.tags.split(',').map(t => t.trim()).filter(Boolean)
           : [],
         featured: formData.featured,
-        author_name: formData.author_name,
-        author_avatar: formData.author_avatar || null,
-        author_bio: formData.author_bio || null,
-        seo_title: formData.seo_title || null,
-        seo_description: formData.seo_description || null,
+        author_name: formData.author_name?.trim() || 'Mynzagric Team',
+        author_avatar: formData.author_avatar?.trim() || null,
+        author_bio: formData.author_bio?.trim() || null,
+        seo_title: formData.seo_title?.trim() || null,
+        seo_description: formData.seo_description?.trim() || null,
         seo_keywords: formData.seo_keywords
           ? formData.seo_keywords.split(',').map(k => k.trim()).filter(Boolean)
           : [],
@@ -137,7 +163,12 @@ export function ArticleForm({ article }: ArticleFormProps) {
           .eq('id', article.id)
           .eq('author_id', user.id)
 
-        if (error) throw error
+        if (error) {
+          if (error.code === '23505') {
+            throw new Error('An article with this slug already exists. Please use a different slug.')
+          }
+          throw error
+        }
       } else {
         // Create new article
         const { error } = await supabase
@@ -147,20 +178,39 @@ export function ArticleForm({ article }: ArticleFormProps) {
             author_id: user.id,
           })
 
-        if (error) throw error
+        if (error) {
+          if (error.code === '23505') {
+            throw new Error('An article with this slug already exists. Please use a different slug.')
+          }
+          throw error
+        }
       }
 
       router.push('/admin')
       router.refresh()
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving article:', error)
-      alert('Failed to save article')
+      let errorMessage = 'Failed to save article. Please check all required fields and try again.'
+      
+      if (error?.message) {
+        errorMessage = error.message
+      } else if (error?.code === '23505') {
+        errorMessage = 'An article with this slug already exists. Please use a different slug.'
+      }
+      
+      setError(errorMessage)
       setLoading(false)
     }
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {error && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
       <Card>
         <CardHeader>
           <CardTitle>Basic Information</CardTitle>
@@ -182,12 +232,19 @@ export function ArticleForm({ article }: ArticleFormProps) {
             <Input
               id="slug"
               value={formData.slug}
-              onChange={(e) => setFormData(prev => ({ ...prev, slug: e.target.value }))}
+              onChange={(e) => {
+                // Validate slug format: only lowercase letters, numbers, and hyphens
+                const value = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '')
+                setFormData(prev => ({ ...prev, slug: value }))
+                setError(null) // Clear error when user types
+              }}
               required
               disabled={loading}
-              pattern="[a-z0-9-]+"
               title="Slug must contain only lowercase letters, numbers, and hyphens"
             />
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Only lowercase letters, numbers, and hyphens are allowed
+            </p>
           </div>
 
           <div className="space-y-2">
@@ -225,7 +282,7 @@ export function ArticleForm({ article }: ArticleFormProps) {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="cover_image">Cover Image</Label>
+            <Label htmlFor="cover_image">Cover Image *</Label>
             <div className="flex items-center gap-4">
               <Input
                 id="cover_image"
@@ -234,6 +291,7 @@ export function ArticleForm({ article }: ArticleFormProps) {
                 onChange={handleImageUpload}
                 disabled={uploading || loading}
                 className="flex-1"
+                required={!formData.cover_image}
               />
               {uploading && (
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -251,11 +309,19 @@ export function ArticleForm({ article }: ArticleFormProps) {
                   variant="ghost"
                   size="icon"
                   className="absolute top-2 right-2"
-                  onClick={() => setFormData(prev => ({ ...prev, cover_image: '' }))}
+                  onClick={() => {
+                    setFormData(prev => ({ ...prev, cover_image: '' }))
+                    setError(null)
+                  }}
                 >
                   <X className="h-4 w-4" />
                 </Button>
               </div>
+            )}
+            {!formData.cover_image && (
+              <p className="text-sm text-red-500 dark:text-red-400">
+                A cover image is required to save this article
+              </p>
             )}
           </div>
         </CardContent>
@@ -405,7 +471,11 @@ export function ArticleForm({ article }: ArticleFormProps) {
         >
           Cancel
         </Button>
-        <Button type="submit" disabled={loading || uploading}>
+        <Button 
+          type="submit" 
+          disabled={loading || uploading || !formData.cover_image}
+          title={!formData.cover_image ? 'Please upload a cover image first' : ''}
+        >
           {loading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
