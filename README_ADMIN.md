@@ -18,6 +18,7 @@ This guide will help you set up the Supabase-based admin dashboard to replace De
 2. Navigate to SQL Editor
 3. Copy and paste the contents of `supabase/schema.sql`
 4. Run the SQL script to create the `articles` table and RLS policies
+5. **IMPORTANT**: Also run `supabase/fix-rls-policy.sql` to add the policy that allows authenticated users to view their own articles in the admin dashboard
 
 ## Step 3: Create Storage Bucket
 
@@ -103,4 +104,9 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 - Ensure articles are marked as "Published"
 - Check that the Supabase client is configured correctly
 - Verify RLS policies allow public read access to published articles
+
+### Articles not showing in admin dashboard (showing "0 articles")
+- **This is the most common issue!** Run the SQL in `supabase/fix-rls-policy.sql` in your Supabase SQL Editor
+- This adds a policy that allows authenticated users to read their own articles (both published and unpublished)
+- Without this policy, RLS blocks authenticated users from seeing their own articles in the admin dashboard
 

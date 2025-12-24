@@ -44,6 +44,12 @@ CREATE POLICY "Public can view published articles"
   FOR SELECT
   USING (published = true);
 
+-- Policy: Authenticated users can read their own articles (published or unpublished)
+CREATE POLICY "Users can view their own articles"
+  ON articles
+  FOR SELECT
+  USING (auth.uid() = author_id);
+
 -- Policy: Authenticated users can insert their own articles
 CREATE POLICY "Users can insert their own articles"
   ON articles
