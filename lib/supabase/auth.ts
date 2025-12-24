@@ -23,14 +23,14 @@ export async function requireAuth() {
     const user = await getCurrentUser()
     
     if (!user) {
-      redirect('/admin/login')
+      redirect('/login')
     }
     
     return user
   } catch (error) {
     // If there's an error, redirect to login
     console.error('Error in requireAuth:', error)
-    redirect('/admin/login')
+    redirect('/login')
   }
 }
 
