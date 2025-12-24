@@ -8,6 +8,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Edit, Trash2, Eye, EyeOff } from 'lucide-react'
 import { useState, useEffect } from 'react'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { AlertCircle, CheckCircle2 } from 'lucide-react'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -30,6 +32,8 @@ export function ArticlesList({ articles: initialArticles }: ArticlesListProps) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [articleToDelete, setArticleToDelete] = useState<Article | null>(null)
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
 
   // Sync articles when initialArticles prop changes (e.g., after page refresh)
   useEffect(() => {
@@ -40,44 +44,87 @@ export function ArticlesList({ articles: initialArticles }: ArticlesListProps) {
     if (!articleToDelete) return
 
     setLoading(true)
+    setError(null)
+    setSuccess(null)
+    
     try {
       const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+
+      if (!user) {
+        throw new Error('You are not authorized. Please log in again.')
+      }
+
       const { error } = await supabase
         .from('articles')
         .delete()
         .eq('id', articleToDelete.id)
+        .eq('author_id', user.id) // Ensure user can only delete their own articles
 
-      if (error) throw error
+      if (error) {
+        if (error.code === 'PGRST116') {
+          throw new Error('Article not found or you do not have permission to delete it.')
+        }
+        throw error
+      }
 
       setArticles(articles.filter(a => a.id !== articleToDelete.id))
       setDeleteDialogOpen(false)
       setArticleToDelete(null)
-      router.refresh()
-    } catch (error) {
+      setSuccess(`Article "${articleToDelete.title}" has been deleted successfully.`)
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => setSuccess(null), 3000)
+      
+      // Refresh the page to ensure data is in sync
+      window.location.href = '/admin'
+    } catch (error: any) {
       console.error('Error deleting article:', error)
-      alert('Failed to delete article')
-    } finally {
+      const errorMessage = error?.message || 'Failed to delete article. Please try again.'
+      setError(errorMessage)
       setLoading(false)
     }
   }
 
   const handleTogglePublish = async (article: Article) => {
+    setError(null)
+    setSuccess(null)
+    
     try {
       const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+
+      if (!user) {
+        throw new Error('You are not authorized. Please log in again.')
+      }
+
+      const newPublishedStatus = !article.published
       const { error } = await supabase
         .from('articles')
-        .update({ published: !article.published })
+        .update({ published: newPublishedStatus })
         .eq('id', article.id)
+        .eq('author_id', user.id) // Ensure user can only update their own articles
 
-      if (error) throw error
+      if (error) {
+        if (error.code === 'PGRST116') {
+          throw new Error('Article not found or you do not have permission to update it.')
+        }
+        throw error
+      }
 
       setArticles(articles.map(a => 
-        a.id === article.id ? { ...a, published: !a.published } : a
+        a.id === article.id ? { ...a, published: newPublishedStatus } : a
       ))
+      
+      setSuccess(`Article has been ${newPublishedStatus ? 'published' : 'unpublished'} successfully.`)
+      setTimeout(() => setSuccess(null), 3000)
+      
       router.refresh()
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error toggling publish status:', error)
-      alert('Failed to update article')
+      const errorMessage = error?.message || 'Failed to update article. Please try again.'
+      setError(errorMessage)
+      setTimeout(() => setError(null), 5000)
     }
   }
 
@@ -103,6 +150,18 @@ export function ArticlesList({ articles: initialArticles }: ArticlesListProps) {
 
   return (
     <>
+      {error && (
+        <Alert variant="destructive" className="mb-4">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+      {success && (
+        <Alert className="mb-4 border-green-500 bg-green-50 dark:bg-green-950/20">
+          <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />
+          <AlertDescription className="text-green-800 dark:text-green-200">{success}</AlertDescription>
+        </Alert>
+      )}
       <div className="grid gap-4">
         {articles.map((article) => (
           <Card key={article.id}>

@@ -1,6 +1,11 @@
 import { getArticleById } from '@/lib/supabase/articles'
 import { ArticleForm } from '@/components/admin/article-form'
 import { notFound } from 'next/navigation'
+import { getCurrentUser } from '@/lib/supabase/auth'
+
+// Force dynamic rendering to fetch fresh article data
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export default async function EditArticlePage({
   params,
@@ -8,9 +13,18 @@ export default async function EditArticlePage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
+  
+  // Ensure user is authenticated
+  const user = await getCurrentUser()
+  if (!user) {
+    notFound()
+  }
+  
+  // Fetch the article
   const article = await getArticleById(id)
 
-  if (!article) {
+  // Check if article exists and belongs to the current user
+  if (!article || article.author_id !== user.id) {
     notFound()
   }
 

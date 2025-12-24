@@ -162,9 +162,13 @@ function BlogCard({ post, featured = false }: { post: BlogPost; featured?: boole
   )
 }
 
+// Force dynamic rendering to fetch fresh articles on each request
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function BlogPage() {
-  // Use static client for static generation
-  const allPosts = await getAllPosts(true)
+  // Use regular client (not static) to fetch fresh data on each request
+  const allPosts = await getAllPosts(false)
   const publishedPosts = allPosts.filter((post) => !post.draft)
   const featuredPosts = publishedPosts.filter((post) => post.featured)
   const regularPosts = publishedPosts.filter((post) => !post.featured)

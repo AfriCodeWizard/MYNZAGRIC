@@ -167,6 +167,9 @@ export function ArticleForm({ article }: ArticleFormProps) {
           if (error.code === '23505') {
             throw new Error('An article with this slug already exists. Please use a different slug.')
           }
+          if (error.code === 'PGRST116') {
+            throw new Error('Article not found or you do not have permission to update it.')
+          }
           throw error
         }
       } else {

@@ -160,16 +160,20 @@ function RelatedPosts({ currentPost, allPosts }: { currentPost: BlogPost; allPos
   )
 }
 
+// Force dynamic rendering to fetch fresh articles on each request
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params
-  // Use static client for static generation
-  const post = await getPostBySlug(slug, true)
+  // Use regular client (not static) to fetch fresh data
+  const post = await getPostBySlug(slug, true, false)
 
   if (!post || post.draft) {
     notFound()
   }
 
-  const allPosts = await getAllPosts(true)
+  const allPosts = await getAllPosts(false)
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
