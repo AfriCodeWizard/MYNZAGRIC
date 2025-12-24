@@ -186,8 +186,8 @@ export function ArticleForm({ article }: ArticleFormProps) {
         }
       }
 
-      router.push('/admin')
-      router.refresh()
+      // Use window.location for a full page reload to ensure fresh data
+      window.location.href = '/admin'
     } catch (error: any) {
       console.error('Error saving article:', error)
       let errorMessage = 'Failed to save article. Please check all required fields and try again.'

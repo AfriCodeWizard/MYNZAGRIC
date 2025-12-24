@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Edit, Trash2, Eye, EyeOff } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -30,6 +30,11 @@ export function ArticlesList({ articles: initialArticles }: ArticlesListProps) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [articleToDelete, setArticleToDelete] = useState<Article | null>(null)
   const [loading, setLoading] = useState(false)
+
+  // Sync articles when initialArticles prop changes (e.g., after page refresh)
+  useEffect(() => {
+    setArticles(initialArticles)
+  }, [initialArticles])
 
   const handleDelete = async () => {
     if (!articleToDelete) return
