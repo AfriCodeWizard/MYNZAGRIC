@@ -321,7 +321,7 @@ function About() {
             <div
               ref={card2Ref}
               data-card="2"
-              className="absolute top-[20%] right-[calc(28%+1.5rem)] md:right-[calc(22%+1.5rem)] w-[28%] md:w-[22%] bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-lg p-4 lg:p-5 flex flex-col items-center justify-center text-center z-20 shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:shadow-[0_0_30px_rgba(34,197,94,0.5)] transition-shadow duration-300"
+              className="absolute top-[20%] right-[calc(28%+22%+2rem)] md:right-[calc(22%+22%+2rem)] w-[28%] md:w-[22%] bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-lg p-4 lg:p-5 flex flex-col items-center justify-center text-center z-20 shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:shadow-[0_0_30px_rgba(34,197,94,0.5)] transition-shadow duration-300"
               style={{ willChange: 'transform, opacity', maxHeight: '240px' }}
             >
               <div className="w-10 md:h-10 lg:w-12 lg:h-12 border-2 border-green-400 rounded-md flex items-center justify-center text-green-400 bg-green-400/10 mb-2 lg:mb-3">
@@ -334,7 +334,7 @@ function About() {
             {/* Cards 3 & 4 - Replace building image (smaller, background, below heading line) - Side by side with consistent spacing matching right cards */}
             <div
               ref={card3Ref}
-              className="absolute right-[calc(42%+22%+2%)] md:right-[calc(42%+22%+2%)] top-[calc(12%+11rem+1rem)] md:top-[calc(17%+14rem+1.25rem)] w-[28%] md:w-[22%] bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-lg p-4 lg:p-5 flex flex-col items-center justify-center text-center z-10 shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:shadow-[0_0_30px_rgba(34,197,94,0.5)] transition-shadow duration-300"
+              className="absolute right-[calc(42%+22%+2rem)] md:right-[calc(42%+22%+2rem)] top-[calc(12%+11rem+1rem)] md:top-[calc(17%+14rem+1.25rem)] w-[28%] md:w-[22%] bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-lg p-4 lg:p-5 flex flex-col items-center justify-center text-center z-10 shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:shadow-[0_0_30px_rgba(34,197,94,0.5)] transition-shadow duration-300"
               style={{ willChange: 'transform, opacity', maxHeight: '240px' }}
             >
               <div className="w-10 md:h-10 lg:w-12 lg:h-12 border-2 border-green-400 rounded-md flex items-center justify-center text-green-400 bg-green-400/10 mb-2 lg:mb-3">
@@ -346,7 +346,7 @@ function About() {
 
             <div
               ref={card4Ref}
-              className="absolute right-[calc(42%+2%)] md:right-[calc(42%+2%)] top-[calc(12%+11rem+1rem)] md:top-[calc(17%+14rem+1.25rem)] w-[28%] md:w-[22%] bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-lg p-4 lg:p-5 flex flex-col items-center justify-center text-center z-10 shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:shadow-[0_0_30px_rgba(34,197,94,0.5)] transition-shadow duration-300"
+              className="absolute right-[calc(42%+2rem)] md:right-[calc(42%+2rem)] top-[calc(12%+11rem+1rem)] md:top-[calc(17%+14rem+1.25rem)] w-[28%] md:w-[22%] bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-lg p-4 lg:p-5 flex flex-col items-center justify-center text-center z-10 shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:shadow-[0_0_30px_rgba(34,197,94,0.5)] transition-shadow duration-300"
               style={{ willChange: 'transform, opacity', maxHeight: '240px' }}
             >
               <div className="w-10 md:h-10 lg:w-12 lg:h-12 border-2 border-green-400 rounded-md flex items-center justify-center text-green-400 bg-green-400/10 mb-2 lg:mb-3">
