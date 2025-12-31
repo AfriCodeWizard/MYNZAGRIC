@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Calendar, Clock, ArrowLeft, Tag, User, Share2, Facebook, Twitter, Linkedin, BookOpen } from 'lucide-react'
+import { Calendar, Clock, ArrowLeft, Tag, User, Share2, Facebook, Linkedin, BookOpen } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { getPostBySlug, getAllPosts, getAllPostSlugs } from '@/lib/blog-loader'
@@ -69,6 +69,13 @@ function ShareButtons({ post }: { post: BlogPost }) {
   const encodedTitle = encodeURIComponent(post.title)
   const encodedDescription = encodeURIComponent(post.excerpt)
 
+  // X (Twitter) Logo SVG Component
+  const XIcon = () => (
+    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+    </svg>
+  )
+
   return (
     <div className="flex flex-col gap-4 p-6 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm">
       <h3 className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2 uppercase tracking-wide">
@@ -89,10 +96,10 @@ function ShareButtons({ post }: { post: BlogPost }) {
           href={`https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center justify-center w-12 h-12 rounded-xl bg-sky-500 text-white hover:bg-sky-600 transition-all hover:scale-110 shadow-md hover:shadow-lg"
-          aria-label="Share on Twitter"
+          className="flex items-center justify-center w-12 h-12 rounded-xl bg-black text-white hover:bg-gray-800 transition-all hover:scale-110 shadow-md hover:shadow-lg"
+          aria-label="Share on X (Twitter)"
         >
-          <Twitter className="w-5 h-5" />
+          <XIcon />
         </a>
         <a
           href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`}
