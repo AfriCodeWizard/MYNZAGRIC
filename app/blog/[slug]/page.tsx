@@ -8,6 +8,7 @@ import remarkGfm from 'remark-gfm'
 import { getPostBySlug, getAllPosts, getAllPostSlugs } from '@/lib/blog-loader'
 import { BlogPost } from '@/lib/blog-data'
 import Footer from '@/components/footer'
+import { BlogStatsProvider } from '@/components/blog/blog-stats-provider'
 import BlogStats from '@/components/blog/blog-stats'
 
 interface BlogPostPageProps {
@@ -177,7 +178,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const allPosts = await getAllPosts(false)
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900">
+    <BlogStatsProvider slug={post.slug}>
+      <div className="min-h-screen bg-white dark:bg-gray-900">
       {/* Hero Image */}
       {post.featuredImage && (
         <div className="relative h-[400px] md:h-[500px] lg:h-[600px] overflow-hidden">
@@ -214,7 +216,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                   {post.excerpt}
                 </p>
                 <div className="flex items-center gap-4 text-white/90">
-                  <BlogStats slug={post.slug} />
+                  <BlogStats variant="white" />
                 </div>
               </div>
             </div>
@@ -257,7 +259,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 {post.excerpt}
               </p>
               <div className="mb-8">
-                <BlogStats slug={post.slug} />
+                <BlogStats />
               </div>
             </header>
           )}
@@ -290,7 +292,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 </div>
                 {post.featuredImage && (
                   <div className="pt-4 border-t border-gray-200 dark:border-gray-800">
-                    <BlogStats slug={post.slug} />
+                    <BlogStats />
                   </div>
                 )}
               </div>
@@ -347,7 +349,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 {/* Views and Likes Stats */}
                 <div className="p-6 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm">
                   <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-4 uppercase tracking-wide">Engagement</h3>
-                  <BlogStats slug={post.slug} />
+                  <BlogStats compact />
                 </div>
                 
                 {/* Reading Stats */}
@@ -383,6 +385,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         </div>
       </section>
       <Footer />
-    </div>
+      </div>
+    </BlogStatsProvider>
   )
 }
