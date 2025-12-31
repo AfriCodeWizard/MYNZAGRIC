@@ -6,6 +6,9 @@ import Image from "next/image"
 import { successStories } from "@/lib/success-stories"
 import type { Metadata } from "next"
 import { BreadcrumbSchema } from "@/components/structured-data"
+import DonateSection from "@/components/donation/donate-section"
+import { Suspense } from "react"
+import DonationMessage from "@/components/donation/donation-message"
 
 export const metadata: Metadata = {
   title: "Our Impact - Transforming Agriculture Through Premium Seedlings | Mynzagric",
@@ -79,6 +82,9 @@ export default function ImpactPage() {
       ]} />
       <div className="min-h-screen bg-[#07090d]">
         <Navbar />
+        <Suspense fallback={null}>
+          <DonationMessage />
+        </Suspense>
       
       {/* Hero Section */}
       <section className="relative h-[70vh] min-h-[600px] overflow-hidden">
@@ -230,6 +236,9 @@ export default function ImpactPage() {
           </div>
         </div>
       </section>
+
+      {/* Donation Section */}
+      <DonateSection />
 
       {/* CTA Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
