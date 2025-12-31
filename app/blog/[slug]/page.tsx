@@ -8,6 +8,7 @@ import remarkGfm from 'remark-gfm'
 import { getPostBySlug, getAllPosts, getAllPostSlugs } from '@/lib/blog-loader'
 import { BlogPost } from '@/lib/blog-data'
 import Footer from '@/components/footer'
+import BlogStats from '@/components/blog/blog-stats'
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>
@@ -209,9 +210,12 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 leading-tight">
                   {post.title}
                 </h1>
-                <p className="text-lg md:text-xl text-white/90 leading-relaxed">
+                <p className="text-lg md:text-xl text-white/90 leading-relaxed mb-6">
                   {post.excerpt}
                 </p>
+                <div className="flex items-center gap-4 text-white/90">
+                  <BlogStats slug={post.slug} />
+                </div>
               </div>
             </div>
           </div>
@@ -249,9 +253,12 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-gray-900 dark:text-white leading-tight">
                 {post.title}
               </h1>
-              <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
+              <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
                 {post.excerpt}
               </p>
+              <div className="mb-8">
+                <BlogStats slug={post.slug} />
+              </div>
             </header>
           )}
 
@@ -259,7 +266,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             {/* Main Content */}
             <div className="lg:col-span-3">
               {/* Author Info */}
-              <div className="flex items-center gap-4 pb-8 mb-8 border-b-2 border-gray-200 dark:border-gray-800">
+              <div className="flex flex-col gap-4 pb-8 mb-8 border-b-2 border-gray-200 dark:border-gray-800">
                 <div className="flex items-center gap-4">
                   {post.author.avatar ? (
                     <Image
@@ -281,6 +288,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                     )}
                   </div>
                 </div>
+                {post.featuredImage && (
+                  <div className="pt-4 border-t border-gray-200 dark:border-gray-800">
+                    <BlogStats slug={post.slug} />
+                  </div>
+                )}
               </div>
 
               {/* Content */}
@@ -331,6 +343,12 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             <aside className="lg:col-span-1">
               <div className="sticky top-8 space-y-6">
                 <ShareButtons post={post} />
+                
+                {/* Views and Likes Stats */}
+                <div className="p-6 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm">
+                  <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-4 uppercase tracking-wide">Engagement</h3>
+                  <BlogStats slug={post.slug} />
+                </div>
                 
                 {/* Reading Stats */}
                 <div className="p-6 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm">
