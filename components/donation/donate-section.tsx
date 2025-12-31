@@ -286,7 +286,9 @@ export default function DonateSection() {
               <p className="text-gray-300 text-center mb-6">
                 Donating <span className="text-green-400 font-bold text-xl">${getDonationAmount().toFixed(2)}</span> via PayPal
               </p>
-              <div id="paypal-button-container" className="flex justify-center"></div>
+              <div className="flex justify-center items-center w-full">
+                <div id="paypal-button-container" className="w-full max-w-md"></div>
+              </div>
             </div>
           )}
 
