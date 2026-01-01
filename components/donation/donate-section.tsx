@@ -30,7 +30,7 @@ export default function DonateSection() {
     {
       id: 'school',
       title: 'Sponsor a School',
-      description: 'Plant 100 fruit seedlings in a school to fight malnutrition and promote healthy eating',
+      description: 'Help us plant a full kit of 100 Grafted fruit seedlings in a school. ($500)',
       amount: 500,
       icon: School,
       color: 'from-blue-500 to-indigo-600'
@@ -38,7 +38,7 @@ export default function DonateSection() {
     {
       id: 'hospital',
       title: 'Sponsor a Hospital',
-      description: 'Plant 100 fruit seedlings in a hospital to provide fresh produce for patients',
+      description: 'Help us plant a full kit of 100 Grafted fruit seedlings in a Hospital. ($500)',
       amount: 500,
       icon: Building2,
       color: 'from-red-500 to-pink-600'
@@ -46,7 +46,7 @@ export default function DonateSection() {
     {
       id: 'general',
       title: 'General Donation',
-      description: 'Support our mission to transform Kenya with fruit trees',
+      description: 'Support our mission to transform schools and hospitals with Grafted fruit trees ($50)',
       amount: 50,
       icon: Heart,
       color: 'from-green-500 to-emerald-600'
@@ -104,8 +104,8 @@ export default function DonateSection() {
             brand_name: 'Mynzagric',
             landing_page: 'BILLING',
             user_action: 'PAY_NOW',
-            return_url: `${window.location.origin}/impact?donation=success`,
-            cancel_url: `${window.location.origin}/impact?donation=cancelled`
+            return_url: `${window.location.origin}/donate?donation=success`,
+            cancel_url: `${window.location.origin}/donate?donation=cancelled`
           }
         })
       },
@@ -119,7 +119,7 @@ export default function DonateSection() {
           setDonorName('')
           setDonorEmail('')
           // Redirect to success page or show success message
-          window.location.href = '/impact?donation=success'
+          window.location.href = '/donate?donation=success'
         })
       },
       onError: (err: any) => {
@@ -159,8 +159,15 @@ export default function DonateSection() {
               Partner with Us to Plant Hope
             </h2>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-              Transform Kenya's schools and hospitals with fruit trees. Help us combat malnutrition, 
-              promote healthy eating, and build sustainable green spaces for generations to come.
+              Transforming Kenya's Schools and Hospitals with Fruit Trees - 100 Pieces per Institution
+            </p>
+            <p className="text-lg text-gray-400 max-w-3xl mx-auto mt-4 leading-relaxed">
+              Kenya has an average of 97,000 registered schools and 12,000 registered Hospitals. 
+              As dedicated sellers of high quality Grafted fruit seedlings, we are on a mission to plant 
+              100 Grafted fruit seedlings in all these institutions and make this vision a reality with 
+              clear impact driven goals like ending malnutrition amongst students and patients, promoting 
+              sustainable Agriculture, environmental benefits like carbon sequestration, biodiversity and 
+              food security.
             </p>
           </div>
 
@@ -174,9 +181,11 @@ export default function DonateSection() {
               <div className="space-y-2">
                 <h4 className="font-bold text-green-400">Fighting Malnutrition</h4>
                 <p className="text-gray-300 text-sm leading-relaxed">
-                  Over 25% of Kenyan children under five suffer from stunting due to poor nutrition. 
-                  Our grafted seedlings provide quick-yielding, vitamin-rich fruits that supplement meals 
-                  and educate on healthy diets.
+                  Malnutrition is a major underlying factor in half of Kenya's high infant and under-five deaths. 
+                  While national acute malnutrition is around 6%, it exceeds emergency levels (15%) in Arid and 
+                  Semi-Arid Lands (ASALs). Kenya faces undernutrition, micronutrient deficiencies, and rising 
+                  obesity (a "triple burden"). Our Grafted fruit seedlings provide quick and long term yielding 
+                  vitamin rich fruits that supplement certain meals and educate on healthy lifestyles.
                 </p>
               </div>
               <div className="space-y-2">
@@ -304,7 +313,7 @@ export default function DonateSection() {
               we can curb hunger and grow a healthier Kenya.
             </p>
             <p className="text-gray-300 leading-relaxed">
-              I'd love to discuss how we can align our efforts. Please contact us or make a donation 
+              We'd love to discuss how we can align our efforts. Please contact us or make a donation 
               to get started.
             </p>
           </div>
