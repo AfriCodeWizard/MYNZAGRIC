@@ -7,7 +7,7 @@ import { getCurrentUser } from '@/lib/supabase/auth'
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
-// Ensure this route is not statically generated
+// Prevent static generation for this dynamic route
 export async function generateStaticParams() {
   return []
 }
