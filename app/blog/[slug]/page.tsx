@@ -273,7 +273,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
             {/* Main Content */}
-            <div className="lg:col-span-3">
+            <div className="lg:col-span-3 min-w-0 overflow-hidden">
               {/* Author Info */}
               <div className="flex flex-col gap-4 pb-8 mb-8 border-b-2 border-gray-200 dark:border-gray-800">
                 <div className="flex items-center gap-4">
@@ -309,18 +309,20 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 prose-headings:font-bold prose-headings:text-gray-900 dark:prose-headings:text-white 
                 prose-headings:mt-12 prose-headings:mb-6 prose-headings:leading-tight
                 prose-p:text-gray-700 dark:prose-p:text-gray-300 prose-p:leading-relaxed prose-p:mb-6
+                prose-p:break-words prose-p:overflow-wrap-anywhere
                 prose-a:text-green-600 dark:prose-a:text-green-400 prose-a:no-underline 
-                hover:prose-a:underline prose-a:font-semibold
+                hover:prose-a:underline prose-a:font-semibold prose-a:break-words
                 prose-strong:text-gray-900 dark:prose-strong:text-white prose-strong:font-bold
-                prose-code:text-green-600 dark:prose-code:text-green-400 prose-code:bg-gray-100 dark:prose-code:bg-gray-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded
-                prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-pre:rounded-xl prose-pre:shadow-lg
+                prose-code:text-green-600 dark:prose-code:text-green-400 prose-code:bg-gray-100 dark:prose-code:bg-gray-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:break-words
+                prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-pre:rounded-xl prose-pre:shadow-lg prose-pre:overflow-x-auto
                 prose-blockquote:border-l-4 prose-blockquote:border-green-500 prose-blockquote:bg-green-50 dark:prose-blockquote:bg-green-950/30 
-                prose-blockquote:text-gray-700 dark:prose-blockquote:text-gray-300 prose-blockquote:pl-6 prose-blockquote:py-4 prose-blockquote:rounded-r-lg
+                prose-blockquote:text-gray-700 dark:prose-blockquote:text-gray-300 prose-blockquote:pl-6 prose-blockquote:py-4 prose-blockquote:rounded-r-lg prose-blockquote:break-words
                 prose-ul:list-disc prose-ul:pl-6 prose-ul:my-6
                 prose-ol:list-decimal prose-ol:pl-6 prose-ol:my-6
-                prose-li:my-2 prose-li:text-gray-700 dark:prose-li:text-gray-300
-                prose-img:rounded-xl prose-img:shadow-lg prose-img:my-8
-                prose-hr:border-gray-200 dark:prose-hr:border-gray-800 prose-hr:my-12">
+                prose-li:my-2 prose-li:text-gray-700 dark:prose-li:text-gray-300 prose-li:break-words
+                prose-img:rounded-xl prose-img:shadow-lg prose-img:my-8 prose-img:max-w-full prose-img:h-auto
+                prose-hr:border-gray-200 dark:prose-hr:border-gray-800 prose-hr:my-12
+                break-words overflow-wrap-anywhere word-break-break-word">
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.content}</ReactMarkdown>
               </div>
 
