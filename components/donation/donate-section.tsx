@@ -57,6 +57,17 @@ export default function DonateSection() {
     if (paypalLoaded && selectedOption && window.paypal) {
       // Render PayPal button when PayPal SDK is loaded and option is selected
       renderPayPalButton()
+      
+      // Auto-scroll to PayPal button after a short delay to allow rendering
+      setTimeout(() => {
+        const paypalContainer = document.getElementById('paypal-button-container')
+        if (paypalContainer) {
+          paypalContainer.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center' 
+          })
+        }
+      }, 300)
     }
   }, [paypalLoaded, selectedOption, customAmount, donorName, donorEmail])
 
@@ -132,10 +143,50 @@ export default function DonateSection() {
   const handleOptionSelect = (optionId: string) => {
     setSelectedOption(optionId)
     setCustomAmount('')
+    
+    // Auto-scroll to donation section after selection
+    setTimeout(() => {
+      const donationSection = document.getElementById('donation-section')
+      if (donationSection) {
+        donationSection.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start' 
+        })
+      } else {
+        // Fallback: scroll to PayPal container if it exists
+        const paypalContainer = document.getElementById('paypal-button-container')
+        if (paypalContainer) {
+          paypalContainer.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center' 
+          })
+        }
+      }
+    }, 100)
   }
 
   const handleCustomAmount = () => {
     setSelectedOption('custom')
+    
+    // Auto-scroll to donation section after custom amount selection
+    setTimeout(() => {
+      const donationSection = document.getElementById('donation-section')
+      if (donationSection) {
+        donationSection.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start' 
+        })
+      } else {
+        // Fallback: scroll to PayPal container if it exists
+        const paypalContainer = document.getElementById('paypal-button-container')
+        if (paypalContainer) {
+          paypalContainer.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center' 
+          })
+        }
+      }
+    }, 100)
   }
 
   return (
@@ -288,7 +339,7 @@ export default function DonateSection() {
 
           {/* PayPal Button Container */}
           {selectedOption && getDonationAmount() > 0 && (
-            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8">
+            <div id="donation-section" className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8">
               <h3 className="text-xl font-bold text-white mb-4 text-center">
                 Complete Your Donation
               </h3>
