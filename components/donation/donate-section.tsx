@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Heart, School, Building2, DollarSign, Users, Leaf } from 'lucide-react'
 import Script from 'next/script'
 
@@ -25,6 +25,7 @@ export default function DonateSection() {
   const [customAmount, setCustomAmount] = useState('')
   const [donorName, setDonorName] = useState('')
   const [donorEmail, setDonorEmail] = useState('')
+  const shouldScrollRef = useRef(false)
 
   const donationOptions: DonationOption[] = [
     {
@@ -58,16 +59,21 @@ export default function DonateSection() {
       // Render PayPal button when PayPal SDK is loaded and option is selected
       renderPayPalButton()
       
-      // Auto-scroll to PayPal button after a short delay to allow rendering
-      setTimeout(() => {
-        const paypalContainer = document.getElementById('paypal-button-container')
-        if (paypalContainer) {
-          paypalContainer.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'center' 
-          })
-        }
-      }, 300)
+      // Auto-scroll to PayPal button only if shouldScrollRef is true
+      // This prevents scrolling when typing in custom amount field
+      if (shouldScrollRef.current) {
+        setTimeout(() => {
+          const paypalContainer = document.getElementById('paypal-button-container')
+          if (paypalContainer) {
+            paypalContainer.scrollIntoView({ 
+              behavior: 'smooth', 
+              block: 'center' 
+            })
+          }
+          // Reset the flag after scrolling
+          shouldScrollRef.current = false
+        }, 300)
+      }
     }
   }, [paypalLoaded, selectedOption, customAmount, donorName, donorEmail])
 
@@ -143,50 +149,14 @@ export default function DonateSection() {
   const handleOptionSelect = (optionId: string) => {
     setSelectedOption(optionId)
     setCustomAmount('')
-    
-    // Auto-scroll to donation section after selection
-    setTimeout(() => {
-      const donationSection = document.getElementById('donation-section')
-      if (donationSection) {
-        donationSection.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'start' 
-        })
-      } else {
-        // Fallback: scroll to PayPal container if it exists
-        const paypalContainer = document.getElementById('paypal-button-container')
-        if (paypalContainer) {
-          paypalContainer.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'center' 
-          })
-        }
-      }
-    }, 100)
+    // Set flag to allow scrolling when PayPal button renders
+    shouldScrollRef.current = true
   }
 
   const handleCustomAmount = () => {
     setSelectedOption('custom')
-    
-    // Auto-scroll to donation section after custom amount selection
-    setTimeout(() => {
-      const donationSection = document.getElementById('donation-section')
-      if (donationSection) {
-        donationSection.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'start' 
-        })
-      } else {
-        // Fallback: scroll to PayPal container if it exists
-        const paypalContainer = document.getElementById('paypal-button-container')
-        if (paypalContainer) {
-          paypalContainer.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'center' 
-          })
-        }
-      }
-    }, 100)
+    // Set flag to allow scrolling when PayPal button renders
+    shouldScrollRef.current = true
   }
 
   return (
@@ -298,11 +268,14 @@ export default function DonateSection() {
                 onChange={(e) => {
                   setCustomAmount(e.target.value)
                   // Only set selected option, don't trigger auto-scroll while typing
+                  // Don't set shouldScrollRef to prevent scrolling
                   if (e.target.value && parseFloat(e.target.value) > 0) {
                     setSelectedOption('custom')
                   } else {
                     setSelectedOption(null)
                   }
+                  // Explicitly prevent scrolling by not setting shouldScrollRef
+                  shouldScrollRef.current = false
                 }}
                 className="flex-1 px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/50"
               />

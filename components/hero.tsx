@@ -434,7 +434,7 @@ export default function Hero() {
   }, [])
 
   return (
-    <section className="relative min-h-screen w-full overflow-hidden">
+    <section id="hero" className="relative min-h-screen w-full overflow-hidden">
       {/* Video Background - Multiple videos with smooth transitions */}
       <div className="hero-video-wrapper absolute inset-0" style={{ zIndex: 0, backgroundColor: "#000000" }}>
         {videos.map((video, index) => {

@@ -245,7 +245,7 @@ Thank you!`
           {/* Logo */}
           <div className="flex-shrink-0 z-50 relative">
             <Link
-              href="/"
+              href="/#hero"
               className={cn(
                 "flex items-center transition-opacity duration-300 hover:opacity-80",
                 "focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-transparent rounded relative z-10"
