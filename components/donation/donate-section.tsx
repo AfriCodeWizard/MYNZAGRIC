@@ -151,12 +151,52 @@ export default function DonateSection() {
     setCustomAmount('')
     // Set flag to allow scrolling when PayPal button renders
     shouldScrollRef.current = true
+    
+    // Also trigger immediate scroll after a short delay to ensure PayPal button is rendered
+    setTimeout(() => {
+      const donationSection = document.getElementById('donation-section')
+      if (donationSection) {
+        donationSection.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'center' 
+        })
+      } else {
+        // Fallback: scroll to PayPal container if it exists
+        const paypalContainer = document.getElementById('paypal-button-container')
+        if (paypalContainer) {
+          paypalContainer.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center' 
+          })
+        }
+      }
+    }, 500)
   }
 
   const handleCustomAmount = () => {
     setSelectedOption('custom')
     // Set flag to allow scrolling when PayPal button renders
     shouldScrollRef.current = true
+    
+    // Also trigger immediate scroll after a short delay to ensure PayPal button is rendered
+    setTimeout(() => {
+      const donationSection = document.getElementById('donation-section')
+      if (donationSection) {
+        donationSection.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'center' 
+        })
+      } else {
+        // Fallback: scroll to PayPal container if it exists
+        const paypalContainer = document.getElementById('paypal-button-container')
+        if (paypalContainer) {
+          paypalContainer.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center' 
+          })
+        }
+      }
+    }, 500)
   }
 
   return (
