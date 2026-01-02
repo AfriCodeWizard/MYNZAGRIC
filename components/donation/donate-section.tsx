@@ -297,8 +297,11 @@ export default function DonateSection() {
                 value={customAmount}
                 onChange={(e) => {
                   setCustomAmount(e.target.value)
-                  if (e.target.value) {
-                    handleCustomAmount()
+                  // Only set selected option, don't trigger auto-scroll while typing
+                  if (e.target.value && parseFloat(e.target.value) > 0) {
+                    setSelectedOption('custom')
+                  } else {
+                    setSelectedOption(null)
                   }
                 }}
                 className="flex-1 px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/50"
